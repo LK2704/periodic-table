@@ -345,6 +345,8 @@
       tabBondingSub: 'Phân tích Δχ, kiểu liên kết & mô phỏng electron',
       tabReactions: 'Phản ứng hóa học',
       tabReactionsSub: 'Dự đoán sản phẩm, cân bằng & minh họa phân tử',
+      tabOrganic: 'Mạch Carbon & IUPAC',
+      tabOrganicSub: 'Lắp ráp 2D & gọi tên chuẩn GDPT 2018',
       presetsLabel: 'Cặp mẫu thú vị:',
       slotA: 'Nguyên tố A',
       slotB: 'Nguyên tố B',
@@ -435,6 +437,8 @@
       tabBondingSub: 'Analyze Δχ, bond polarity & electron animation',
       tabReactions: 'Chemical Reactions',
       tabReactionsSub: 'Predict products, balance & animate molecules',
+      tabOrganic: 'Carbon Chain & IUPAC',
+      tabOrganicSub: '2D chain builder & IUPAC naming',
       presetsLabel: 'Interesting pairs:',
       slotA: 'Element A',
       slotB: 'Element B',
@@ -1425,28 +1429,41 @@
 
   function syncTabChrome() {
     const d = dict();
-    const isRxn = state.activeTab === 'reactions';
-    if (dom.tabBonding && dom.tabReactions) {
-      dom.tabBonding.classList.toggle('active', !isRxn);
-      dom.tabBonding.setAttribute('aria-selected', !isRxn ? 'true' : 'false');
+    const tab = state.activeTab;
+    const isBonding = tab === 'bonding';
+    const isRxn = tab === 'reactions';
+    const isOrg = tab === 'organic';
+
+    if (dom.tabBonding) {
+      dom.tabBonding.classList.toggle('active', isBonding);
+      dom.tabBonding.setAttribute('aria-selected', isBonding ? 'true' : 'false');
+    }
+    if (dom.tabReactions) {
       dom.tabReactions.classList.toggle('active', isRxn);
       dom.tabReactions.setAttribute('aria-selected', isRxn ? 'true' : 'false');
     }
-    if (dom.panelBonding && dom.panelReactions) {
-      dom.panelBonding.classList.toggle('hidden', isRxn);
-      dom.panelReactions.classList.toggle('hidden', !isRxn);
+    if (dom.tabOrganic) {
+      dom.tabOrganic.classList.toggle('active', isOrg);
+      dom.tabOrganic.setAttribute('aria-selected', isOrg ? 'true' : 'false');
     }
+
+    if (dom.panelBonding) dom.panelBonding.classList.toggle('hidden', !isBonding);
+    if (dom.panelReactions) dom.panelReactions.classList.toggle('hidden', !isRxn);
+    if (dom.panelOrganic) dom.panelOrganic.classList.toggle('hidden', !isOrg);
 
     if (isRxn && window.ReactionLab && typeof window.ReactionLab.getHeaderTexts === 'function') {
       const rxnText = window.ReactionLab.getHeaderTexts(state.lang);
       if (dom.footerHint) dom.footerHint.textContent = rxnText.footerHint;
+    } else if (isOrg && window.OrganicBuilder && typeof window.OrganicBuilder.getHeaderTexts === 'function') {
+      const orgText = window.OrganicBuilder.getHeaderTexts(state.lang);
+      if (dom.footerHint) dom.footerHint.textContent = orgText.footerHint;
     } else {
       if (dom.footerHint) dom.footerHint.textContent = d.footerHint;
     }
   }
 
   function setTab(tab) {
-    const nextTab = tab === 'reactions' ? 'reactions' : 'bonding';
+    const nextTab = tab === 'reactions' || tab === 'organic' ? tab : 'bonding';
     const changed = state.activeTab !== nextTab;
     closeDropdowns();
     state.activeTab = nextTab;
@@ -1592,8 +1609,10 @@
       tabsBar: document.getElementById('lab-tabs'),
       tabBonding: document.getElementById('lab-tab-bonding'),
       tabReactions: document.getElementById('lab-tab-reactions'),
+      tabOrganic: document.getElementById('lab-tab-organic'),
       panelBonding: document.getElementById('lab-panel-bonding'),
       panelReactions: document.getElementById('lab-panel-reactions'),
+      panelOrganic: document.getElementById('lab-panel-organic'),
       btnClose: document.getElementById('btn-close-lab'),
       btnCloseFooter: document.getElementById('btn-close-lab-footer'),
       presetsList: document.getElementById('lab-presets-list'),
@@ -1682,6 +1701,9 @@
     if (window.ReactionLab && typeof window.ReactionLab.setLang === 'function') {
       window.ReactionLab.setLang(state.lang);
     }
+    if (window.OrganicBuilder && typeof window.OrganicBuilder.setLang === 'function') {
+      window.OrganicBuilder.setLang(state.lang);
+    }
     dom.modal.classList.remove('hidden');
     callbacks.onOpen();
   }
@@ -1723,6 +1745,9 @@
     state.lang = lang;
     if (window.ReactionLab && typeof window.ReactionLab.setLang === 'function') {
       window.ReactionLab.setLang(lang);
+    }
+    if (window.OrganicBuilder && typeof window.OrganicBuilder.setLang === 'function') {
+      window.OrganicBuilder.setLang(lang);
     }
     applyLabLanguage();
   }

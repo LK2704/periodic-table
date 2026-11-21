@@ -103,7 +103,7 @@
       modeIonization: 'Năng lượng ion hóa',
       modeDensity: 'Khối lượng riêng',
       bondingLabBtn: 'Lab',
-      bondingLabTitle: 'Mở Lab — Liên kết nguyên tử & Phản ứng hóa học',
+      bondingLabTitle: 'Mở Lab — Liên kết nguyên tử, Phản ứng hóa học & Mạch Carbon IUPAC',
       toolsBtn: 'Công cụ',
       toolsBtnTitle: 'Mở Công cụ — Tính khối lượng mol, So sánh nguyên tố & Máy đo pH',
       sendToLabBtn: 'Đưa vào Lab',
@@ -336,7 +336,7 @@
       modeIonization: 'Ionization Energy',
       modeDensity: 'Density',
       bondingLabBtn: 'Lab',
-      bondingLabTitle: 'Open Lab — Atomic Bonding & Chemical Reactions',
+      bondingLabTitle: 'Open Lab — Atomic Bonding, Chemical Reactions & Carbon Chain IUPAC',
       toolsBtn: 'Tools',
       toolsBtnTitle: 'Open Tools — Molar Mass, Compare Elements & pH Meter',
       sendToLabBtn: 'Send to Lab',
@@ -4300,6 +4300,11 @@
   }
   if (window.ReactionLab) {
     window.ReactionLab.init({
+      getLang: () => state.lang
+    });
+  }
+  if (window.OrganicBuilder) {
+    window.OrganicBuilder.init({
       getLang: () => state.lang
     });
   }

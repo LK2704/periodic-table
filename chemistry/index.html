@@ -587,11 +587,11 @@
     </div>
   </div>
 
-  <!-- LAB MODAL (2 Split Panels: Atomic Bonding & Chemical Reactions) -->
+  <!-- LAB MODAL (3 Split Panels: Atomic Bonding, Chemical Reactions & Organic Carbon Chain Builder) -->
   <div class="detail-modal lab-modal hidden" id="lab-modal" role="dialog" aria-modal="true" aria-label="Lab">
     <div class="detail-backdrop" id="lab-backdrop"></div>
     <div class="detail-dialog lab-dialog" id="lab-dialog">
-      <!-- Fixed 2-Panel Split Header (no redundant title bar; divides directly into 2 equal tabs) -->
+      <!-- Fixed 3-Panel Split Header (3 equal tabs + close button) -->
       <div class="lab-split-header" id="lab-tabs" role="tablist" aria-label="Chế độ Lab">
         <button
           type="button"
@@ -629,6 +629,29 @@
           <span class="lab-tab-copy">
             <span class="lab-tab-title" data-i18n-lab="tabReactions">Phản ứng hóa học</span>
             <span class="lab-tab-sub" data-i18n-lab="tabReactionsSub">Dự đoán sản phẩm, cân bằng &amp; minh họa phân tử</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="lab-tab-btn"
+          id="lab-tab-organic"
+          data-lab-tab="organic"
+          role="tab"
+          aria-selected="false"
+          aria-controls="lab-panel-organic"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
+              <path d="M3.2 12.8L7.4 7.6L12.6 12.4L16.8 7.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="3.2" cy="12.8" r="2" fill="currentColor" />
+              <circle cx="7.4" cy="7.6" r="2" fill="currentColor" />
+              <circle cx="12.6" cy="12.4" r="2" fill="currentColor" />
+              <circle cx="16.8" cy="7.2" r="2" fill="currentColor" />
+            </svg>
+          </span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-lab="tabOrganic">Mạch Carbon &amp; IUPAC</span>
+            <span class="lab-tab-sub" data-i18n-lab="tabOrganicSub">Lắp ráp 2D &amp; gọi tên chuẩn GDPT 2018</span>
           </span>
         </button>
         <button type="button" class="detail-close-btn lab-split-close" id="btn-close-lab" aria-label="Đóng">✕</button>
@@ -882,6 +905,128 @@
                   <p class="rxn-explain-text" id="rxn-exp-text"></p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: ORGANIC CARBON CHAIN BUILDER & IUPAC NAMING -->
+        <div class="lab-tab-panel hidden" id="lab-panel-organic" role="tabpanel" aria-labelledby="lab-tab-organic">
+          <!-- Sample Presets Row -->
+          <div class="lab-presets-row org-presets-row">
+            <span class="lab-presets-label" data-i18n-org="presetsLabel">Ví dụ mẫu:</span>
+            <div class="lab-presets-list" id="org-presets-list"></div>
+          </div>
+
+          <!-- Interactive 2D SVG Ball-and-Stick Molecule Builder -->
+          <div class="org-builder-card">
+            <div class="org-toolbar" id="org-toolbar">
+              <div class="org-tool-group org-tool-attach">
+                <button type="button" class="org-tool-btn is-carbon" data-org-action="add-c">
+                  <span data-i18n-org="addC">+ C</span>
+                  <span class="org-c-count mono" id="org-carbon-counter">1/10 C</span>
+                </button>
+                <button type="button" class="org-tool-btn is-hydrogen" data-org-action="add-h">
+                  <span data-i18n-org="addH">+ H</span>
+                </button>
+                <button type="button" class="org-tool-btn is-autofill" id="org-btn-autofill-h">
+                  <span aria-hidden="true">✦</span>
+                  <span data-i18n-org="autoFillH">Điền đủ H</span>
+                </button>
+                <span class="org-tool-sep" aria-hidden="true"></span>
+                <button type="button" class="org-tool-btn is-o" data-org-action="add-oh">-OH</button>
+                <button type="button" class="org-tool-btn is-o" data-org-action="add-o">=O</button>
+                <button type="button" class="org-tool-btn is-o" data-org-action="add-cooh">-COOH</button>
+                <button type="button" class="org-tool-btn is-n" data-org-action="add-nh2">-NH₂</button>
+                <span class="org-tool-sep" aria-hidden="true"></span>
+                <button type="button" class="org-tool-btn is-hal" data-org-action="add-cl">-Cl</button>
+                <button type="button" class="org-tool-btn is-hal" data-org-action="add-br">-Br</button>
+                <button type="button" class="org-tool-btn is-hal" data-org-action="add-f">-F</button>
+                <button type="button" class="org-tool-btn is-hal" data-org-action="add-i">-I</button>
+                <span class="org-tool-sep" aria-hidden="true"></span>
+                <button type="button" class="org-tool-btn is-danger" id="org-btn-delete">
+                  <span aria-hidden="true">✕</span>
+                  <span data-i18n-org="deleteBtn">Xóa</span>
+                </button>
+              </div>
+
+              <div class="org-tool-group org-tool-utils">
+                <button type="button" class="org-util-btn active" id="org-btn-toggle-h" aria-pressed="true">
+                  <span class="org-h-dot" aria-hidden="true">H</span>
+                  <span id="org-toggle-h-label" data-i18n-org="hideHLabel">Hiện H</span>
+                </button>
+                <button type="button" class="org-util-btn active" id="org-btn-toggle-num" aria-pressed="true">
+                  <span class="org-num-dot" aria-hidden="true">#</span>
+                  <span data-i18n-org="numberingToggle">Số mạch chính (1,2,3)</span>
+                </button>
+                <button type="button" class="org-util-btn" id="org-btn-undo" disabled>
+                  <span aria-hidden="true">↶</span>
+                  <span data-i18n-org="undoBtn">Hoàn tác</span>
+                </button>
+                <button type="button" class="org-util-btn" id="org-btn-reset">
+                  <span aria-hidden="true">↺</span>
+                  <span data-i18n-org="resetBtn">Đặt lại (C)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Inline Validation / Valence Feedback Banner -->
+            <div class="org-toast hidden" id="org-toast" role="status" aria-live="polite"></div>
+
+            <!-- SVG Stage -->
+            <div class="org-stage">
+              <div class="org-svg-host" id="org-svg-host" aria-live="polite"></div>
+              <div class="org-stage-hint" data-i18n-org="stageHint">
+                Bấm nguyên tử C để chọn • Bấm tay nối trống hoặc + H để gắn Hydro • Bấm liên kết C–C để đổi bậc (– / = / ≡)
+              </div>
+            </div>
+          </div>
+
+          <!-- Realtime IUPAC Analysis Panel -->
+          <div class="org-results-area" aria-live="polite">
+            <!-- Incomplete Valence Status Banner -->
+            <div class="org-valence-banner hidden" id="org-valence-banner" role="status">
+              <div class="org-valence-msg">
+                <span class="org-valence-dot" aria-hidden="true"></span>
+                <span id="org-valence-text"></span>
+              </div>
+              <button type="button" class="org-valence-quick-btn" id="org-btn-quick-fill">
+                <span aria-hidden="true">✦</span>
+                <span data-i18n-org="autoFillH">Điền đủ H</span>
+              </button>
+            </div>
+
+            <div class="org-name-hero" id="org-name-hero">
+              <div class="org-name-main">
+                <span class="org-hero-eyebrow" id="org-hero-eyebrow" data-i18n-org="heroEyebrow">Tên gọi IUPAC (GDPT 2018)</span>
+                <div class="org-iupac-name" id="org-iupac-name">methane</div>
+              </div>
+              <span class="org-class-badge" id="org-class-badge" data-org-class="alkane">Alkane</span>
+            </div>
+
+            <div class="org-metrics-grid">
+              <div class="org-metric-box">
+                <span class="org-metric-lbl" data-i18n-org="mFormula">Công thức phân tử</span>
+                <strong class="org-metric-val mono" id="org-val-formula">CH<sub>4</sub></strong>
+              </div>
+              <div class="org-metric-box is-wide">
+                <span class="org-metric-lbl" data-i18n-org="mCondensed">CTCT thu gọn</span>
+                <strong class="org-metric-val mono" id="org-val-condensed">CH<sub>4</sub></strong>
+              </div>
+              <div class="org-metric-box">
+                <span class="org-metric-lbl" data-i18n-org="mMolarMass">Phân tử khối (M)</span>
+                <strong class="org-metric-val mono" id="org-val-mass">16.043 g/mol</strong>
+              </div>
+              <div class="org-metric-box">
+                <span class="org-metric-lbl" data-i18n-org="mUnsat">Độ bất bão hòa (k)</span>
+                <strong class="org-metric-val mono" id="org-val-unsat">k = 0 (0 π)</strong>
+              </div>
+            </div>
+
+            <div class="org-steps-card">
+              <div class="org-steps-head">
+                <span class="org-steps-title" data-i18n-org="stepsTitle">Cách gọi tên từng bước</span>
+              </div>
+              <ol class="org-steps-list" id="org-steps-list"></ol>
             </div>
           </div>
         </div>
@@ -1388,6 +1533,7 @@
   <script src="lab.js"></script>
   <script src="reactions-organic-data.js"></script>
   <script src="reactions.js"></script>
+  <script src="organic-builder.js"></script>
   <script src="tools.js"></script>
   <script src="element-details.js"></script>
   <script src="atom3d.js"></script>
