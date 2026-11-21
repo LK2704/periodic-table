@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Periodic Table</title>
+  <link rel="stylesheet" href="style.css?v=20261121-10" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- TOP HEADER BAR -->
+    <header class="site-header">
+      <div class="header-left">
+        <div class="view-mode-wrap">
+          <label class="view-mode-label" for="view-mode-select" data-i18n="viewModeLabel">Chế độ</label>
+          <select id="view-mode-select" class="view-mode-select" aria-label="Chế độ hiển thị bảng tuần hoàn">
+            <option value="default" data-i18n="modeDefault">Mặc định (Nhóm chất)</option>
+            <option value="temperature" data-i18n="modeTemperature">Trạng thái theo nhiệt độ</option>
+            <option value="electronegativity" data-i18n="modeElectronegativity">Độ âm điện</option>
+            <option value="radius" data-i18n="modeRadius">Bán kính nguyên tử</option>
+            <option value="ionization" data-i18n="modeIonization">Năng lượng ion hóa</option>
+            <option value="density" data-i18n="modeDensity">Khối lượng riêng</option>
+          </select>
+        </div>
+      </div>
+      <div class="header-brand">
+        <span class="brand-title">Interactive Periodic Table</span>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="lab-open-btn tools-open-btn" id="btn-open-tools">
+          <svg class="tools-btn-svg" width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="5" height="5" rx="1.1" stroke="currentColor" stroke-width="1.35" />
+            <rect x="9" y="2" width="5" height="5" rx="1.1" stroke="currentColor" stroke-width="1.35" />
+            <rect x="2" y="9" width="5" height="5" rx="1.1" stroke="currentColor" stroke-width="1.35" />
+            <rect x="9" y="9" width="5" height="5" rx="1.1" stroke="currentColor" stroke-width="1.35" />
+          </svg>
+          <span data-i18n="toolsBtn">Công cụ</span>
+        </button>
+        <button type="button" class="lab-open-btn" id="btn-open-lab">
+          <span class="lab-btn-icon desktop-only-glyph" aria-hidden="true">⚗️</span>
+          <svg class="mobile-only-svg lab-btn-svg" width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M5.75 2.25H10.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+            <path d="M6.6 2.25V6.1L3.05 12.15C2.65 12.82 3.13 13.75 3.92 13.75H12.08C12.87 13.75 13.35 12.82 12.95 12.15L9.4 6.1V2.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.55 9.85H11.45" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+          </svg>
+          <span data-i18n="bondingLabBtn">Lab</span>
+        </button>
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn active" data-lang="vi">VI</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- UPPER HALF: 3D ATOM MODEL & ELEMENT METRICS -->
+    <section class="top-section is-empty" id="top-section" aria-label="Thông tin chi tiết và mô hình 3D nguyên tố">
+      <!-- Backdrop for near-fullscreen 3D Atom inspection -->
+      <div class="atom-expand-backdrop hidden" id="atom-expand-backdrop" aria-hidden="true"></div>
+
+      <!-- Left: 3D Atomic Model Viewer (wrapped in stable grid slot for smooth expand/collapse) -->
+      <div class="atom-stage-slot" id="atom-stage-slot">
+        <div class="atom-stage" id="atom-stage">
+        <canvas id="atom-canvas" aria-label="Mô hình 3D nguyên tử có thể xoay 360 độ"></canvas>
+
+        <!-- Expanded-only element identity banner -->
+        <div class="atom-expanded-banner hidden" id="atom-expanded-banner"></div>
+
+        <!-- Idle caption when no element selected -->
+        <div class="atom-idle-caption" id="atom-idle-caption" data-i18n="idleAtomCaption">
+          Mô hình nguyên tử 3D tương tác
+        </div>
+
+        <!-- Top-left particle counter + compact atomic radius & active isotope bar -->
+        <div class="atom-hud atom-hud-tl" id="atom-hud-particles">
+          <div class="atom-particles-row">
+            <span class="particle-pill p-proton" id="pill-proton">
+              <i class="dot"></i> p⁺ <strong id="hud-protons">0</strong>
+            </span>
+            <span class="particle-pill p-neutron" id="pill-neutron">
+              <i class="dot"></i> n⁰ <strong id="hud-neutrons">0</strong>
+            </span>
+            <span class="particle-pill p-electron" id="pill-electron">
+              <i class="dot"></i> e⁻ <strong id="hud-electrons">0</strong>
+            </span>
+          </div>
+          <div class="atom-sub-row">
+            <div class="atom-radius-line" id="hud-radius-wrap">
+              <span class="hud-radius-lbl" data-i18n="hudRadiusLabel">Bán kính:</span>
+              <strong class="hud-radius-val" id="hud-radius">—</strong>
+            </div>
+            <div class="atom-isotope-chip hidden" id="hud-isotope-chip">
+              <span class="iso-hud-badge" id="hud-isotope-label"></span>
+              <button type="button" class="iso-hud-reset" id="btn-reset-isotope" title="Đặt lại về đồng vị phổ biến mặc định">
+                <span aria-hidden="true">↺</span>
+                <span data-i18n="isoResetShort">Mặc định</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top-right shell distribution -->
+        <div class="atom-hud atom-hud-tr" id="hud-shells"></div>
+
+        <!-- Bottom-left interaction hint -->
+        <div class="atom-hud atom-hud-bl" id="atom-hud-hint">
+          <span class="drag-hint" data-i18n="dragHint">↻ Kéo xoay 360° • Cuộn thu phóng</span>
+        </div>
+
+        <!-- Bottom-right 3D controls -->
+        <div class="atom-hud atom-hud-br" id="atom-hud-controls">
+          <button type="button" class="stage-btn active" id="btn-autorotate">
+            <span id="autorotate-icon" class="desktop-only-glyph">⏸</span>
+            <span class="mobile-only-svg autorotate-svg-wrap" aria-hidden="true">
+              <svg class="ar-svg-pause" width="11" height="11" viewBox="0 0 16 16" fill="none">
+                <rect x="3.75" y="2.75" width="2.75" height="10.5" rx="0.9" fill="currentColor" />
+                <rect x="9.5" y="2.75" width="2.75" height="10.5" rx="0.9" fill="currentColor" />
+              </svg>
+              <svg class="ar-svg-play" width="11" height="11" viewBox="0 0 16 16" fill="none">
+                <path d="M4.6 3.15L12.6 8L4.6 12.85V3.15Z" fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span data-i18n="autoRotate">Tự xoay</span>
+          </button>
+          <button type="button" class="stage-btn speed-btn" id="btn-orbit-speed">
+            <span class="speed-glyph" id="speed-icon" aria-hidden="true">»</span>
+            <svg class="mobile-only-svg speed-pause-svg" width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <rect x="3.75" y="2.75" width="2.75" height="10.5" rx="0.9" fill="currentColor" />
+              <rect x="9.5" y="2.75" width="2.75" height="10.5" rx="0.9" fill="currentColor" />
+            </svg>
+            <span class="speed-val" id="speed-label">1×</span>
+          </button>
+          <button type="button" class="stage-btn" id="btn-mode">
+            <span id="mode-label">Quỹ đạo 3D</span>
+          </button>
+          <button type="button" class="stage-btn icon-only" id="btn-reset" aria-label="Đặt lại góc nhìn">
+            <span class="desktop-only-glyph" aria-hidden="true">⟲</span>
+            <svg class="mobile-only-svg reset-btn-svg" width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3.2 8a4.8 4.8 0 1 0 1.4-3.4L3 6.2" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M3 3.2V6.2H6" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button type="button" class="stage-btn icon-only expand-btn" id="btn-expand-atom" aria-pressed="false" aria-label="Phóng to mô hình 3D">
+            <svg class="expand-icon-open" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2.5 6V2.5H6M10 2.5H13.5V6M13.5 10V13.5H10M6 13.5H2.5V10" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <svg class="expand-icon-close hidden" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M6 2.5V6H2.5M13.5 6H10V2.5M10 13.5V10H13.5M2.5 10H6V13.5" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <!-- Right: Element Properties Dashboard -->
+      <div class="inspector-panel" id="inspector-panel">
+        <!-- Empty / Idle State before hovering or locking any element -->
+        <div class="inspector-empty" id="inspector-empty">
+          <div class="empty-orbit-icon" aria-hidden="true">
+            <svg width="42" height="42" viewBox="0 0 48 48" fill="none">
+              <ellipse cx="24" cy="24" rx="20" ry="8" stroke="currentColor" stroke-width="1.6" opacity="0.65" />
+              <ellipse cx="24" cy="24" rx="20" ry="8" stroke="currentColor" stroke-width="1.6" opacity="0.65" transform="rotate(60 24 24)" />
+              <ellipse cx="24" cy="24" rx="20" ry="8" stroke="currentColor" stroke-width="1.6" opacity="0.65" transform="rotate(120 24 24)" />
+              <circle cx="24" cy="24" r="4" fill="currentColor" />
+            </svg>
+          </div>
+          <h2 class="empty-title" id="empty-title" data-i18n="emptyTitle">Di chuột vào một nguyên tố bên dưới để khám phá</h2>
+          <p class="empty-desc" id="empty-desc" data-i18n="emptyDesc">
+            Thông số chi tiết, cấu hình electron và mô hình nguyên tử 3D sẽ hiển thị tại đây. Nhấp trực tiếp vào một ô để cố định thông tin.
+          </p>
+        </div>
+
+        <!-- Active Element Metrics View -->
+        <div class="inspector-content hidden" id="inspector-content">
+          <div class="inspector-header">
+            <div class="hero-identity">
+              <div class="hero-tile" id="hero-tile">
+                <span class="hero-z" id="info-number"></span>
+                <span class="hero-sym" id="info-symbol"></span>
+                <span class="hero-mass" id="info-mass-short"></span>
+              </div>
+              <div class="hero-titles">
+                <div class="hero-name-row">
+                  <h1 id="info-name"></h1>
+                  <span class="hero-en-name" id="info-en-name"></span>
+                </div>
+                <div class="hero-badges">
+                  <span class="badge badge-macro" id="info-macro"></span>
+                  <span class="badge badge-category" id="info-category"></span>
+                  <span class="badge badge-phase" id="info-phase"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="inspector-header-actions">
+              <button type="button" class="lab-send-btn" id="btn-send-to-lab">
+                <span class="desktop-only-glyph" aria-hidden="true">⚗️</span>
+                <svg class="mobile-only-svg lab-btn-svg" width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M5.75 2.25H10.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+                  <path d="M6.6 2.25V6.1L3.05 12.15C2.65 12.82 3.13 13.75 3.92 13.75H12.08C12.87 13.75 13.35 12.82 12.95 12.15L9.4 6.1V2.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M4.55 9.85H11.45" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+                </svg>
+                <span data-i18n="sendToLabBtn">Đưa vào Lab</span>
+              </button>
+              <button type="button" class="details-trigger-btn" id="btn-open-details">
+                <span class="details-arrow" aria-hidden="true">→</span>
+                <span data-i18n="detailsBtn">Khám phá chi tiết</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dedicated Full & Shorthand Electron Configuration Bar -->
+          <div class="econfig-bar" id="econfig-bar" role="button" tabindex="0" aria-expanded="false" aria-controls="orbital-popover">
+            <span class="econfig-label" data-i18n="mConfig">Cấu hình electron</span>
+            <div class="econfig-full mono" id="econfig-full"></div>
+            <span class="econfig-short mono" id="econfig-short"></span>
+            <span class="econfig-orbital-hint" id="econfig-orbital-hint" aria-hidden="true">
+              <span class="econfig-hint-glyph">[↑↓]</span>
+              <span class="econfig-hint-caret">▾</span>
+            </span>
+          </div>
+
+          <!-- Metrics Grid (4 x 3) -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mMass">Nguyên tử khối</span>
+              <span class="metric-value" id="m-mass"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mOuter">Electron lớp ngoài</span>
+              <span class="metric-value" id="m-outer"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mEneg">Độ âm điện (Pauling)</span>
+              <span class="metric-value" id="m-eneg"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mSpecHeat">Nhiệt dung riêng</span>
+              <span class="metric-value" id="m-specheat"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mIoniz">Năng lượng ion hóa I₁</span>
+              <span class="metric-value" id="m-ioniz"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mDensity">Khối lượng riêng</span>
+              <span class="metric-value" id="m-density"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mMelt">Nhiệt độ nóng chảy</span>
+              <span class="metric-value" id="m-melt"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mBoil">Nhiệt độ sôi</span>
+              <span class="metric-value" id="m-boil"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mOx">Số oxi hóa phổ biến</span>
+              <span class="metric-value" id="m-ox"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mPos">Vị trí & Phân lớp</span>
+              <span class="metric-value" id="m-pos"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mShells">Số lớp / Lớp vỏ e⁻</span>
+              <span class="metric-value mono" id="m-shells"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label" data-i18n="mYear">Năm phát hiện</span>
+              <span class="metric-value" id="m-year"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIDDLE RIBBON: CATEGORY LEGEND & QUICK SEARCH -->
+    <nav class="legend-bar" aria-label="Phân loại và tìm kiếm nguyên tố">
+      <div class="macro-filters" id="macro-filters">
+        <button type="button" class="filter-chip active" data-macro="all" data-i18n="filterAll">Tất cả</button>
+        <button type="button" class="filter-chip" data-macro="metal">
+          <span class="swatch-multi"></span> <span data-i18n="filterMetal">Kim loại</span>
+        </button>
+        <button type="button" class="filter-chip" data-macro="metalloid">
+          <span class="swatch sw-metalloid"></span> <span data-i18n="filterMetalloid">Á kim</span>
+        </button>
+        <button type="button" class="filter-chip" data-macro="nonmetal">
+          <span class="swatch sw-nonmetal"></span> <span data-i18n="filterNonmetal">Phi kim</span>
+        </button>
+        <button type="button" class="filter-chip" data-macro="noble-gas">
+          <span class="swatch sw-noble"></span> <span data-i18n="filterNoble">Khí hiếm</span>
+        </button>
+      </div>
+
+      <div class="sub-legend" id="sub-legend"></div>
+
+      <!-- TEMPERATURE SLIDER CONTROLS (shown in Temperature mode) -->
+      <div class="temp-controls hidden" id="temp-controls" aria-label="Điều khiển nhiệt độ">
+        <div class="temp-readout">
+          <span class="temp-val-c" id="temp-val-c">25°C</span>
+          <span class="temp-val-sep">/</span>
+          <span class="temp-val-k" id="temp-val-k">298 K</span>
+        </div>
+
+        <div class="temp-slider-wrap">
+          <input
+            type="range"
+            id="temp-slider"
+            class="temp-slider"
+            min="-273"
+            max="6000"
+            step="1"
+            value="25"
+            aria-label="Thanh trượt nhiệt độ theo độ C"
+          />
+        </div>
+
+        <div class="temp-presets" id="temp-presets">
+          <button type="button" class="temp-preset-btn" data-temp="-200">-200°C</button>
+          <button type="button" class="temp-preset-btn active" data-temp="25">25°C</button>
+          <button type="button" class="temp-preset-btn" data-temp="1000">1000°C</button>
+          <button type="button" class="temp-preset-btn" data-temp="3500">3500°C</button>
+          <button type="button" class="temp-reset-btn" id="temp-reset-btn" title="Đặt lại 25°C">↺ 25°C</button>
+        </div>
+
+        <div class="temp-counters" id="temp-counters">
+          <span class="temp-count-pill st-solid">
+            <i class="st-dot"></i>
+            <span data-i18n="stateSolid">Rắn</span>
+            <strong id="count-solid">0</strong>
+          </span>
+          <span class="temp-count-pill st-liquid">
+            <i class="st-dot"></i>
+            <span data-i18n="stateLiquid">Lỏng</span>
+            <strong id="count-liquid">0</strong>
+          </span>
+          <span class="temp-count-pill st-gas">
+            <i class="st-dot"></i>
+            <span data-i18n="stateGas">Khí</span>
+            <strong id="count-gas">0</strong>
+          </span>
+          <span class="temp-count-pill st-unknown">
+            <i class="st-dot"></i>
+            <span data-i18n="stateUnknownShort">Chưa rõ</span>
+            <strong id="count-unknown">0</strong>
+          </span>
+        </div>
+      </div>
+
+      <!-- HEATMAP COLORBAR LEGEND (shown in Periodic Trends Heatmap modes) -->
+      <div class="heatmap-controls hidden" id="heatmap-controls" aria-label="Chú giải bản đồ nhiệt">
+        <div class="heatmap-meta">
+          <span class="heatmap-title" id="heatmap-title">Độ âm điện</span>
+          <span class="heatmap-scale-badge hidden" id="heatmap-log-badge" data-i18n="heatmapLogScale">Thang log₁₀</span>
+        </div>
+        <div class="heatmap-colorbar-wrap">
+          <span class="heatmap-bound" id="heatmap-min">0.70</span>
+          <div class="heatmap-gradient-bar" aria-hidden="true"></div>
+          <span class="heatmap-bound" id="heatmap-max">3.98</span>
+          <span class="heatmap-unit" id="heatmap-unit">Pauling</span>
+        </div>
+        <div class="heatmap-null-legend">
+          <span class="heatmap-null-swatch" aria-hidden="true"></span>
+          <span data-i18n="heatmapNoData">Không có dữ liệu (—)</span>
+        </div>
+        <button type="button" class="mode-exit-btn" id="heatmap-reset-btn" data-i18n="modeBackDefault">
+          ↺ Mặc định
+        </button>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Tìm: Fe, Sắt, 26..."
+          autocomplete="off"
+          aria-label="Tìm kiếm nguyên tố"
+        />
+        <button type="button" class="search-clear hidden" id="search-clear">✕</button>
+      </div>
+    </nav>
+
+    <!-- LOWER HALF: FULL 118-ELEMENT PERIODIC TABLE -->
+    <main class="table-section" aria-label="Bảng tuần hoàn các nguyên tố hóa học">
+      <div class="periodic-wrapper" id="periodic-wrapper">
+        <div class="periodic-grid" id="periodic-grid"></div>
+      </div>
+    </main>
+
+    <!-- BOTTOM-LEFT PAGE FOOTER SLOT: Chemistry Fun Fact Trigger -->
+    <footer class="page-footer-slot" aria-label="Tiện ích cuối trang">
+      <button
+        type="button"
+        class="fun-fact-btn"
+        id="btn-fun-fact"
+        title="Sự thật thú vị"
+        aria-label="Sự thật thú vị"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="fun-fact-modal"
+      >
+        <svg class="fun-fact-btn-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M6 11.2V10.1C4.55 9.3 3.7 7.9 3.7 6.35C3.7 3.95 5.62 2.05 8 2.05C10.38 2.05 12.3 3.95 12.3 6.35C12.3 7.9 11.45 9.3 10 10.1V11.2"
+            stroke="currentColor"
+            stroke-width="1.35"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M6.2 12.5H9.8M6.8 14H9.2"
+            stroke="currentColor"
+            stroke-width="1.35"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+    </footer>
+  </div>
+
+  <!-- MOBILE-ONLY LOCKED ELEMENT ACTION BAR (hidden on desktop & when unlocked) -->
+  <div
+    class="mobile-lock-bar hidden"
+    id="mobile-lock-bar"
+    role="region"
+    aria-label="Thao tác nguyên tố đang khóa"
+    aria-hidden="true"
+  >
+    <button type="button" class="mobile-lock-info" id="btn-mobile-scroll-top" title="Cuộn lên xem mô hình 3D và thông số">
+      <span class="mobile-lock-tile" id="mobile-lock-tile">
+        <span class="mobile-lock-z" id="mobile-lock-z"></span>
+        <span class="mobile-lock-sym" id="mobile-lock-sym"></span>
+      </span>
+      <span class="mobile-lock-text">
+        <span class="mobile-lock-name" id="mobile-lock-name"></span>
+        <span class="mobile-lock-sub" id="mobile-lock-sub"></span>
+      </span>
+    </button>
+    <div class="mobile-lock-actions">
+      <button type="button" class="mobile-details-btn" id="btn-mobile-open-details">
+        <span class="details-arrow" aria-hidden="true">→</span>
+        <span data-i18n="detailsBtn">Khám phá chi tiết</span>
+      </button>
+      <button
+        type="button"
+        class="mobile-unlock-btn"
+        id="btn-mobile-unlock"
+        title="Bỏ khóa nguyên tố"
+        aria-label="Bỏ khóa nguyên tố"
+      >✕</button>
+    </div>
+  </div>
+
+  <!-- CHEMISTRY FUN FACT CENTERED COMPACT MODAL -->
+  <div
+    class="fun-fact-modal"
+    id="fun-fact-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="ff-title"
+    aria-hidden="true"
+  >
+    <div class="ff-backdrop" id="ff-backdrop"></div>
+    <div class="ff-dialog" id="ff-dialog">
+      <div class="ff-header">
+        <div class="ff-header-title-wrap">
+          <svg class="ff-header-icon" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M6 11.2V10.1C4.55 9.3 3.7 7.9 3.7 6.35C3.7 3.95 5.62 2.05 8 2.05C10.38 2.05 12.3 3.95 12.3 6.35C12.3 7.9 11.45 9.3 10 10.1V11.2"
+              stroke="currentColor"
+              stroke-width="1.35"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6.2 12.5H9.8M6.8 14H9.2"
+              stroke="currentColor"
+              stroke-width="1.35"
+              stroke-linecap="round"
+            />
+          </svg>
+          <h2 class="ff-title" id="ff-title">Sự thật hóa học</h2>
+        </div>
+        <button
+          type="button"
+          class="ff-close-btn"
+          id="ff-close"
+          title="Đóng"
+          aria-label="Đóng"
+        >✕</button>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content-stage" id="ff-stage">
+          <p class="ff-text" id="ff-text"></p>
+        </div>
+      </div>
+      <div class="ff-footer">
+        <button type="button" class="ff-element-btn hidden" id="ff-view-element"></button>
+        <button
+          type="button"
+          class="ff-next-btn"
+          id="ff-next"
+          title="Câu tiếp theo"
+          aria-label="Câu tiếp theo"
+        >
+          <svg class="ff-next-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M3.25 8H12.5M8.75 4.25L12.5 8L8.75 11.75"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELEMENT APPLICATIONS & CHARACTERISTICS MODAL -->
+  <div class="detail-modal hidden" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="detail-backdrop" id="detail-backdrop"></div>
+    <div class="detail-dialog" id="detail-dialog">
+      <div class="detail-header">
+        <div class="detail-identity">
+          <div class="detail-tile" id="modal-tile">
+            <span class="detail-tile-z" id="modal-number"></span>
+            <span class="detail-tile-sym" id="modal-symbol"></span>
+          </div>
+          <div class="detail-titles">
+            <div class="detail-name-row">
+              <h2 id="modal-title"></h2>
+              <span class="detail-subname" id="modal-subname"></span>
+            </div>
+            <div class="detail-badges">
+              <span class="badge badge-macro" id="modal-macro"></span>
+              <span class="badge badge-category" id="modal-category"></span>
+              <span class="badge badge-phase" id="modal-phase"></span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="detail-close-btn" id="btn-close-details" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-section">
+          <h3 class="detail-section-title" data-i18n="modalOverview">Tổng quan</h3>
+          <p class="detail-overview" id="modal-summary"></p>
+        </div>
+
+        <div class="detail-section" id="modal-spectrum-section">
+          <h3 class="detail-section-title" id="modal-spectrum-title" data-i18n="modalSpectrum">Quang phổ phát xạ (380–750 nm)</h3>
+          <div class="spectrum-row" id="modal-spectrum-row">
+            <div class="spectrum-box" id="modal-spectrum-box"></div>
+            <div class="flame-card hidden" id="modal-flame-card"></div>
+          </div>
+        </div>
+
+        <div class="detail-section" id="modal-isotopes-section">
+          <div class="iso-section-head">
+            <h3 class="detail-section-title" data-i18n="modalIsotopes">Đồng vị phổ biến &amp; Chu kì bán rã</h3>
+            <span class="iso-section-hint" data-i18n="modalIsotopesHint">Bấm để xem mô hình 3D (n⁰ = A − Z)</span>
+          </div>
+          <div class="isotopes-grid" id="modal-isotopes-grid"></div>
+        </div>
+
+        <div class="detail-section">
+          <h3 class="detail-section-title" data-i18n="modalTraits">Đặc trưng nổi bật</h3>
+          <ul class="detail-list" id="modal-traits"></ul>
+        </div>
+
+        <div class="detail-section">
+          <h3 class="detail-section-title" data-i18n="modalApps">Ứng dụng thực tế</h3>
+          <ul class="detail-list detail-apps-list" id="modal-apps"></ul>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <div class="detail-meta-strip">
+          <span class="detail-meta-item" id="modal-meta-config"></span>
+          <span class="detail-meta-sep">•</span>
+          <span class="detail-meta-item" id="modal-meta-year"></span>
+        </div>
+        <button type="button" class="detail-done-btn" id="btn-close-details-footer" data-i18n="modalClose">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAB MODAL (2 Split Panels: Atomic Bonding & Chemical Reactions) -->
+  <div class="detail-modal lab-modal hidden" id="lab-modal" role="dialog" aria-modal="true" aria-label="Lab">
+    <div class="detail-backdrop" id="lab-backdrop"></div>
+    <div class="detail-dialog lab-dialog" id="lab-dialog">
+      <!-- Fixed 2-Panel Split Header (no redundant title bar; divides directly into 2 equal tabs) -->
+      <div class="lab-split-header" id="lab-tabs" role="tablist" aria-label="Chế độ Lab">
+        <button
+          type="button"
+          class="lab-tab-btn active"
+          id="lab-tab-bonding"
+          data-lab-tab="bonding"
+          role="tab"
+          aria-selected="true"
+          aria-controls="lab-panel-bonding"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">
+            <span class="desktop-only-glyph">⚛</span>
+            <svg class="mobile-only-svg lab-atom-svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.25" />
+              <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.25" transform="rotate(60 10 10)" />
+              <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.25" transform="rotate(120 10 10)" />
+              <circle cx="10" cy="10" r="1.85" fill="currentColor" />
+            </svg>
+          </span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-lab="tabBonding">Liên kết nguyên tử</span>
+            <span class="lab-tab-sub" data-i18n-lab="tabBondingSub">Phân tích Δχ, kiểu liên kết &amp; mô phỏng electron</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="lab-tab-btn"
+          id="lab-tab-reactions"
+          data-lab-tab="reactions"
+          role="tab"
+          aria-selected="false"
+          aria-controls="lab-panel-reactions"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">⇌</span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-lab="tabReactions">Phản ứng hóa học</span>
+            <span class="lab-tab-sub" data-i18n-lab="tabReactionsSub">Dự đoán sản phẩm, cân bằng &amp; minh họa phân tử</span>
+          </span>
+        </button>
+        <button type="button" class="detail-close-btn lab-split-close" id="btn-close-lab" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="detail-body lab-body">
+        <!-- TAB 1: ATOMIC BONDING LAB -->
+        <div class="lab-tab-panel" id="lab-panel-bonding" role="tabpanel" aria-labelledby="lab-tab-bonding">
+          <!-- Sample Preset Pairs -->
+          <div class="lab-presets-row">
+            <span class="lab-presets-label" data-i18n-lab="presetsLabel">Cặp mẫu thú vị:</span>
+            <div class="lab-presets-list" id="lab-presets-list"></div>
+          </div>
+
+          <!-- Element A & B Pickers + Swap -->
+          <div class="lab-pickers-row">
+            <div class="lab-picker-card" id="lab-picker-a" data-slot="a">
+              <div class="lab-picker-top">
+                <span class="lab-slot-badge" data-i18n-lab="slotA">Nguyên tố A</span>
+                <div class="lab-search-wrap">
+                  <span class="lab-search-icon" aria-hidden="true">⌕</span>
+                  <input
+                    type="text"
+                    class="lab-search-input"
+                    id="lab-search-a"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="lab-dropdown hidden" id="lab-dropdown-a" role="listbox"></div>
+                </div>
+              </div>
+              <div class="lab-selected-preview" id="lab-preview-a"></div>
+            </div>
+
+            <button type="button" class="lab-swap-btn" id="lab-swap-btn" title="Hoán đổi A và B" aria-label="Hoán đổi hai nguyên tố">
+              ⇄
+            </button>
+
+            <div class="lab-picker-card" id="lab-picker-b" data-slot="b">
+              <div class="lab-picker-top">
+                <span class="lab-slot-badge" data-i18n-lab="slotB">Nguyên tố B</span>
+                <div class="lab-search-wrap">
+                  <span class="lab-search-icon" aria-hidden="true">⌕</span>
+                  <input
+                    type="text"
+                    class="lab-search-input"
+                    id="lab-search-b"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="lab-dropdown hidden" id="lab-dropdown-b" role="listbox"></div>
+                </div>
+              </div>
+              <div class="lab-selected-preview" id="lab-preview-b"></div>
+            </div>
+          </div>
+
+          <!-- Animated SVG Bonding Visualization -->
+          <div class="lab-visual-stage" id="lab-visual-stage">
+            <div class="lab-svg-host" id="lab-svg-host" aria-live="polite"></div>
+          </div>
+
+          <!-- Analysis & Compound Result Grid -->
+          <div class="lab-results-grid">
+            <div class="lab-analysis-card" id="lab-analysis-card">
+              <div class="lab-analysis-head">
+                <span class="lab-bond-badge" id="lab-bond-badge"></span>
+                <div class="lab-delta-pill">
+                  <span class="lab-delta-label">Δχ = |χ<sub>A</sub> − χ<sub>B</sub>|</span>
+                  <strong class="lab-delta-val" id="lab-delta-val">0.00</strong>
+                </div>
+              </div>
+
+              <div class="lab-scale-wrap" id="lab-scale-wrap">
+                <div class="lab-scale-bar">
+                  <span class="scale-zone zone-nonpolar" style="width: 12.1%"></span>
+                  <span class="scale-zone zone-polar" style="width: 39.4%"></span>
+                  <span class="scale-zone zone-ionic" style="width: 48.5%"></span>
+                  <span class="lab-scale-pin" id="lab-scale-pin"></span>
+                </div>
+                <div class="lab-scale-ticks">
+                  <span>0.0</span>
+                  <span style="left: 12.1%">0.4</span>
+                  <span style="left: 51.5%">1.7</span>
+                  <span>3.3+</span>
+                </div>
+              </div>
+
+              <p class="lab-analysis-desc" id="lab-analysis-desc"></p>
+              <div class="lab-callout hidden" id="lab-callout"></div>
+            </div>
+
+            <div class="lab-compound-card" id="lab-compound-card">
+              <div class="lab-compound-eyebrow" id="lab-compound-eyebrow"></div>
+              <div class="lab-compound-formula" id="lab-compound-formula"></div>
+              <div class="lab-compound-name" id="lab-compound-name"></div>
+              <p class="lab-compound-desc" id="lab-compound-desc"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: CHEMICAL REACTIONS LAB -->
+        <div class="lab-tab-panel hidden" id="lab-panel-reactions" role="tabpanel" aria-labelledby="lab-tab-reactions">
+          <!-- Quick Sample Reaction Presets -->
+          <div class="lab-presets-row rxn-presets-row">
+            <span class="lab-presets-label" data-i18n-rxn="presetsLabel">Ví dụ nhanh:</span>
+            <div class="rxn-preset-filter" id="rxn-preset-filter" role="group" aria-label="Nhóm ví dụ phản ứng">
+              <button type="button" class="rxn-preset-tab active" data-preset-group="inorganic" aria-pressed="true" data-i18n-rxn="presetGroupInorganic">Vô cơ</button>
+              <button type="button" class="rxn-preset-tab" data-preset-group="organic" aria-pressed="false" data-i18n-rxn="presetGroupOrganic">Hữu cơ</button>
+            </div>
+            <div class="lab-presets-list" id="rxn-presets-list"></div>
+          </div>
+
+          <!-- Reactants Input Area -->
+          <div class="rxn-input-panel">
+            <div class="rxn-slots-row" id="rxn-slots-row">
+              <!-- Reactant 1 -->
+              <div class="rxn-slot" id="rxn-slot-0">
+                <div class="rxn-slot-head">
+                  <label class="rxn-slot-label" id="rxn-label-0" for="rxn-input-0">Chất 1</label>
+                </div>
+                <div class="rxn-input-wrap">
+                  <input
+                    type="text"
+                    class="rxn-input mono"
+                    id="rxn-input-0"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="vd: HCl, Fe, BaCl2..."
+                  />
+                  <div class="rxn-dropdown hidden" id="rxn-dropdown-0" role="listbox"></div>
+                </div>
+                <div class="rxn-slot-error hidden" id="rxn-error-0" role="alert"></div>
+              </div>
+
+              <span class="rxn-plus-op" aria-hidden="true">+</span>
+
+              <!-- Reactant 2 -->
+              <div class="rxn-slot" id="rxn-slot-1">
+                <div class="rxn-slot-head">
+                  <label class="rxn-slot-label" id="rxn-label-1" for="rxn-input-1">Chất 2</label>
+                </div>
+                <div class="rxn-input-wrap">
+                  <input
+                    type="text"
+                    class="rxn-input mono"
+                    id="rxn-input-1"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="vd: NaOH, H2SO4, Na2SO4..."
+                  />
+                  <div class="rxn-dropdown hidden" id="rxn-dropdown-1" role="listbox"></div>
+                </div>
+                <div class="rxn-slot-error hidden" id="rxn-error-1" role="alert"></div>
+              </div>
+
+              <span class="rxn-plus-op hidden" id="rxn-plus-2" aria-hidden="true">+</span>
+
+              <!-- Optional Reactant 3 -->
+              <div class="rxn-slot hidden" id="rxn-slot-2">
+                <div class="rxn-slot-head">
+                  <label class="rxn-slot-label" id="rxn-label-2" for="rxn-input-2">Chất 3</label>
+                  <button type="button" class="rxn-remove-slot-btn" id="rxn-remove-2" title="Bỏ chất thứ 3" aria-label="Bỏ chất thứ 3">✕</button>
+                </div>
+                <div class="rxn-input-wrap">
+                  <input
+                    type="text"
+                    class="rxn-input mono"
+                    id="rxn-input-2"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="vd: H2O, O2, NaCl..."
+                  />
+                  <div class="rxn-dropdown hidden" id="rxn-dropdown-2" role="listbox"></div>
+                </div>
+                <div class="rxn-slot-error hidden" id="rxn-error-2" role="alert"></div>
+              </div>
+            </div>
+
+            <!-- Global Validation Error (e.g. duplicate reactants) -->
+            <div class="rxn-global-error hidden" id="rxn-global-error" role="alert"></div>
+
+            <!-- Action Controls Row -->
+            <div class="rxn-actions-row">
+              <div class="rxn-actions-left">
+                <button type="button" class="rxn-util-btn" id="rxn-btn-add-third" data-i18n-rxn="addThirdBtn">+ Thêm chất thứ 3</button>
+                <button type="button" class="rxn-util-btn rxn-clear-btn" id="rxn-btn-clear" data-i18n-rxn="clearAllBtn">Xóa tất cả</button>
+              </div>
+              <button type="button" class="rxn-primary-btn" id="rxn-btn-react">
+                <span data-i18n-rxn="reactBtn">Phản ứng</span>
+                <span class="rxn-btn-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Reaction Result Section -->
+          <div class="rxn-result-section" id="rxn-result-section" aria-live="polite">
+            <div class="rxn-empty-state hidden" id="rxn-empty-state"></div>
+
+            <div class="rxn-result-card" id="rxn-result-card">
+              <div class="rxn-badges-row">
+                <span class="rxn-type-badge" id="rxn-type-badge"></span>
+                <span class="rxn-source-badge" id="rxn-source-badge"></span>
+              </div>
+
+              <div class="rxn-equation-stage" id="rxn-equation-stage"></div>
+
+              <!-- Animated Pure-SVG Molecular Reaction Stage -->
+              <div class="rxn-visual-stage" id="rxn-visual-stage">
+                <div class="rxn-visual-toolbar">
+                  <span class="rxn-visual-eyebrow" data-i18n-rxn="visualTitle">Minh họa phân tử</span>
+                  <button type="button" class="rxn-replay-btn" id="rxn-btn-replay">
+                    <span aria-hidden="true">↻</span>
+                    <span data-i18n-rxn="replayBtn">Phát lại</span>
+                  </button>
+                </div>
+                <div class="rxn-svg-host" id="rxn-svg-host" aria-live="polite"></div>
+                <div class="rxn-visual-legend" id="rxn-visual-legend">
+                  <span class="rxn-leg-item">
+                    <svg class="rxn-leg-swatch" width="18" height="8" viewBox="0 0 18 8" aria-hidden="true">
+                      <line x1="1" y1="4" x2="17" y2="4" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                    <span data-i18n-rxn="legCovalent">Cộng hóa trị</span>
+                  </span>
+                  <span class="rxn-leg-item">
+                    <svg class="rxn-leg-swatch" width="18" height="8" viewBox="0 0 18 8" aria-hidden="true">
+                      <line x1="1" y1="4" x2="17" y2="4" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 3" />
+                    </svg>
+                    <span data-i18n-rxn="legIonic">Tương tác ion</span>
+                  </span>
+                  <span class="rxn-leg-item">
+                    <span class="rxn-leg-sym is-gas" aria-hidden="true">↑</span>
+                    <span data-i18n-rxn="legGas">Khí bay hơi</span>
+                  </span>
+                  <span class="rxn-leg-item">
+                    <span class="rxn-leg-sym is-ppt" aria-hidden="true">↓</span>
+                    <span data-i18n-rxn="legPpt">Kết tủa</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="rxn-spectator-note hidden" id="rxn-spectator-note"></div>
+
+              <div class="rxn-explain-grid">
+                <div class="rxn-explain-block">
+                  <span class="rxn-explain-eyebrow" id="rxn-phen-label">Hiện tượng thực tế</span>
+                  <p class="rxn-explain-text" id="rxn-phen-text"></p>
+                </div>
+                <div class="rxn-explain-block">
+                  <span class="rxn-explain-eyebrow" id="rxn-exp-label">Giải thích bản chất</span>
+                  <p class="rxn-explain-text" id="rxn-exp-text"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-footer lab-footer">
+        <span class="lab-footer-hint" id="lab-footer-hint" data-i18n-lab="footerHint">Mẹo: Nhập số hiệu (11), ký hiệu (Na) hoặc tên Việt/Anh không dấu để chọn nhanh nguyên tố.</span>
+        <button type="button" class="detail-done-btn" id="btn-close-lab-footer" data-i18n-lab="close">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHEMISTRY TOOLS MODAL (3 Tabs: Molar Mass, Compare Elements, pH Meter) -->
+  <div class="detail-modal tools-modal hidden" id="tools-modal" role="dialog" aria-modal="true" aria-labelledby="tools-modal-title">
+    <div class="detail-backdrop" id="tools-backdrop"></div>
+    <div class="detail-dialog lab-dialog tools-dialog" id="tools-dialog">
+      <div class="detail-header lab-header tools-header">
+        <div class="lab-title-group">
+          <div class="lab-header-icon tools-header-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="2" width="5" height="5" rx="1.1" stroke="#9db89c" stroke-width="1.35" />
+              <rect x="9" y="2" width="5" height="5" rx="1.1" stroke="#9db89c" stroke-width="1.35" />
+              <rect x="2" y="9" width="5" height="5" rx="1.1" stroke="#9db89c" stroke-width="1.35" />
+              <rect x="9" y="9" width="5" height="5" rx="1.1" stroke="#9db89c" stroke-width="1.35" />
+            </svg>
+          </div>
+          <div class="lab-title-text">
+            <h2 id="tools-modal-title" data-i18n-tools="modalTitle">Công Cụ Hóa Học</h2>
+            <p class="lab-subtitle" data-i18n-tools="modalSubtitle">Tính khối lượng mol, so sánh nguyên tố &amp; máy đo pH chuẩn 25°C</p>
+          </div>
+        </div>
+        <button type="button" class="detail-close-btn" id="btn-close-tools" aria-label="Đóng">✕</button>
+      </div>
+
+      <!-- Fixed 3-Tab Switcher directly below modal header -->
+      <div class="tools-tabbar" id="tools-tabs" role="tablist" aria-label="Các công cụ hóa học">
+        <button
+          type="button"
+          class="tools-tab-btn active"
+          id="tools-tab-molar"
+          data-tools-tab="molar"
+          role="tab"
+          aria-selected="true"
+          aria-controls="tools-panel-molar"
+        >
+          <svg class="tools-tab-svg" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2.2V13.5M4.5 13.5H11.5M2.5 5.2H13.5M4.2 5.2L2.2 9.5H6.2L4.2 5.2ZM11.8 5.2L9.8 9.5H13.8L11.8 5.2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span data-i18n-tools="tabMolar">Tính khối lượng mol</span>
+        </button>
+        <button
+          type="button"
+          class="tools-tab-btn"
+          id="tools-tab-compare"
+          data-tools-tab="compare"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tools-panel-compare"
+        >
+          <svg class="tools-tab-svg" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2.2 4.5H7.2M2.2 8H10.5M2.2 11.5H5.8M13.8 4.5H9.8M13.8 8H12.5M13.8 11.5H8.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+          </svg>
+          <span data-i18n-tools="tabCompare">So sánh nguyên tố</span>
+        </button>
+        <button
+          type="button"
+          class="tools-tab-btn"
+          id="tools-tab-ph"
+          data-tools-tab="ph"
+          role="tab"
+          aria-selected="false"
+          aria-controls="tools-panel-ph"
+        >
+          <svg class="tools-tab-svg" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2.2C8 2.2 4 6.9 4 10.1A4 4 0 0 0 12 10.1C12 6.9 8 2.2 8 2.2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round" />
+            <path d="M6.4 10.5C6.6 11.4 7.3 12 8.2 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+          </svg>
+          <span data-i18n-tools="tabPh">Máy đo pH</span>
+        </button>
+      </div>
+
+      <div class="detail-body lab-body tools-body" id="tools-body">
+        <!-- TAB 1: MOLAR MASS & % COMPOSITION -->
+        <div class="tools-tab-panel" id="tools-panel-molar" role="tabpanel" aria-labelledby="tools-tab-molar">
+          <div class="molar-presets-row">
+            <span class="lab-presets-label" data-i18n-tools="molarPresetsLabel">Công thức mẫu:</span>
+            <div class="molar-presets-list" id="tools-molar-presets"></div>
+          </div>
+
+          <div class="molar-input-group">
+            <label class="molar-input-label" for="tools-molar-input" data-i18n-tools="molarInputLabel">Công thức hóa học</label>
+            <div class="molar-input-wrap">
+              <input
+                type="text"
+                id="tools-molar-input"
+                class="molar-input mono"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Ví dụ: H2SO4, Ca(OH)2, Fe2(SO4)3, CuSO4·5H2O..."
+              />
+              <button type="button" class="molar-clear-btn hidden" id="tools-molar-clear" aria-label="Xóa">✕</button>
+            </div>
+          </div>
+
+          <div class="molar-error hidden" id="tools-molar-error" role="alert">
+            <span class="molar-error-icon" aria-hidden="true">!</span>
+            <span id="tools-molar-error-text"></span>
+          </div>
+          <div class="molar-empty hidden" id="tools-molar-empty"></div>
+
+          <div class="molar-result-wrap" id="tools-molar-result">
+            <div class="molar-summary-card tools-molar-summary">
+              <div class="molar-summary-left">
+                <span class="molar-summary-eyebrow" data-i18n-tools="molarTotalLabel">Tổng khối lượng mol (M)</span>
+                <div class="molar-formula-display" id="tools-molar-formula"></div>
+                <span class="molar-total-meta" id="tools-molar-meta"></span>
+              </div>
+              <div class="tools-molar-summary-right">
+                <div class="molar-summary-right">
+                  <strong class="molar-total-val mono" id="tools-molar-total">0.000</strong>
+                  <span class="molar-total-unit">g/mol</span>
+                </div>
+                <button type="button" class="molar-highlight-btn tools-highlight-btn" id="btn-tools-molar-highlight">
+                  <span aria-hidden="true">◎</span>
+                  <span data-i18n-tools="molarHighlightBtn">Đánh dấu trên bảng</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="molar-bar-section">
+              <div class="molar-bar-head">
+                <span class="molar-bar-title" data-i18n-tools="molarBarTitle">Tỷ lệ % khối lượng theo màu nhóm nguyên tố</span>
+              </div>
+              <div class="molar-pct-bar" id="tools-molar-bar" role="img" aria-label="Biểu đồ phần trăm khối lượng"></div>
+            </div>
+
+            <div class="molar-table-wrap">
+              <table class="molar-table tools-molar-table">
+                <thead>
+                  <tr>
+                    <th data-i18n-tools="molarColElement">Nguyên tố</th>
+                    <th class="num-col" data-i18n-tools="molarColCount">Số nguyên tử</th>
+                    <th class="num-col" data-i18n-tools="molarColAtomicMass">Nguyên tử khối (u)</th>
+                    <th class="num-col" data-i18n-tools="molarColContrib">Đóng góp (g/mol)</th>
+                    <th class="num-col" data-i18n-tools="molarColPercent">Tỷ lệ (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="tools-molar-tbody"></tbody>
+              </table>
+            </div>
+
+            <p class="molar-synthetic-note hidden" id="tools-molar-synthetic"></p>
+          </div>
+        </div>
+
+        <!-- TAB 2: COMPARE ELEMENTS -->
+        <div class="tools-tab-panel hidden" id="tools-panel-compare" role="tabpanel" aria-labelledby="tools-tab-compare">
+          <div class="lab-presets-row">
+            <span class="lab-presets-label" data-i18n-tools="cmpPresetsLabel">Cặp gợi ý:</span>
+            <div class="lab-presets-list" id="tools-cmp-presets"></div>
+          </div>
+
+          <div class="lab-pickers-row">
+            <div class="lab-picker-card compare-picker-a" id="tools-cmp-picker-a" data-slot="a">
+              <div class="lab-picker-top">
+                <span class="lab-slot-badge compare-slot-badge">
+                  <i class="cmp-side-dot side-a"></i>
+                  <span data-i18n-tools="cmpSlotA">Nguyên tố A</span>
+                </span>
+                <div class="lab-search-wrap">
+                  <span class="lab-search-icon" aria-hidden="true">⌕</span>
+                  <input
+                    type="text"
+                    class="lab-search-input"
+                    id="tools-cmp-search-a"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="lab-dropdown hidden" id="tools-cmp-dropdown-a" role="listbox"></div>
+                </div>
+              </div>
+              <div class="tools-cmp-preview" id="tools-cmp-preview-a"></div>
+            </div>
+
+            <button type="button" class="lab-swap-btn" id="tools-cmp-swap" title="Hoán đổi nguyên tố A và B" aria-label="Hoán đổi hai nguyên tố">
+              ⇄
+            </button>
+
+            <div class="lab-picker-card compare-picker-b" id="tools-cmp-picker-b" data-slot="b">
+              <div class="lab-picker-top">
+                <span class="lab-slot-badge compare-slot-badge">
+                  <i class="cmp-side-dot side-b"></i>
+                  <span data-i18n-tools="cmpSlotB">Nguyên tố B</span>
+                </span>
+                <div class="lab-search-wrap">
+                  <span class="lab-search-icon" aria-hidden="true">⌕</span>
+                  <input
+                    type="text"
+                    class="lab-search-input"
+                    id="tools-cmp-search-b"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="lab-dropdown hidden" id="tools-cmp-dropdown-b" role="listbox"></div>
+                </div>
+              </div>
+              <div class="tools-cmp-preview" id="tools-cmp-preview-b"></div>
+            </div>
+          </div>
+
+          <div class="cmp-table-card">
+            <div class="cmp-table-head">
+              <div class="cmp-col-head cmp-head-a" id="tools-cmp-head-a"></div>
+              <div class="cmp-col-head cmp-head-mid" data-i18n-tools="cmpColMetric">Chỉ số đối chiếu</div>
+              <div class="cmp-col-head cmp-head-b" id="tools-cmp-head-b"></div>
+            </div>
+            <div class="cmp-rows" id="tools-cmp-rows"></div>
+          </div>
+          <p class="tools-cmp-temp-note" id="tools-cmp-temp-note"></p>
+        </div>
+
+        <!-- TAB 3: pH METER & ACID-BASE MIXING -->
+        <div class="tools-tab-panel hidden" id="tools-panel-ph" role="tabpanel" aria-labelledby="tools-tab-ph">
+          <!-- Compact 2-Mode Toggle -->
+          <div class="tools-ph-modebar" id="tools-ph-modes" role="group" aria-label="Chế độ đo pH">
+            <button type="button" class="tools-ph-mode-btn active" data-ph-mode="single" aria-pressed="true" data-i18n-tools="phModeSingle">
+              Dung dịch đơn
+            </button>
+            <button type="button" class="tools-ph-mode-btn" data-ph-mode="mix" aria-pressed="false" data-i18n-tools="phModeMix">
+              Pha trộn Axit + Bazơ
+            </button>
+          </div>
+
+          <!-- Mode A: Single Solution Controls -->
+          <div class="ph-controls-card" id="tools-ph-single">
+            <div class="ph-single-grid">
+              <div class="ph-field">
+                <label class="ph-field-label" for="tools-ph-single-input" data-i18n-tools="phSelectLabel">Nhập công thức hoặc tên chất</label>
+                <div class="ph-search-wrap">
+                  <span class="ph-search-icon" aria-hidden="true">⌕</span>
+                  <input
+                    type="text"
+                    id="tools-ph-single-input"
+                    class="ph-text-input mono"
+                    autocomplete="off"
+                    spellcheck="false"
+                    value="HCl"
+                    placeholder="Gõ công thức/tên: HCl, HCOOH, NH3, Na2CO3, anilin..."
+                  />
+                  <div class="lab-dropdown ph-dropdown hidden" id="tools-ph-single-dropdown" role="listbox"></div>
+                </div>
+                <div class="ph-class-badge hidden" id="tools-ph-single-badge"></div>
+              </div>
+              <div class="ph-field">
+                <label class="ph-field-label" for="tools-ph-conc-input" data-i18n-tools="phConcLabel">Nồng độ mol (Cₘ)</label>
+                <div class="ph-conc-input-wrap">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    id="tools-ph-conc-input"
+                    class="ph-num-input mono"
+                    autocomplete="off"
+                    spellcheck="false"
+                    value="0.01"
+                  />
+                  <span class="ph-input-unit mono">M</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ph-slider-block">
+              <input
+                type="range"
+                id="tools-ph-slider"
+                class="ph-log-slider"
+                min="-6"
+                max="0"
+                step="0.01"
+                value="-2"
+                aria-label="Thanh trượt nồng độ theo thang logarit"
+              />
+              <div class="ph-slider-ticks mono" aria-hidden="true">
+                <span>10⁻⁶ M</span>
+                <span>10⁻⁵</span>
+                <span>10⁻⁴</span>
+                <span>10⁻³</span>
+                <span>10⁻²</span>
+                <span>10⁻¹</span>
+                <span>1 M</span>
+              </div>
+            </div>
+
+            <div class="ph-quick-row">
+              <div class="ph-chips-list" id="tools-ph-conc-presets"></div>
+              <span class="ph-range-note" data-i18n-tools="phConcRangeNote">Phạm vi nhập trực tiếp: 1e-9 đến 2 M (thanh trượt log₁₀: 10⁻⁶ – 1 M)</span>
+            </div>
+          </div>
+
+          <!-- Mode B: Mix Acid + Base Controls -->
+          <div class="ph-controls-card hidden" id="tools-ph-mix">
+            <div class="ph-mix-presets-row">
+              <span class="lab-presets-label" data-i18n-tools="phMixPresetsLabel">Mẫu pha trộn:</span>
+              <div class="ph-chips-list" id="tools-ph-mix-presets"></div>
+            </div>
+
+            <div class="ph-mix-grid">
+              <div class="ph-mix-side is-acid">
+                <div class="ph-mix-side-head">
+                  <span class="ph-side-dot is-acid"></span>
+                  <span data-i18n-tools="phAcidCardTitle">Dung dịch Axit (mạnh hoặc yếu)</span>
+                </div>
+                <div class="ph-field">
+                  <label class="ph-field-label" for="tools-ph-acid-input" data-i18n-tools="phSubstanceLbl">Chất tan</label>
+                  <div class="ph-search-wrap">
+                    <span class="ph-search-icon" aria-hidden="true">⌕</span>
+                    <input
+                      type="text"
+                      id="tools-ph-acid-input"
+                      class="ph-text-input mono"
+                      autocomplete="off"
+                      spellcheck="false"
+                      value="CH3COOH"
+                      placeholder="Gõ axit: HCl, CH3COOH, H2SO4, fomic..."
+                    />
+                    <div class="lab-dropdown ph-dropdown hidden" id="tools-ph-acid-dropdown" role="listbox"></div>
+                  </div>
+                  <div class="ph-class-badge hidden" id="tools-ph-acid-badge"></div>
+                </div>
+                <div class="ph-mix-num-row">
+                  <div class="ph-field">
+                    <label class="ph-field-label" for="tools-ph-c1" data-i18n-tools="phConcShort">Nồng độ (M)</label>
+                    <input type="number" id="tools-ph-c1" class="ph-num-input mono" min="0" max="5" step="any" value="0.1" />
+                  </div>
+                  <div class="ph-field">
+                    <label class="ph-field-label" for="tools-ph-v1" data-i18n-tools="phVolShort">Thể tích (mL)</label>
+                    <input type="number" id="tools-ph-v1" class="ph-num-input mono" min="0.1" max="100000" step="any" value="100" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="ph-mix-plus" aria-hidden="true">+</div>
+
+              <div class="ph-mix-side is-base">
+                <div class="ph-mix-side-head">
+                  <span class="ph-side-dot is-base"></span>
+                  <span data-i18n-tools="phBaseCardTitle">Dung dịch Bazơ (mạnh hoặc yếu)</span>
+                </div>
+                <div class="ph-field">
+                  <label class="ph-field-label" for="tools-ph-base-input" data-i18n-tools="phSubstanceLbl">Chất tan</label>
+                  <div class="ph-search-wrap">
+                    <span class="ph-search-icon" aria-hidden="true">⌕</span>
+                    <input
+                      type="text"
+                      id="tools-ph-base-input"
+                      class="ph-text-input mono"
+                      autocomplete="off"
+                      spellcheck="false"
+                      value="NaOH"
+                      placeholder="Gõ bazơ: NaOH, Ba(OH)2, NH3, anilin..."
+                    />
+                    <div class="lab-dropdown ph-dropdown hidden" id="tools-ph-base-dropdown" role="listbox"></div>
+                  </div>
+                  <div class="ph-class-badge hidden" id="tools-ph-base-badge"></div>
+                </div>
+                <div class="ph-mix-num-row">
+                  <div class="ph-field">
+                    <label class="ph-field-label" for="tools-ph-c2" data-i18n-tools="phConcShort">Nồng độ (M)</label>
+                    <input type="number" id="tools-ph-c2" class="ph-num-input mono" min="0" max="5" step="any" value="0.1" />
+                  </div>
+                  <div class="ph-field">
+                    <label class="ph-field-label" for="tools-ph-v2" data-i18n-tools="phVolShort">Thể tích (mL)</label>
+                    <input type="number" id="tools-ph-v2" class="ph-num-input mono" min="0.1" max="100000" step="any" value="50" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- pH Error Alert -->
+          <div class="molar-error hidden" id="tools-ph-error" role="alert">
+            <span class="molar-error-icon" aria-hidden="true">!</span>
+            <span id="tools-ph-error-text"></span>
+          </div>
+
+          <!-- Mode B Stoichiometry Summary -->
+          <div class="ph-stoich-card hidden" id="tools-ph-stoich">
+            <div class="ph-stoich-head">
+              <span class="ph-section-eyebrow" data-i18n-tools="phStoichTitle">Tóm tắt phản ứng trung hòa</span>
+              <span class="ph-stoich-status is-neutral" id="tools-ph-stoich-status"></span>
+            </div>
+            <div class="ph-stoich-metrics">
+              <div class="ph-mini-stat">
+                <span class="ph-mini-lbl">n<sub>H⁺</sub></span>
+                <strong class="ph-mini-val mono" id="tools-ph-nh">0 mmol</strong>
+              </div>
+              <div class="ph-mini-stat">
+                <span class="ph-mini-lbl">n<sub>OH⁻</sub></span>
+                <strong class="ph-mini-val mono" id="tools-ph-noh">0 mmol</strong>
+              </div>
+              <div class="ph-mini-stat">
+                <span class="ph-mini-lbl" data-i18n-tools="phTotalVol">Tổng thể tích V</span>
+                <strong class="ph-mini-val mono" id="tools-ph-vtotal">200 mL</strong>
+              </div>
+              <div class="ph-mini-stat">
+                <span class="ph-mini-lbl" data-i18n-tools="phResidualConc">Nồng độ ion dư</span>
+                <strong class="ph-mini-val mono" id="tools-ph-excess-conc">0 M</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main pH Results Display -->
+          <div class="ph-result-card" id="tools-ph-result">
+            <div class="ph-readout-row">
+              <div class="ph-hero-meter">
+                <span class="ph-hero-lbl">pH</span>
+                <strong class="ph-hero-val mono" id="tools-ph-big-val">2.00</strong>
+                <span class="ph-env-badge env-strong-acid" id="tools-ph-env-badge">Axit mạnh</span>
+              </div>
+
+              <div class="ph-sub-metrics">
+                <div class="ph-metric-box">
+                  <span class="ph-metric-lbl">pOH</span>
+                  <strong class="ph-metric-val mono" id="tools-ph-poh-val">12.00</strong>
+                </div>
+                <div class="ph-metric-box">
+                  <span class="ph-metric-lbl">[H⁺]</span>
+                  <strong class="ph-metric-val mono" id="tools-ph-h-val">1.00 × 10<sup>−2</sup> M</strong>
+                </div>
+                <div class="ph-metric-box">
+                  <span class="ph-metric-lbl">[OH⁻]</span>
+                  <strong class="ph-metric-val mono" id="tools-ph-oh-val">1.00 × 10<sup>−12</sup> M</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Matte 0–14 pH Scale Bar with Sliding Needle -->
+            <div class="ph-scale-section">
+              <div class="ph-scale-head">
+                <span class="ph-section-eyebrow" data-i18n-tools="phScaleTitle">Thang đo pH (0 – 14 ở 25°C)</span>
+                <div class="ph-scale-zones-lbl">
+                  <span data-i18n-tools="phScaleAcid">Axit</span>
+                  <span>•</span>
+                  <span data-i18n-tools="phScaleNeutral">Trung tính</span>
+                  <span>•</span>
+                  <span data-i18n-tools="phScaleBase">Bazơ</span>
+                </div>
+              </div>
+              <div class="ph-scale-track-wrap">
+                <div class="ph-scale-bar" aria-hidden="true"></div>
+                <div class="ph-scale-needle" id="tools-ph-needle" style="left: 14.29%">
+                  <span class="ph-needle-tag mono" id="tools-ph-needle-tag">2.00</span>
+                  <span class="ph-needle-stem"></span>
+                </div>
+              </div>
+              <div class="ph-scale-ticks mono" aria-hidden="true">
+                <span>0</span>
+                <span>2</span>
+                <span>4</span>
+                <span>6</span>
+                <span class="is-mid">7</span>
+                <span>8</span>
+                <span>10</span>
+                <span>12</span>
+                <span>14</span>
+              </div>
+            </div>
+
+            <p class="ph-water-note hidden" id="tools-ph-water-note"></p>
+
+            <!-- Chemical Indicator Simulation (Litmus & Phenolphthalein) -->
+            <div class="ph-indicators-section">
+              <span class="ph-section-eyebrow" data-i18n-tools="phIndicatorsTitle">Mô phỏng chất chỉ thị màu</span>
+              <div class="ph-indicators-grid">
+                <div class="ph-indicator-card">
+                  <div class="ph-ind-swatch litmus-red" id="tools-ph-litmus-swatch" aria-hidden="true"></div>
+                  <div class="ph-ind-info">
+                    <span class="ph-ind-name" data-i18n-tools="phLitmusTitle">Quỳ tím (Litmus)</span>
+                    <strong class="ph-ind-state" id="tools-ph-litmus-state">Hóa đỏ (pH &lt; 6)</strong>
+                  </div>
+                </div>
+                <div class="ph-indicator-card">
+                  <div class="ph-ind-swatch phenol-clear" id="tools-ph-phenol-swatch" aria-hidden="true"></div>
+                  <div class="ph-ind-info">
+                    <span class="ph-ind-name" data-i18n-tools="phPhenolTitle">Phenolphtalein</span>
+                    <strong class="ph-ind-state" id="tools-ph-phenol-state">Không màu (pH &lt; 8.2)</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-footer lab-footer tools-footer">
+        <span class="lab-footer-hint" id="tools-footer-hint"></span>
+        <button type="button" class="detail-done-btn" id="btn-close-tools-footer" data-i18n-tools="close">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="elements-data.js"></script>
+  <script src="spectra-data.js"></script>
+  <script src="isotopes-data.js"></script>
+  <script src="lab.js"></script>
+  <script src="reactions-organic-data.js"></script>
+  <script src="reactions.js"></script>
+  <script src="tools.js"></script>
+  <script src="element-details.js"></script>
+  <script src="atom3d.js"></script>
+  <script src="facts-data.js"></script>
+  <script src="facts.js"></script>
+  <script src="app.js?v=20261121-10"></script>
+</body>
+</html>
