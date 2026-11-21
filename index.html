@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Science Lab — Interactive Chemistry, Physics &amp; Biology</title>
+  <style>
+    :root {
+      --bg-app: #0e1117;
+      --bg-top: #161922;
+      --bg-surface: #1a1e29;
+      --bg-card: #222735;
+      --bg-card-alt: #1d222e;
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --border-strong: rgba(148, 163, 184, 0.24);
+      --text-primary: #edf1f7;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+      --font-serif: 'Cambria', 'Georgia', 'Times New Roman', serif;
+      --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.32);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.42);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      background: radial-gradient(ellipse 80% 55% at 50% 0%, #171c28 0%, var(--bg-app) 68%);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Header */
+    .hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(22, 25, 34, 0.88);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .hub-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .hub-brand-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #d4b47c;
+    }
+
+    .hub-brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.08rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #f1f5f9;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .lang-btn {
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color 0.16s ease, color 0.16s ease;
+    }
+
+    .lang-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .lang-btn.active {
+      background: var(--bg-card);
+      color: #f8fafc;
+      box-shadow: inset 0 0 0 1px var(--border-strong);
+    }
+
+    /* Main Content */
+    .hub-main {
+      flex: 1;
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 56px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 36px;
+    }
+
+    .hub-hero {
+      text-align: center;
+      max-width: 660px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hub-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: #d4b47c;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hub-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3.6vw, 2.55rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: #f8fafc;
+      letter-spacing: 0.01em;
+    }
+
+    .hub-subtitle {
+      font-size: 0.94rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* Subject Cards Grid */
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .subject-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 22px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .subject-card.is-live {
+      background: linear-gradient(165deg, #1f2431 0%, var(--bg-surface) 65%);
+      border-color: rgba(212, 180, 124, 0.32);
+      cursor: pointer;
+    }
+
+    .subject-card.is-live:hover {
+      transform: translateY(-3px);
+      border-color: rgba(212, 180, 124, 0.65);
+      background: linear-gradient(165deg, #252b3b 0%, #1d222f 65%);
+      box-shadow: var(--shadow-md);
+    }
+
+    .subject-card.is-soon {
+      background: var(--bg-card-alt);
+      opacity: 0.78;
+      cursor: default;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid;
+      flex-shrink: 0;
+    }
+
+    .card-icon.chem {
+      color: #dfd0a8;
+      background: #2b2318;
+      border-color: #6b532f;
+    }
+
+    .card-icon.phys {
+      color: #a9cee0;
+      background: #152430;
+      border-color: #2c536e;
+    }
+
+    .card-icon.bio {
+      color: #b7d7c2;
+      background: #162920;
+      border-color: #2f5e47;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 4px;
+      font-size: 0.69rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+
+    .status-pill.live {
+      color: #c4d6a8;
+      background: #212918;
+      border-color: #46572f;
+    }
+
+    .status-pill.live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8fb862;
+    }
+
+    .status-pill.soon {
+      color: var(--text-muted);
+      background: var(--bg-app);
+      border-color: var(--border-subtle);
+    }
+
+    .card-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.32rem;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    .card-path {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .card-desc {
+      margin-top: 4px;
+      font-size: 0.83rem;
+      line-height: 1.56;
+      color: var(--text-secondary);
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .card-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(14, 17, 23, 0.55);
+      color: #cbd5e1;
+      font-size: 0.71rem;
+      font-weight: 500;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .subject-card.is-live .card-footer {
+      color: #e6d2ae;
+    }
+
+    .subject-card.is-live:hover .card-arrow {
+      transform: translateX(4px);
+    }
+
+    .card-arrow {
+      font-family: var(--font-mono);
+      transition: transform 0.16s ease;
+    }
+
+    .subject-card.is-soon .card-footer {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Footer */
+    .hub-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 860px) {
+      .hub-main {
+        padding: 32px 16px 36px;
+        gap: 26px;
+      }
+      .hub-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hub-header">
+    <a href="./" class="hub-brand">
+      <span class="hub-brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.35" />
+          <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.35" transform="rotate(60 10 10)" />
+          <ellipse cx="10" cy="10" rx="8.1" ry="3.2" stroke="currentColor" stroke-width="1.35" transform="rotate(120 10 10)" />
+          <circle cx="10" cy="10" r="1.9" fill="currentColor" />
+        </svg>
+      </span>
+      <span class="hub-brand-title">Science Hub</span>
+    </a>
+
+    <div class="lang-switch" role="group" aria-label="Language switcher">
+      <button type="button" class="lang-btn active" data-lang="vi">VI</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <main class="hub-main">
+    <section class="hub-hero">
+      <span class="hub-eyebrow" data-i18n="eyebrow">Nền tảng Khoa học Tương tác</span>
+      <h1 class="hub-title" data-i18n="heroTitle">Khám phá Hóa học, Vật lý &amp; Sinh học</h1>
+      <p class="hub-subtitle" data-i18n="heroSub">
+        Bộ công cụ trực quan và phòng thí nghiệm mô phỏng dành cho học tập khoa học tự nhiên. Chọn một phân môn bên dưới để bắt đầu.
+      </p>
+    </section>
+
+    <section class="hub-grid" aria-label="Các phân môn khoa học">
+      <!-- CHEMISTRY (LIVE) -->
+      <a class="subject-card is-live" href="./chemistry/">
+        <div class="card-top">
+          <span class="card-icon chem" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M9 3H15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M10 3V8.6L4.6 17.8C3.9 18.95 4.73 20.4 6.08 20.4H17.92C19.27 20.4 20.1 18.95 19.4 17.8L14 8.6V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M6.8 14.5H17.2" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="status-pill live" data-i18n="statusLive">Sẵn sàng</span>
+        </div>
+
+        <div class="card-copy">
+          <h2 class="card-title" data-i18n="chemTitle">Hóa học</h2>
+          <span class="card-path">/chemistry/</span>
+          <p class="card-desc" data-i18n="chemDesc">
+            Bảng tuần hoàn 118 nguyên tố tương tác kèm mô hình nguyên tử 3D, phòng Lab liên kết hóa học, cân bằng phản ứng vô cơ &amp; hữu cơ THPT, máy đo pH và tính khối lượng mol.
+          </p>
+          <div class="card-tags">
+            <span class="card-tag" data-i18n="chemTag1">Bảng tuần hoàn 3D</span>
+            <span class="card-tag" data-i18n="chemTag2">Phản ứng Vô cơ &amp; Hữu cơ</span>
+            <span class="card-tag" data-i18n="chemTag3">pH &amp; Mol</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span data-i18n="chemAction">Mở ứng dụng Hóa học</span>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </div>
+      </a>
+
+      <!-- PHYSICS (COMING SOON — sau này chỉ cần đổi <div class="subject-card is-soon"> thành <a class="subject-card is-live" href="./physics/">) -->
+      <div class="subject-card is-soon" aria-disabled="true">
+        <div class="card-top">
+          <span class="card-icon phys" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+              <ellipse cx="12" cy="12" rx="9.5" ry="3.8" stroke="currentColor" stroke-width="1.45" />
+              <ellipse cx="12" cy="12" rx="9.5" ry="3.8" stroke="currentColor" stroke-width="1.45" transform="rotate(60 12 12)" />
+              <ellipse cx="12" cy="12" rx="9.5" ry="3.8" stroke="currentColor" stroke-width="1.45" transform="rotate(120 12 12)" />
+            </svg>
+          </span>
+          <span class="status-pill soon" data-i18n="statusSoon">Sắp ra mắt</span>
+        </div>
+
+        <div class="card-copy">
+          <h2 class="card-title" data-i18n="physTitle">Vật lý</h2>
+          <span class="card-path">/physics/</span>
+          <p class="card-desc" data-i18n="physDesc">
+            Mô phỏng cơ học, dao động sóng, điện từ trường, quang học và vật lý hạt nhân trực quan.
+          </p>
+          <div class="card-tags">
+            <span class="card-tag" data-i18n="physTag1">Cơ học &amp; Sóng</span>
+            <span class="card-tag" data-i18n="physTag2">Điện từ &amp; Quang học</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span data-i18n="soonAction">Đang phát triển</span>
+        </div>
+      </div>
+
+      <!-- BIOLOGY (COMING SOON — sau này chỉ cần đổi <div class="subject-card is-soon"> thành <a class="subject-card is-live" href="./biology/">) -->
+      <div class="subject-card is-soon" aria-disabled="true">
+        <div class="card-top">
+          <span class="card-icon bio" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M7 3C7 8 17 8 17 12C17 16 7 16 7 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M17 3C17 8 7 8 7 12C7 16 17 16 17 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M8.5 6.5H15.5M8.5 17.5H15.5M9.5 12H14.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="status-pill soon" data-i18n="statusSoon">Sắp ra mắt</span>
+        </div>
+
+        <div class="card-copy">
+          <h2 class="card-title" data-i18n="bioTitle">Sinh học</h2>
+          <span class="card-path">/biology/</span>
+          <p class="card-desc" data-i18n="bioDesc">
+            Cấu trúc tế bào 3D, cơ chế di truyền DNA/RNA, trao đổi chất và hệ sinh thái tương tác.
+          </p>
+          <div class="card-tags">
+            <span class="card-tag" data-i18n="bioTag1">Tế bào &amp; DNA</span>
+            <span class="card-tag" data-i18n="bioTag2">Di truyền học</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span data-i18n="soonAction">Đang phát triển</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="hub-footer">
+    <span data-i18n="footerNote">Science Hub — Cấu trúc đa phân môn: /chemistry • /physics • /biology</span>
+  </footer>
+
+  <script>
+    (function () {
+      const I18N = {
+        vi: {
+          eyebrow: 'Nền tảng Khoa học Tương tác',
+          heroTitle: 'Khám phá Hóa học, Vật lý & Sinh học',
+          heroSub: 'Bộ công cụ trực quan và phòng thí nghiệm mô phỏng dành cho học tập khoa học tự nhiên. Chọn một phân môn bên dưới để bắt đầu.',
+          statusLive: 'Sẵn sàng',
+          statusSoon: 'Sắp ra mắt',
+          chemTitle: 'Hóa học',
+          chemDesc: 'Bảng tuần hoàn 118 nguyên tố tương tác kèm mô hình nguyên tử 3D, phòng Lab liên kết hóa học, cân bằng phản ứng vô cơ & hữu cơ THPT, máy đo pH và tính khối lượng mol.',
+          chemTag1: 'Bảng tuần hoàn 3D',
+          chemTag2: 'Phản ứng Vô cơ & Hữu cơ',
+          chemTag3: 'pH & Mol',
+          chemAction: 'Mở ứng dụng Hóa học',
+          physTitle: 'Vật lý',
+          physDesc: 'Mô phỏng cơ học, dao động sóng, điện từ trường, quang học và vật lý hạt nhân trực quan.',
+          physTag1: 'Cơ học & Sóng',
+          physTag2: 'Điện từ & Quang học',
+          bioTitle: 'Sinh học',
+          bioDesc: 'Cấu trúc tế bào 3D, cơ chế di truyền DNA/RNA, trao đổi chất và hệ sinh thái tương tác.',
+          bioTag1: 'Tế bào & DNA',
+          bioTag2: 'Di truyền học',
+          soonAction: 'Đang phát triển',
+          footerNote: 'Science Hub — Cấu trúc đa phân môn: /chemistry • /physics • /biology'
+        },
+        en: {
+          eyebrow: 'Interactive Science Platform',
+          heroTitle: 'Explore Chemistry, Physics & Biology',
+          heroSub: 'Visual tools and interactive laboratories built for natural science learning. Select a discipline below to begin.',
+          statusLive: 'Available',
+          statusSoon: 'Coming Soon',
+          chemTitle: 'Chemistry',
+          chemDesc: 'Interactive 118-element periodic table with 3D atom models, Atomic Bonding & Inorganic/Organic Reaction Lab, pH meter, and molar mass calculator.',
+          chemTag1: '3D Periodic Table',
+          chemTag2: 'Inorganic & Organic Lab',
+          chemTag3: 'pH & Molar Mass',
+          chemAction: 'Open Chemistry App',
+          physTitle: 'Physics',
+          physDesc: 'Interactive simulations for classical mechanics, waves, electromagnetism, optics, and nuclear physics.',
+          physTag1: 'Mechanics & Waves',
+          physTag2: 'Electromagnetism & Optics',
+          bioTitle: 'Biology',
+          bioDesc: '3D cell structures, DNA/RNA genetics, metabolism pathways, and interactive ecosystem models.',
+          bioTag1: 'Cells & DNA',
+          bioTag2: 'Genetics',
+          soonAction: 'In Development',
+          footerNote: 'Science Hub — Multi-subject structure: /chemistry • /physics • /biology'
+        }
+      };
+
+      const buttons = document.querySelectorAll('.lang-btn');
+      function applyLang(lang) {
+        const dict = I18N[lang] || I18N.vi;
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.dataset.i18n;
+          if (dict[key]) el.textContent = dict[key];
+        });
+        buttons.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+      }
+
+      buttons.forEach((btn) => {
+        btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+      });
+    })();
+  </script>
+</body>
+</html>
