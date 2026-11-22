@@ -6548,6 +6548,458 @@
       ],
       note: 'Công thức C₁₂H₁₀ (chứa 12 Carbon — giới hạn tối đa của trình dựng phân tử); khác Naphthalene ở chỗ 2 vòng nối đơn chứ không chung cạnh.',
       noteEn: 'Formula C₁₂H₁₀ (maximum 12 carbons supported in builder); unlike fused Naphthalene, its two phenyl rings join via a single C–C bond.'
+    },
+
+    // =========================================================================
+    // 13. CARBOHYDRATE DISACCHARIDES, PEPTIDES, STRAINED CAGES & CLASSICS (+16)
+    // =========================================================================
+    {
+      id: 'sucrose',
+      catKey: 'carbohydrate',
+      elements: ['C','C','C','C','C','O','C','O','O','O','O','O','C','C','C','C','O','C','O','O','O','C','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],[1,7,1],[2,8,1],[3,9,1],[4,6,1],[6,10,1],[0,11,1],[11,12,1],[12,13,1],[13,14,1],[14,15,1],[15,16,1],[16,12,1],[12,17,1],[17,18,1],[13,19,1],[14,20,1],[15,21,1],[21,22,1]],
+      name: 'Saccharose (Sucrose · Đường mía)',
+      nameEn: 'Sucrose (Table sugar)',
+      category: 'Carbohydrate (Disaccharide)',
+      categoryEn: 'Carbohydrate (Disaccharide)',
+      state: 'Rắn (tinh thể trong suốt không màu, vị ngọt sắc)',
+      stateEn: 'Solid (colorless crystals, sweet taste)',
+      solubility: 'Tan rất tốt trong nước (độ tan tăng mạnh theo nhiệt độ)',
+      solubilityEn: 'Very soluble in water (~200 g/100 mL at 20 °C)',
+      realLife: 'Loại đường phổ biến nhất trong gia đình được sản xuất từ cây mía, củ cải đường và thốt nốt (còn gọi là đường kính, đường phèn); giữ vai trò nguồn năng lượng quen thuộc, chất bảo quản mứt trái cây và sản xuất nước giải khát.',
+      realLifeEn: 'Everyday household sugar extracted from sugarcane and sugar beets, prized globally for cooking, baking, fruit preserves, and beverage sweetening.',
+      reactions: [
+        'Hòa tan Cu(OH)₂ ở nhiệt độ thường tạo dung dịch màu XANH LAM đậm (tính chất nhiều nhóm -OH liền kề).',
+        'KHÔNG tham gia phản ứng tráng bạc với AgNO₃/NH₃ và KHÔNG làm mất màu nước Brom (vì không thể tự mở vòng tạo aldehyde).',
+        'Thủy phân trong dung dịch acid loãng đun nóng (hoặc nhờ enzyme invertase) thu được hỗn hợp đồng mol gồm Glucose và Fructose (dung dịch sau thủy phân tráng bạc dương tính!).'
+      ],
+      reactionsEn: [
+        'Dissolves Cu(OH)₂ at room temperature to form a deep blue polyalcohol complex.',
+        'Does NOT reduce Tollens reagent (AgNO₃/NH₃) or decolorize bromine water because both anomeric centers are locked glycosidically.',
+        'Acid-catalyzed or enzymatic hydrolysis splits 1 Sucrose cleanly into 1 Glucose + 1 Fructose (turning Tollens-positive afterward!).'
+      ],
+      note: 'Công thức C₁₂H₂₂O₁₁ (M = 342); cấu tạo từ 1 gốc α-glucose nối C₁→C₂ với 1 gốc β-fructose nên không còn nhóm -OH hemiacetal tự do.',
+      noteEn: 'Formula C₁₂H₂₂O₁₁ (M = 342.30 g/mol); non-reducing α-1,2-glycoside uniting Glucopyranose and Fructofuranose.'
+    },
+    {
+      id: 'maltose',
+      catKey: 'carbohydrate',
+      elements: ['C','C','C','C','C','O','C','O','O','O','O','O','C','C','C','C','C','O','C','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],[1,7,1],[2,8,1],[3,9,1],[4,6,1],[6,10,1],[0,11,1],[11,15,1],[12,13,1],[13,14,1],[14,15,1],[15,16,1],[16,17,1],[17,12,1],[12,19,1],[13,20,1],[14,21,1],[16,18,1],[18,22,1]],
+      name: 'Maltose (Đường mạch nha)',
+      nameEn: 'Maltose (Malt sugar)',
+      category: 'Carbohydrate (Disaccharide)',
+      categoryEn: 'Carbohydrate (Disaccharide)',
+      state: 'Rắn (tinh thể trắng) hoặc dạng mạch nha dẻo quánh vị ngọt dịu',
+      stateEn: 'Solid (white crystals) / sweet viscous syrup',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Đường mạch nha thu được khi thủy phân tinh bột nhờ enzyme amylase có trong mầm thóc lúa nảy mầm (làm kẹo kéo, kẹo Cu Đơ, vịt quay giòn da vàng bóng, ủ bia và thực phẩm dinh dưỡng dễ tiêu hóa).',
+      realLifeEn: 'Malt sugar liberated by amylase enzymes acting on sprouting barley and rice starch; vital in brewing beer, malted milkshakes, chewy malt candies, and golden-roast glazes.',
+      reactions: [
+        'Hòa tan Cu(OH)₂ tạo dung dịch xanh lam và đun nóng xuất hiện kết tủa đỏ gạch Cu₂O; đồng thời THAM GIA phản ứng tráng bạc với AgNO₃/NH₃ và làm mất màu nước Brom!',
+        'Thủy phân hoàn toàn trong môi trường acid đun nóng CHỈ tạo ra 2 phân tử Glucose duy nhất (khác Saccharose tạo Glucose + Fructose).',
+        'Trong dung dịch tồn tại cân bằng mở vòng ở đơn vị Glucose thứ hai (liên kết α-1,4-glycoside).'
+      ],
+      reactionsEn: [
+        'Dissolves Cu(OH)₂ at ambient temperature (blue), precipitates Cu₂O upon heating, yields a positive Tollens silver mirror, and decolorizes bromine water.',
+        'Complete acid hydrolysis yields exclusively TWO equivalents of Glucose (unlike Sucrose).',
+        'Remains a reducing sugar because one pyranose ring preserves a free anomeric hemiacetal -OH.'
+      ],
+      note: 'Công thức C₁₂H₂₂O₁₁ (M = 342); cặp phân biệt kinh điển với Saccharose: Maltose tráng bạc trực tiếp được còn Saccharose thì KHÔNG.',
+      noteEn: 'Formula C₁₂H₂₂O₁₁ (M = 342.30 g/mol); reducing α-1,4-linked Glucose dimer isomeric with non-reducing Sucrose.'
+    },
+    {
+      id: 'isopropyl-formate',
+      catKey: 'ester',
+      elements: ['C','O','O','C','C','C'],
+      bonds: [[0,1,2],[0,2,1],[2,3,1],[3,4,1],[3,5,1]],
+      name: 'Isopropyl formate (Isopropyl methanoate)',
+      nameEn: 'Isopropyl formate (Isopropyl methanoate)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (dễ bay hơi, sôi ở 68 °C, mùi thơm mận chín)',
+      stateEn: 'Colorless volatile liquid (bp 68 °C, sweet plum aroma)',
+      solubility: 'Tan ít trong nước (~2,1 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.1 g/100 mL)',
+      realLife: 'Là ester mạch nhánh duy nhất của bộ 4 đồng phân ester no đơn chức C₄H₈O₂, thường dùng làm dung môi khô nhanh, hương liệu trái cây và được phát hiện cả trong các đám mây phân tử ở trung tâm dải Ngân Hà.',
+      realLifeEn: 'The sole branched structural isomer among C₄H₈O₂ saturated esters, prized in fruit-essence chemistry and famously detected in interstellar gas clouds near the Galactic Center.',
+      reactions: [
+        'Mang đầu formate HCOO– nên THAM GIA phản ứng tráng bạc (tạo 2 mol Ag) với thuốc thử Tollens (AgNO₃/NH₃).',
+        'Xà phòng hóa trong dung dịch NaOH đun nóng thu được muối Sodium formate (HCOONa) và alcohol bậc hai Propan-2-ol.',
+        'Làm mất màu dung dịch nước Brom khi đun nhẹ.'
+      ],
+      reactionsEn: [
+        'Reduces Tollens reagent (AgNO₃/NH₃) to metallic silver thanks to its aldehyde-like formate headgroup.',
+        'Hot NaOH hydrolysis produces Sodium formate and secondary alcohol Propan-2-ol.',
+        'Reduces aqueous bromine gently upon warming.'
+      ],
+      note: 'Công thức C₄H₈O₂ (HCOOCH(CH₃)₂); hoàn thiện đủ bộ 4 đồng phân ester đơn chức C₄H₈O₂ (cùng Ethyl acetate, Methyl propionate và Propyl formate).',
+      noteEn: 'Formula C₄H₈O₂; completes all 4 aliphatic monoester constitutional isomers of C₄H₈O₂.'
+    },
+    {
+      id: 'ethylmethylamine',
+      catKey: 'amine',
+      elements: ['C','C','N','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1]],
+      name: 'Ethylmethylamine (N-Methylethanamine)',
+      nameEn: 'Ethylmethylamine (N-Methylethanamine)',
+      category: 'Amine',
+      categoryEn: 'Amine',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 36 °C, mùi cá khai giống ammonia)',
+      stateEn: 'Colorless volatile liquid (bp 36 °C, fishy ammonia odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Amine bậc hai bất đối xứng đơn giản nhất, dùng làm khối xây dựng tổng hợp các hoạt chất dược phẩm hệ thần kinh (như thuốc điều trị Alzheimer Rivastigmine), thuốc trừ sâu và chất nhũ hóa công nghiệp.',
+      realLifeEn: 'Simplest unsymmetrical secondary amine, employed in pharmaceutical synthesis (including the neurological drug Rivastigmine) and rubber curing agents.',
+      reactions: [
+        'Tính base mạnh hơn cả NH₃ và các amine bậc một tương ứng: làm quỳ tím hóa xanh và hòa tan nhanh trong HCl.',
+        'Tác dụng với acid nitrous (HNO₂) tạo hợp chất nitrosamine dạng dầu vàng nhạt (phản ứng phân biệt amine bậc hai).',
+        'Không tham gia phản ứng tạo khí N₂ khi gặp HNO₂ như amine bậc một.'
+      ],
+      reactionsEn: [
+        'Stronger aqueous base than Ammonia or primary C₃H₉N amines; turns litmus blue cleanly.',
+        'Reacts with nitrous acid (HNO₂) to separate a pale-yellow oily N-nitrosamine rather than evolving N₂ gas.',
+        'Readily forms tertiary amides with acid anhydrides or acyl chlorides.'
+      ],
+      note: 'Công thức CH₃–CH₂–NH–CH₃ (C₃H₉N); là amine bậc hai duy nhất trong nhóm đồng phân amine C₃H₉N.',
+      noteEn: 'Formula C₃H₉N; the sole secondary amine isomer in the classic 4-isomer C₃H₉N Grade 12 set.'
+    },
+    {
+      id: 'vinyl-alcohol',
+      catKey: 'alcohol',
+      elements: ['C','C','O'],
+      bonds: [[0,1,2],[1,2,1]],
+      name: 'Vinyl alcohol (Ethenol)',
+      nameEn: 'Vinyl alcohol (Ethenol)',
+      category: 'Alcohol (Enol không bền)',
+      categoryEn: 'Alcohol (Unstable enol)',
+      state: 'Cực kỳ kém bền, gần như lập tức chuyển hóa thành Acetaldehyde',
+      stateEn: 'Transient unstable tautomer (rearranges to Acetaldehyde)',
+      solubility: 'Tan trong dung môi khi phát sinh tức thời',
+      solubilityEn: 'Transient in solution',
+      realLife: 'Dù không thể đóng chai đứng riêng (vì tự chuyển vị ngay thành Acetaldehyde), dạng mắt xích Vinyl alcohol lại tạo thành polymer Polyvinyl alcohol (PVA) làm màng bọc viên giặt tự tan trong nước, hồ vải và nước nhỏ mắt nhân tạo!',
+      realLifeEn: 'Too unstable to isolate free (rapidly tautomerizing to Acetaldehyde), yet its polymerized backbone makes Polyvinyl alcohol (PVA) for water-soluble laundry pods, glues, and artificial tear drops!',
+      reactions: [
+        'Không bền hóa học: nhóm -OH gắn trực tiếp vào Carbon mang nối đôi C=C tự động chuyển vị ngay thành aldehyde Acetaldehyde (CH₂=CH–OH → CH₃–CHO).',
+        'Chính quá trình chuyển vị này giải thích vì sao thủy phân Vinyl acetate không thu được alcohol mà thu được Acetaldehyde tráng bạc!',
+        'Là đồng phân hỗ biến (tautomer) với Acetaldehyde.'
+      ],
+      reactionsEn: [
+        'Instantaneous keto–enol tautomerization converts CH₂=CH–OH rapidly into Acetaldehyde (CH₃–CHO).',
+        'Explains why alkaline hydrolysis of Vinyl acetate yields Aldehyde instead of an alcohol.',
+        'Polyvinyl alcohol (PVA) must therefore be synthesized by hydrolyzing Poly(vinyl acetate), not by polymerizing Vinyl alcohol.'
+      ],
+      note: 'Công thức C₂H₄O; bài học kinh điển: alcohol có -OH gắn trực tiếp vào C nối đôi sẽ kém bền và chuyển hóa sang aldehyde/ketone.',
+      noteEn: 'Formula C₂H₄O; textbook unstable enol tautomer of Acetaldehyde and monomer unit represented indirectly by PVA.'
+    },
+    {
+      id: 'triglycine',
+      catKey: 'aminoacid',
+      elements: ['N','C','C','O','N','C','C','O','N','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1],[4,5,1],[5,6,1],[6,7,2],[6,8,1],[8,9,1],[9,10,1],[10,11,2],[10,12,1]],
+      name: 'Triglycine (Gly-Gly-Gly)',
+      nameEn: 'Triglycine (Gly-Gly-Gly)',
+      category: 'Tripeptide (Amino acid)',
+      categoryEn: 'Tripeptide',
+      state: 'Rắn (bột tinh thể trắng)',
+      stateEn: 'Solid (white crystalline powder)',
+      solubility: 'Tan tốt trong nước',
+      solubilityEn: 'Soluble in water',
+      realLife: 'Tripeptide đơn giản nhất được ghép từ ba mắt xích Glycine qua 2 liên kết peptide (–CO–NH–); là phân tử mẫu nhỏ nhất dùng trong thực hành phòng thí nghiệm để minh họa phản ứng màu Biuret tím đặc trưng của Peptide và Protein.',
+      realLifeEn: 'Simplest tripeptide linking three Glycine residues via two peptide bonds; serves in classrooms as the smallest textbook molecule giving a positive purple Biuret reaction.',
+      reactions: [
+        'CHO PHẢN ỨNG MÀU BIURET (tạo phức chất MÀU TÍM ĐẶC TRƯNG với Cu(OH)₂ trong môi trường kiềm) nhờ chứa tối thiểu 2 liên kết peptide (khác với dipeptide Gly-Gly âm tính!).',
+        'Thủy phân hoàn toàn trong NaOH đun nóng theo tỉ lệ mol 1 : 3 (tạo 3 mol muối Glycine-Na và 1 H₂O); trong HCl dư tỉ lệ 1 : 3 kèm 2 H₂O.',
+        'Gồm 3 mắt xích Glycine với 2 liên kết peptide trong chuỗi.'
+      ],
+      reactionsEn: [
+        'Gives a vivid VIOLET Biuret complex with alkaline Cu(OH)₂ (positive because it possesses ≥ 2 peptide bonds, unlike dipeptide Gly-Gly!).',
+        'Consumes 3 moles of NaOH or HCl upon complete hot peptide hydrolysis into 3 equivalents of Glycine salts.',
+        'Serves as a quantitative model for peptide-bond stoichiometry in Grade 12 exams.'
+      ],
+      note: 'Công thức C₆H₁₁N₃O₄ (M = 189,2); luôn nhớ cặp so sánh: Gly-Gly (dipeptide, KHÔNG Biuret) vs. Gly-Gly-Gly (tripeptide, CÓ màu tím Biuret).',
+      noteEn: 'Formula C₆H₁₁N₃O₄ (M = 189.17 g/mol); smallest peptide showing positive violet Biuret reactivity.'
+    },
+    {
+      id: 'penguinone',
+      catKey: 'ketone',
+      elements: ['C','C','C','C','C','C','O','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,2],[2,3,1],[3,4,1],[4,5,2],[5,0,1],[0,6,2],[2,7,1],[3,8,1],[3,9,1],[4,10,1]],
+      name: 'Penguinone (Chim cánh cụt)',
+      nameEn: 'Penguinone',
+      category: 'Ketone (Phân tử hình tượng)',
+      categoryEn: 'Ketone (Trivial icon)',
+      state: 'Dầu lỏng vàng nhạt đến tinh thể sáp nhẹ (mùi long não thơm)',
+      stateEn: 'Pale yellow oil / low-melting solid (camphor odor)',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ',
+      solubilityEn: 'Insoluble in water; soluble in organic solvents',
+      realLife: 'Một trong những phân tử nổi tiếng vui nhộn nhất của Hóa học hữu cơ với công thức cấu tạo 2D giống hệt một chú chim cánh cụt mũm mĩm đang đứng giơ hai cánh vẫy (mỏ =O trên đầu, hai chân -CH₃ bên dưới); thường được in trên áo thun hóa học và giáo trình giảng dạy tạo hứng thú cho học sinh.',
+      realLifeEn: 'Famous whimsy icon in organic chemistry whose 2D skeletal structure unmistakably resembles a cheerful standing penguin waving two flippers with its =O beak on top and two methyl feet below.',
+      reactions: [
+        'Làm mất màu dung dịch Br₂ và KMnO₄ ở nhiệt độ thường nhờ 2 liên kết đôi C=C trong vòng 6 cạnh.',
+        'Vòng cyclohexadienone bị kẹp giữa hai nhóm methyl bậc bốn khiến phân tử không thể dễ dàng chuyển vị enol hóa thành phenol (tồn tại bền ở dạng ketone).',
+        'Phản ứng với thuốc thử 2,4-DNPH cho dẫn xuất hydrazone màu đỏ cam.'
+      ],
+      reactionsEn: [
+        'Decolorizes bromine water and cold KMnO₄ via its cross-conjugated ring double bonds.',
+        'Gem-dimethyl substitution blocks enol tautomerization, locking the molecule in its stable penguinone ketone form.',
+        'Forms a bright orange-red hydrazone derivative with 2,4-DNPH.'
+      ],
+      note: 'Tên hệ thống IUPAC: 3,4,4,5-tetramethylcyclohexa-2,5-dien-1-one (C₁₀H₁₄O).',
+      noteEn: 'Systematic IUPAC name: 3,4,4,5-tetramethylcyclohexa-2,5-dien-1-one (C₁₀H₁₄O).'
+    },
+    {
+      id: 'prismane',
+      catKey: 'cycloalkane',
+      elements: ['C','C','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,1],[2,0,1],[3,4,1],[4,5,1],[5,3,1],[0,3,1],[1,4,1],[2,5,1]],
+      name: 'Prismane (Benzene của Ladenburg)',
+      nameEn: 'Prismane (Ladenburg benzene)',
+      category: 'Cycloalkane (Đa vòng hình lăng trụ)',
+      categoryEn: 'Polycyclic alkane (Prism cage)',
+      state: 'Chất lỏng không màu rất kém bền (dễ nổ mạnh khi va đập hoặc đun nóng)',
+      stateEn: 'Colorless volatile liquid (explosive upon heating or shock)',
+      solubility: 'Không tan trong nước, tan trong dung môi không phân cực',
+      solubilityEn: 'Insoluble in water; soluble in organic solvents',
+      realLife: 'Cấu trúc lăng trụ tam giác kỳ thú do Albert Ladenburg đề xuất năm 1869 như một giả thuyết hình học thay thế cho vòng Benzene trước khi cấu trúc thơm của Kekulé được khẳng định; hơn 100 năm sau mới được tổng hợp thành công trong phòng thí nghiệm năm 1973.',
+      realLifeEn: 'Famous triangular-prism valence isomer of Benzene (C₆H₆) proposed historically by Albert Ladenburg in 1869 before Kekulé’s aromatic structure triumphed, finally synthesized in 1973.',
+      reactions: [
+        'Hoàn toàn không có nối đôi nhưng có mức năng lượng sức căng rất lớn (kết hợp hai vòng 3 cạnh và ba vòng 4 cạnh).',
+        'Khi đun nóng ở khoảng 90 °C tự đồng phân hóa tỏa nhiệt mạnh chuyển trở lại thành Benzene thơm bền vững!',
+        'Khó bền cơ học và nhạy nổ khi cô đặc tinh khiết.'
+      ],
+      reactionsEn: [
+        'Built purely of single C–C bonds combining two cyclopropane and three cyclobutane faces.',
+        'Exothermically isomerizes back into aromatic Benzene at ~90 °C (violating Woodward–Hoffmann allowed speed to stay temporarily isolable).',
+        'Explosive liquid when handled neat.'
+      ],
+      note: 'Công thức C₆H₆; bộ đồng phân hóa trị kinh điển của Benzene gồm: Benzene – Prismane – Dewar benzene.',
+      noteEn: 'Formula C₆H₆; part of the classic C₆H₆ valence isomer triad alongside Benzene and Dewar benzene.'
+    },
+    {
+      id: 'dewar-benzene',
+      catKey: 'cycloalkene',
+      elements: ['C','C','C','C','C','C'],
+      bonds: [[0,1,2],[1,2,1],[2,3,1],[3,4,2],[4,5,1],[5,0,1],[2,5,1]],
+      name: 'Dewar benzene',
+      nameEn: 'Dewar benzene',
+      category: 'Cycloalkene (Hai vòng chung cạnh)',
+      categoryEn: 'Bicyclic diene',
+      state: 'Chất lỏng không màu (kém bền, dễ bay hơi)',
+      stateEn: 'Colorless volatile liquid',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ',
+      solubilityEn: 'Insoluble in water; soluble in organic solvents',
+      realLife: 'Cấu trúc gập cánh sách hai vòng 4 cạnh chung cạnh do James Dewar phác họa năm 1867 nhằm mô tả đồng phân phi thơm của Benzene; được tổng hợp thực nghiệm thành công năm 1962 và trở thành ví dụ vàng kiểm chứng quy tắc đối xứng quỹ đạo Woodward–Hoffmann.',
+      realLifeEn: 'Open-book bicyclo[2.2.0]hexadiene valence isomer sketched by James Dewar in 1867 and synthesized cleanly in 1962; celebrated showcase of Woodward–Hoffmann orbital-symmetry kinetic barriers.',
+      reactions: [
+        'Làm mất màu dung dịch nước Brom và KMnO₄ ở điều kiện thường nhờ có 2 liên kết đôi C=C thực sự (không có tính thơm!).',
+        'Khi đun nóng ở ~90 °C (hoặc chu kỳ bán rã vài ngày ở 25 °C) mở cầu nối giữa để chuyển về Benzene thơm bền vững hơn nhiều.',
+        'Dù tỏa tới ~250 kJ/mol khi chuyển thành Benzene, quá trình bị cản trở đối xứng quỹ đạo nên vẫn cô lập được ở nhiệt độ thấp.'
+      ],
+      reactionsEn: [
+        'Decolorizes bromine water and cold KMnO₄ rapidly as a genuine localized bicyclic diene.',
+        'Reverts slowly at room temperature (half-life ~2 days) or rapidly at ~90 °C back into Benzene.',
+        'Remains remarkably isolable despite ~250 kJ/mol ring strain because disrotatory ring-opening is thermally orbital-symmetry forbidden.'
+      ],
+      note: 'Công thức C₆H₆ (Bicyclo[2.2.0]hexa-2,5-diene); cùng công thức Benzene nhưng không phẳng và mất màu được nước Brom.',
+      noteEn: 'Formula C₆H₆ (bicyclo[2.2.0]hexa-2,5-diene); bent non-aromatic valence isomer of Benzene.'
+    },
+    {
+      id: 'squaric-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','O','O','O','O'],
+      bonds: [[0,1,2],[1,2,1],[2,3,1],[3,0,1],[0,4,1],[1,5,1],[2,6,2],[3,7,2]],
+      name: 'Squaric acid (Acid hình vuông)',
+      nameEn: 'Squaric acid (Quadratic acid)',
+      category: 'Acid hữu cơ mạnh (Oxocarbon)',
+      categoryEn: 'Strong vinylogous diacid',
+      state: 'Rắn (bột tinh thể trắng tinh khiết)',
+      stateEn: 'Solid (white crystalline powder)',
+      solubility: 'Tan vừa trong nước nóng (~2 g/100 mL ở 20 °C)',
+      solubilityEn: 'Sparingly soluble cold; soluble in hot water',
+      realLife: 'Hợp chất nổi tiếng có khung vòng 4 cạnh vuông vức đều đặn với tên gọi xuất phát từ hình vuông ("square"); được dùng để chế tạo thuốc thử nhận biết ion Fe³⁺/Ca²⁺ và tổng hợp phẩm màu Squaraine hấp thụ ánh sáng cận hồng ngoại cho pin mặt trời và cảm biến sinh học.',
+      realLifeEn: 'Planar 4-membered oxocarbon acid named for its square ring geometry; building block for bright NIR-absorbing squaraine dyes in organic solar cells and bio-imaging.',
+      reactions: [
+        'Dù KHÔNG chứa nhóm -COOH mà chỉ mang cụm enediol-diketone nhưng lại có LỰC ACID RẤT MẠNH (pKa₁ ≈ 1,5 — mạnh gần bằng Phosphoric acid và mạnh hơn hẳn Acetic acid!).',
+        'Tác dụng với NaOH theo tỉ lệ 1 : 2 tạo ion dianion C₄O₄²⁻ đối xứng hoàn toàn mang tính thơm 2π-electron.',
+        'Tạo phức màu đỏ tím đậm rất nhạy với dung dịch FeCl₃.'
+      ],
+      reactionsEn: [
+        'Remarkably strong organic acid (pKa₁ ≈ 1.5, vastly stronger than Acetic acid!) despite having ZERO -COOH groups, stabilized by its 2π-aromatic C₄O₄²⁻ dianion.',
+        'Consumes 2 equivalents of NaOH and effervesces vigorously with carbonates.',
+        'Produces an intense burgundy-violet chelate color with aqueous FeCl₃.'
+      ],
+      note: 'Công thức C₄H₂O₄ (3,4-dihydroxycyclobut-3-ene-1,2-dione); minh chứng ngoạn mục cho sự ổn định cộng hưởng thơm trong ion C₄O₄²⁻.',
+      noteEn: 'Formula C₄H₂O₄; famous example of strong organic acidity without a carboxyl group thanks to 2π aromaticity.'
+    },
+    {
+      id: 'mellitic-acid',
+      catKey: 'carboxylic',
+      elements: [...C6_AROM,'C','O','O','C','O','O','C','O','O','C','O','O','C','O','O','C','O','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[6,8,1],[1,9,1],[9,10,2],[9,11,1],[2,12,1],[12,13,2],[12,14,1],[3,15,1],[15,16,2],[15,17,1],[4,18,1],[18,19,2],[18,20,1],[5,21,1],[21,22,2],[21,23,1]],
+      name: 'Mellitic acid (Benzenehexacarboxylic acid)',
+      nameEn: 'Mellitic acid',
+      category: 'Carboxylic acid (6 chức)',
+      categoryEn: 'Carboxylic acid (Hexaacid)',
+      state: 'Rắn (tinh thể hình kim trắng, mượt như lụa)',
+      stateEn: 'Solid (white silky needle crystals)',
+      solubility: 'Tan rất tốt trong nước và Ethanol',
+      solubilityEn: 'Very soluble in water and Ethanol',
+      realLife: 'Tìm thấy trong tự nhiên dưới dạng khoáng vật đá mật ong "Mellite" màu vàng trong các vỉa than nâu; khi đun khử nước hết phân tử này tạo thành anhydride C₁₂O₉ không chứa bất kỳ nguyên tử Hydrogen nào và đóng vai trò chất kết nối đa năng tổng hợp khung cơ kim MOF.',
+      realLifeEn: 'Naturally occurs as the amber-colored "honey-stone" aluminum salt mineral Mellite; hexadentate linker in Metal–Organic Frameworks (MOFs) and classic gateway to Hydrogen-free C₁₂O₉ oxocarbon.',
+      reactions: [
+        'Mang đủ 6 nhóm -COOH gắn kín toàn bộ 6 đỉnh vòng Benzene: tác dụng với NaOH theo tỉ lệ tối đa 1 : 6 và giải phóng 6 mol CO₂ khi gặp NaHCO₃ dư.',
+        'Đun nóng tách 3 phân tử H₂O tạo thành Mellitic trianhydride (C₁₂O₉ — hợp chất chỉ gồm C và O)!',
+        'Rất bền nhiệt và bền vững với các chất oxi hóa như dung dịch HNO₃ hoặc H₂SO₄ đặc.'
+      ],
+      reactionsEn: [
+        'Hexacarboxylic aromatic acid neutralizing 6 equivalents of NaOH and liberating 6 moles of CO₂ from excess NaHCO₃.',
+        'Exhaustive thermal dehydration yields Mellitic trianhydride (C₁₂O₉), a molecular carbon oxide.',
+        'Resistant to oxidative destruction by boiling Nitric acid.'
+      ],
+      note: 'Công thức C₁₂H₆O₁₂ (M = 342,2 — đúng bằng phân tử khối Saccharose/Maltose C₁₂H₂₂O₁₁ nhưng số O gấp đôi H!).',
+      noteEn: 'Formula C₁₂H₆O₁₂ (M = 342.17 g/mol — coincidentally identical molar mass to Sucrose C₁₂H₂₂O₁₁).'
+    },
+    {
+      id: 'azulene',
+      catKey: 'arene',
+      elements: ['C','C','C','C','C','C','C','C','C','C'],
+      bonds: [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,5,2],[5,6,1],[6,7,2],[7,8,1],[8,9,2],[9,0,1],[0,4,1]],
+      name: 'Azulene (Hydrocarbon màu xanh lam)',
+      nameEn: 'Azulene',
+      category: 'Arene (Thơm không benzenoid)',
+      categoryEn: 'Arene (Non-benzenoid aromatic)',
+      state: 'Rắn (tinh thể vảy MÀU XANH LAM ĐẬM rực rỡ, mùi thơm nhẹ giống Naphthalene)',
+      stateEn: 'Solid (deep ROYAL BLUE crystalline flakes, naphthalene-like odor)',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ (tạo dung dịch màu xanh biếc)',
+      solubilityEn: 'Insoluble in water; forms vivid sapphire-blue organic solutions',
+      realLife: 'Hiện tượng kỳ diệu của Hóa học hữu cơ: dù là hydrocarbon đồng phân trực tiếp của Naphthalene trắng (C₁₀H₈), Azulene lại sở hữu MÀU XANH LAM ĐẬM rực rỡ hiếm có (tên bắt nguồn từ chữ "azul" nghĩa là xanh dương); dẫn xuất tự nhiên của nó tạo màu xanh cho tinh dầu hoa cúc La Mã làm dịu da và một số loài nấm rừng màu lam.',
+      realLifeEn: 'Chemical marvel: a pure C₁₀H₈ isomer of colorless white Naphthalene that glows intense ROYAL BLUE ("azul"), giving chamomile soothing skincare oils and rare Lactarius indigo mushrooms their striking blue hue.',
+      reactions: [
+        'Đáp ứng quy tắc thơm Hückel với hệ liên hợp 10π-electron chạy dọc chu vi vòng 5 cạnh + vòng 7 cạnh dung hợp.',
+        'Có tính phân cực điện rõ rệt (khác hoàn toàn Naphthalene không phân cực!) do vòng 7 cạnh nhường bớt mật độ electron cho vòng 5 cạnh tạo cặp vòng thơm bổ trợ.',
+        'Khi nung nóng khoảng 350 °C trong pha khí có thể chuyển vị dần thành Naphthalene bền nhiệt hơn.'
+      ],
+      reactionsEn: [
+        'Non-benzenoid 10π-electron Hückel aromatic uniting a 5-membered and 7-membered ring.',
+        'Exhibits an unusually large 1.08 D dipole moment for a hydrocarbon because partial charge transfer creates an aromatic 6π cyclopentadienide + 6π tropylium resonance pair.',
+        'Thermal isomerization above 350 °C rearranges Azulene cleanly into more stable Naphthalene.'
+      ],
+      note: 'Công thức C₁₀H₈; cùng công thức phân tử với Naphthalene (trắng, không phân cực) nhưng Azulene lại xanh dương rực rỡ và phân cực rõ.',
+      noteEn: 'Formula C₁₀H₈; striking chromatic and dipolar contrast against its structural isomer Naphthalene.'
+    },
+    {
+      id: 'tetrahedrane',
+      catKey: 'cycloalkane',
+      elements: ['C','C','C','C'],
+      bonds: [[0,1,1],[0,2,1],[0,3,1],[1,2,1],[1,3,1],[2,3,1]],
+      name: 'Tetrahedrane',
+      nameEn: 'Tetrahedrane',
+      category: 'Cycloalkane (Hình khối tứ diện)',
+      categoryEn: 'Polycyclic alkane (Tetrahedral cage)',
+      state: 'Cực kỳ kém bền ở dạng chưa gắn nhóm thế (các dẫn xuất thế cồng kềnh ở thể rắn tinh thể)',
+      stateEn: 'Parent extremely strained; bulky substituted derivatives form stable solids',
+      solubility: 'Tan trong dung môi không phân cực (với dẫn xuất bền)',
+      solubilityEn: 'Soluble in nonpolar solvents (substituted analogs)',
+      realLife: 'Khối tứ diện đều nhỏ nhất trong hình học Platonic hydrocarbon: 4 nguyên tử Carbon nối đôi một với cả 3 nguyên tử còn lại tạo góc liên kết cực nhỏ (~60°); dù phân tử mẹ C₄H₄ rất kém bền, phiên bản gắn 4 nhóm tert-butyl cồng kềnh lại tổng hợp thành tinh thể bền nhiệt tới 135 °C!',
+      realLifeEn: 'Simplest Platonic cage hydrocarbon where all four Carbons sit bonded identically at vertices of a regular tetrahedron; although naked C₄H₄ is fleeting, tetra-tert-butyltetrahedrane forms surprisingly stable crystals melting at 135 °C.',
+      reactions: [
+        'Mọi liên kết C–C đều là liên kết đơn nhưng mang 3 mặt tam giác độc lập (độ bất bão hòa k = 3 bằng với Vinylacetylene!).',
+        'Sức căng góc cực lớn khiến dẫn xuất có xu hướng mở vòng thành Cyclobutadiene khi đun nóng hoặc chiếu xạ.',
+        'Phản ứng cháy tỏa năng lượng giải phóng sức căng cấu trúc khổng lồ.'
+      ],
+      reactionsEn: [
+        'All six edges are single C–C bonds, yielding 3 independent degrees of unsaturation.',
+        'Reversibly photo-isomerizes with stabilized Cyclobutadiene derivatives.',
+        'High internal ring strain dramatically elevates enthalpy of combustion.'
+      ],
+      note: 'Công thức C₄H₄ (cùng công thức với Vinylacetylene nhưng 100% liên kết đơn dạng khối tứ diện K₄).',
+      noteEn: 'Formula C₄H₄; tetrahedral K₄ structural isomer of acyclic Vinylacetylene.'
+    },
+    {
+      id: 'chloral-hydrate',
+      catKey: 'alcohol',
+      elements: ['C','C','Cl','Cl','Cl','O','O'],
+      bonds: [[0,1,1],[0,2,1],[0,3,1],[0,4,1],[1,5,1],[1,6,1]],
+      name: 'Chloral hydrate',
+      nameEn: 'Chloral hydrate',
+      category: 'Alcohol / Dẫn xuất Halogen (Gem-diol bền)',
+      categoryEn: 'Alcohol / Halogenated gem-diol',
+      state: 'Rắn (tinh thể trong suốt không màu, mùi hắc giống dưa lưới nồng)',
+      stateEn: 'Solid (colorless crystals, pungent aromatic odor)',
+      solubility: 'Tan cực kỳ tốt trong nước (~800 g/100 mL)',
+      solubilityEn: 'Extremely soluble in water (~800 g/100 mL)',
+      realLife: 'Thuốc an thần gây ngủ cổ điển đầu tiên do Justus von Liebig tổng hợp năm 1832 (còn gắn với tên lóng "thuốc mê tức thời" trong tiểu thuyết trinh thám xưa khi nhỏ vào đồ uống có cồn); ngày nay chủ yếu dùng trong phòng thí nghiệm soi hiển vi thực vật và sinh học.',
+      realLifeEn: 'Historic first synthetic hypnotic sedative synthesized by Liebig in 1832; chemically famous today as an optical clearing reagent in plant microscopy and classic textbook exception to Erlenmeyer’s gem-diol rule.',
+      reactions: [
+        'Ngoại lệ kinh điển: hai nhóm -OH gắn trên CÙNG 1 nguyên tử Carbon (gem-diol) hoàn toàn BỀN VỮNG thành tinh thể rắn (nhờ nhóm -CCl₃ hút electron cực mạnh và liên kết nội phân tử), thay vì tách nước thành aldehyde như thông thường!',
+        'Đun với dung dịch kiềm NaOH đặc bị cắt mạch (phản ứng Haloform) tạo Chloroform (CHCl₃) và muối Sodium formate (HCOONa).',
+        'Đun nóng với H₂SO₄ đặc mất nước thu hồi trở lại Trichloroacetaldehyde (Chloral).'
+      ],
+      reactionsEn: [
+        'Rare isolable crystalline geminal diol (2 -OH on one C) stabilized strongly by the electron-withdrawing -CCl₃ group.',
+        'Warm aqueous alkali cleaves the C–C bond via haloform-like cleavage into Chloroform and Sodium formate.',
+        'Conc. H₂SO₄ dehydrates the solid cleanly back to oily Chloral (CCl₃CHO).'
+      ],
+      note: 'Công thức C₂H₃Cl₃O₂ (CCl₃–CH(OH)₂); cùng với Methanediol là hai ví dụ kinh điển phá vỡ quy tắc "2 nhóm -OH trên 1 C không bền".',
+      noteEn: 'Formula C₂H₃Cl₃O₂ (2,2,2-trichloroethane-1,1-diol); alongside Methanediol, proves geminal diols can stabilize under strong electronic withdrawal.'
+    },
+    {
+      id: 'aminooxyacetic-acid',
+      catKey: 'carboxylic',
+      elements: ['N','O','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,2],[3,5,1]],
+      name: 'Aminooxyacetic acid (AOA)',
+      nameEn: 'Aminooxyacetic acid (AOA)',
+      category: 'Carboxylic acid (Tạp chức Oxyamine)',
+      categoryEn: 'Carboxylic acid (Oxyamine)',
+      state: 'Rắn (tinh thể trắng, thường dùng dạng muối hydrochloride ổn định)',
+      stateEn: 'Solid (white crystals / stable hydrochloride salt)',
+      solubility: 'Tan tốt trong nước',
+      solubilityEn: 'Soluble in water',
+      realLife: 'Chất ức chế mạnh các enzyme phụ thuộc vitamin B6 (như enzyme tổng hợp Ethylene gây chín héo hoa) nên được ứng dụng trong ngành trồng hoa cắt cành thương mại để kéo dài thời gian tươi lâu của hoa cẩm chướng, hoa hồng sau thu hoạch!',
+      realLifeEn: 'Potent inhibitor of PLP-dependent enzymes and Ethylene biosynthesis, applied commercially to extend vase life of freshly cut carnations and ornamental flowers.',
+      reactions: [
+        'Phân tử tạp chức độc đáo mang đồng thời nhóm Carboxylic (-COOH) và cầu Oxyamine (-O-NH₂), phản ứng được với cả HCl lẫn NaOH.',
+        'Nhóm –O–NH₂ dễ dàng ngưng tụ tạo liên kết Oxime rất bền với nhóm Aldehyde của coenzyme vitamin B6 (pyridoxal phosphate).',
+        'Đun với dung dịch kiềm hoặc acid thể hiện tính chất đặc trưng của carboxylic acid.'
+      ],
+      reactionsEn: [
+        'Unusual bifunctional aminooxy acid pairing a carboxylic acid with an –O–NH₂ hydroxylamine ether.',
+        'Terminal –O–NH₂ reacts rapidly with coenzyme PLP aldehyde groups to form stable inhibitory oximes.',
+        'Displays zwitterionic and acid–base neutralization reactivity.'
+      ],
+      note: 'Công thức H₂N–O–CH₂–COOH (C₂H₅NO₃); hợp chất mẫu kết hợp đồng thời cầu dị tố O–N và chức -COOH.',
+      noteEn: 'Formula C₂H₅NO₃; intriguing bifunctional acid combining –COOH with an O-substituted hydroxylamine bridge.'
+    },
+    {
+      id: 'carbon-suboxide',
+      catKey: 'custom',
+      elements: ['O','C','C','C','O'],
+      bonds: [[0,1,2],[1,2,2],[2,3,2],[3,4,2]],
+      name: 'Carbon suboxide (C₃O₂ · Tricarbon dioxide)',
+      nameEn: 'Carbon suboxide (C₃O₂)',
+      category: 'Oxocarbon hữu cơ (Cumulene)',
+      categoryEn: 'Oxocarbon / Cumulene',
+      state: 'Khí không màu (sôi ở 6,8 °C, mùi rất hắc cay nồng)',
+      stateEn: 'Colorless pungent fuming gas (bp 6.8 °C)',
+      solubility: 'Phản ứng nhanh với nước tạo Malonic acid',
+      solubilityEn: 'Hydrolyzes cleanly in water into Malonic acid',
+      realLife: 'Phân tử thẳng hàng hoàn hảo không chứa bất kỳ nguyên tử Hydrogen nào (O=C=C=C=O, chuỗi 4 nối đôi liền kề — cumulene), thực chất chính là "anhydride kép" của Malonic acid; cũng góp mặt ở lượng vết trong khí quyển Sao Hỏa và dễ polymer hóa tạo lớp màng Carbon màu đỏ cam.',
+      realLifeEn: 'Remarkable Hydrogen-free linear cumulene (O=C=C=C=O) acting as the double anhydride of Malonic acid; detected in trace extraterrestrial chemistry and spontaneously polymerizes at room temperature into red-brown poly(carbon suboxide).',
+      reactions: [
+        'Tác dụng nhanh với nước (H₂O) theo tỉ lệ 1 : 2 tái tạo hoàn toàn Malonic acid: O=C=C=C=O + 2 H₂O → HOOC–CH₂–COOH!',
+        'Được điều chế trực tiếp trong phòng thí nghiệm bằng cách khử nước Malonic acid với chất hút ẩm cực mạnh P₂O₅ (P₄O₁₀).',
+        'Phản ứng với Ethanol tạo Diethyl malonate và với Ammonia tạo Malonamide.'
+      ],
+      reactionsEn: [
+        'Reacts cleanly with 2 equivalents of H₂O to yield Malonic acid (serves functionally as Malonic acid bis-anhydride).',
+        'Synthesized classically by dehydrating Malonic acid thoroughly over P₄O₁₀.',
+        'Reacts rapidly with Alcohols and Amines to afford malonate esters and malonamides.'
+      ],
+      note: 'Công thức C₃O₂ (M = 68,031 g/mol); hoàn toàn không có nguyên tử Hydrogen nào nhưng bắt nguồn trực tiếp từ hữu cơ Malonic acid.',
+      noteEn: 'Formula C₃O₂ (M = 68.031 g/mol); rare all-C/O Hydrogen-free linear oxocarbon derived directly from Malonic acid.'
     }
   ];
 

@@ -352,6 +352,686 @@
   });
 
   // =========================================================================
+  // ORGANIC DICTIONARY BRIDGE & GRAPH FEATURE ANALYZER (window.ORGANIC_COMPOUNDS)
+  // =========================================================================
+  const BRIDGED_ORGANIC_MAP = new Map();     // token/formula -> { token, hillFormula, displayFormula, compound, features, isTier1Existing }
+  const BRIDGED_ORGANIC_BY_ID = new Map();   // compound.id -> bridged entry
+  const HILL_TO_BRIDGED_MAP = new Map();     // hillFormula -> primary bridged entry for 2D SVG lookup
+  const BRIDGED_GRAPH_CACHE = new Map();     // token -> cached 2D molecule graph
+  let organicDictionaryBridged = false;
+
+  // Map existing Tier 1 IDs in window.ORGANIC_COMPOUNDS to their canonical Tier 1 formula keys
+  const EXISTING_TIER1_ID_MAP = {
+    'methane': 'CH4',
+    'ethane': 'C2H6',
+    'propane': 'C3H8',
+    'butane': 'C4H10',
+    'ethylene': 'C2H4',
+    'propylene': 'C3H6',
+    'acetylene': 'C2H2',
+    'propyne': 'C3H4',
+    'benzene': 'C6H6',
+    'toluene': 'C7H8',
+    'styrene': 'C8H8',
+    'cyclohexane': 'C6H12',
+    'methanol': 'CH3OH',
+    'ethanol': 'C2H5OH',
+    'ethylene-glycol': 'C2H4(OH)2',
+    'glycerol': 'C3H5(OH)3',
+    'phenol': 'C6H5OH',
+    'formaldehyde': 'HCHO',
+    'acetaldehyde': 'CH3CHO',
+    'acetone': 'CH3COCH3',
+    'formic-acid': 'HCOOH',
+    'acetic-acid': 'CH3COOH',
+    'methyl-formate': 'HCOOCH3',
+    'ethyl-formate': 'HCOOC2H5',
+    'methyl-acetate': 'CH3COOCH3',
+    'ethyl-acetate': 'CH3COOC2H5',
+    'glucose-ring': 'C6H12O6',
+    'fructose-furanose': 'Fructose',
+    'sucrose': 'C12H22O11',
+    'methylamine': 'CH3NH2',
+    'aniline': 'C6H5NH2'
+  };
+
+  // Duplicate open-chain / secondary ring conformations to skip from dropdown (main ring form already registered)
+  const SKIPPED_ORGANIC_DUP_IDS = new Set([
+    'glucose-open',
+    'glucose-furanose',
+    'fructose-open',
+    'fructose-pyranose',
+    'ribose-open',
+    'carbonic-acid'
+  ]);
+
+  // Explicit clean token overrides for specific IDs to guarantee readable textbook tokens
+  const TOKEN_OVERRIDE_BY_ID = {
+    'isopropanol': 'Isopropanol',
+    'propylene-glycol': 'Propane-1,2-diol',
+    'fumaric-acid': 'FumaricAcid',
+    'caprolactam': 'Caprolactam',
+    'ribose-ring': 'Ribose',
+    'deoxyribose-ring': 'Deoxyribose',
+    'cyclohexa-1,3-diene': 'Cyclohexa-1,3-diene',
+    '2-chloro-2-methylpropane': 'tert-ButylChloride',
+    'tnt': 'TNT'
+  };
+
+  const STANDARD_ORGANIC_VALENCE = {
+    C: 4, O: 2, N: 3, Cl: 1, Br: 1, F: 1, I: 1, H: 1, S: 2, P: 3
+  };
+
+  function buildHillFormulaFromAtoms(atoms) {
+    const keys = Object.keys(atoms || {}).filter((k) => (atoms[k] || 0) > 0);
+    if (keys.length === 0) return '';
+    const ordered = [];
+    if (atoms.C > 0) {
+      ordered.push('C');
+      if (atoms.H > 0) ordered.push('H');
+    }
+    keys
+      .filter((k) => !(atoms.C > 0 && (k === 'C' || k === 'H')))
+      .sort()
+      .forEach((k) => ordered.push(k));
+    return ordered.map((sym) => `${sym}${atoms[sym] > 1 ? atoms[sym] : ''}`).join('');
+  }
+
+  function registerDynamicFormula(formula) {
+    if (!formula) return formula;
+    FORMULA_WHITELIST.add(formula);
+    if (!LOWERCASE_CANONICAL_MAP.has(formula.toLowerCase())) {
+      LOWERCASE_CANONICAL_MAP.set(formula.toLowerCase(), formula);
+    }
+    return formula;
+  }
+
+  function makeBondKey(u, v) {
+    return u < v ? `${u}-${v}` : `${v}-${u}`;
+  }
+
+  // Find all chordless simple cycles of length 3..7 in a heavy-atom molecular graph
+  function findSimpleRings(n, adj, bondMap) {
+    const rings = [];
+    const seenKeys = new Set();
+
+    for (let start = 0; start < n; start++) {
+      const path = [start];
+      const inPath = new Set([start]);
+
+      function dfs(curr) {
+        if (path.length > 7) return;
+        const nbs = adj[curr] || [];
+        for (let i = 0; i < nbs.length; i++) {
+          const next = nbs[i].idx;
+          if (next === start && path.length >= 3) {
+            // Check chordless (no internal shortcut edge between non-adjacent cycle vertices)
+            let hasChord = false;
+            const L = path.length;
+            if (L >= 4) {
+              for (let a = 0; a < L && !hasChord; a++) {
+                for (let b = a + 2; b < L; b++) {
+                  if (a === 0 && b === L - 1) continue;
+                  if (bondMap.has(makeBondKey(path[a], path[b]))) {
+                    hasChord = true;
+                    break;
+                  }
+                }
+              }
+            }
+            if (!hasChord) {
+              const sortedKey = path.slice().sort((x, y) => x - y).join(',');
+              if (!seenKeys.has(sortedKey)) {
+                seenKeys.add(sortedKey);
+                rings.push(path.slice());
+              }
+            }
+          } else if (next > start && !inPath.has(next) && path.length < 7) {
+            inPath.add(next);
+            path.push(next);
+            dfs(next);
+            path.pop();
+            inPath.delete(next);
+          }
+        }
+      }
+
+      dfs(start);
+    }
+
+    return rings;
+  }
+
+  function extractOrganicFeatures(compound) {
+    const els = Array.isArray(compound.elements) ? compound.elements : [];
+    const rawBonds = Array.isArray(compound.bonds) ? compound.bonds : [];
+    const n = els.length;
+    const adj = Array.from({ length: n }, () => []);
+    const bondOrderSum = new Array(n).fill(0);
+    const bondMap = new Map();
+
+    rawBonds.forEach((b) => {
+      const u = b[0];
+      const v = b[1];
+      const order = b[2] || 1;
+      if (u < 0 || u >= n || v < 0 || v >= n || u === v) return;
+      const key = makeBondKey(u, v);
+      if (bondMap.has(key)) return;
+      bondMap.set(key, order);
+      adj[u].push({ idx: v, sym: els[v], order });
+      adj[v].push({ idx: u, sym: els[u], order });
+      bondOrderSum[u] += order;
+      bondOrderSum[v] += order;
+    });
+
+    // Compute implicit hydrogens on each heavy atom (with special care for Nitro N bonded to two O)
+    const implicitH = new Array(n).fill(0);
+    const atoms = Object.create(null);
+
+    for (let i = 0; i < n; i++) {
+      const sym = els[i];
+      atoms[sym] = (atoms[sym] || 0) + 1;
+      if (sym === 'H') continue;
+
+      if (sym === 'N') {
+        const oDoubleCount = adj[i].filter((nb) => nb.sym === 'O' && nb.order >= 2).length;
+        if (oDoubleCount >= 1 || bondOrderSum[i] >= 4) {
+          implicitH[i] = 0;
+        } else {
+          implicitH[i] = Math.max(0, 3 - bondOrderSum[i]);
+        }
+      } else {
+        const stdVal = STANDARD_ORGANIC_VALENCE[sym] || 0;
+        implicitH[i] = Math.max(0, stdVal - bondOrderSum[i]);
+      }
+
+      if (implicitH[i] > 0) {
+        atoms.H = (atoms.H || 0) + implicitH[i];
+      }
+    }
+
+    const hillFormula = buildHillFormulaFromAtoms(atoms);
+
+    // Detect simple rings and aromatic rings
+    const rings = findSimpleRings(n, adj, bondMap);
+    const aromaticAtoms = new Set();
+    const aromaticBondKeys = new Set();
+    let nAromaticRings = 0;
+
+    rings.forEach((ring) => {
+      const L = ring.length;
+      let doubleInRing = 0;
+      const ringEdges = [];
+      for (let i = 0; i < L; i++) {
+        const u = ring[i];
+        const v = ring[(i + 1) % L];
+        const k = makeBondKey(u, v);
+        ringEdges.push(k);
+        if ((bondMap.get(k) || 1) === 2) doubleInRing++;
+      }
+
+      // 6-membered benzene / pyridine ring (3 endocyclic double bonds, all C/N)
+      if (L === 6 && doubleInRing === 3 && ring.every((idx) => els[idx] === 'C' || els[idx] === 'N')) {
+        nAromaticRings++;
+        ring.forEach((idx) => aromaticAtoms.add(idx));
+        ringEdges.forEach((k) => aromaticBondKeys.add(k));
+      }
+
+      // 5-membered furan / pyrrole heteroaromatic ring (2 endocyclic double bonds, no exocyclic =O)
+      if (
+        L === 5 &&
+        doubleInRing === 2 &&
+        ring.some((idx) => els[idx] === 'O' || els[idx] === 'N') &&
+        !ring.some((idx) => adj[idx].some((nb) => !ring.includes(nb.idx) && nb.sym === 'O' && nb.order === 2))
+      ) {
+        nAromaticRings++;
+        ring.forEach((idx) => aromaticAtoms.add(idx));
+        ringEdges.forEach((k) => aromaticBondKeys.add(k));
+      }
+    });
+
+    if (compound.id === 'azulene' || compound.id === 'caffeine') {
+      nAromaticRings = Math.max(1, nAromaticRings);
+      rings.forEach((ring) => {
+        ring.forEach((idx) => aromaticAtoms.add(idx));
+        for (let i = 0; i < ring.length; i++) {
+          const k = makeBondKey(ring[i], ring[(i + 1) % ring.length]);
+          if (bondMap.get(k) === 2) aromaticBondKeys.add(k);
+        }
+      });
+    }
+
+    // Identify carbonyl carbons (C=O)
+    const carbonylMap = new Map(); // cIdx -> oDoubleIdx
+    for (let i = 0; i < n; i++) {
+      if (els[i] !== 'C') continue;
+      const oDoubles = adj[i].filter((nb) => nb.sym === 'O' && nb.order === 2);
+      if (oDoubles.length === 1) {
+        carbonylMap.set(i, oDoubles[0].idx);
+      }
+    }
+
+    let nCOOH = 0;
+    let nCHO = 0;
+    let nKetone = 0;
+    let isFormicAcid = false;
+    let isFormateEster = false;
+    const coohCarbons = new Set();
+    const coohOxygens = new Set();
+    const esterOxygens = new Set();
+    const amideNitrogens = new Set();
+    const esters = [];
+
+    carbonylMap.forEach((oDoubleIdx, cIdx) => {
+      const otherNbs = adj[cIdx].filter((nb) => nb.idx !== oDoubleIdx);
+
+      // Any single-bonded N attached to C=O is an amide/peptide/urea/carbamate/lactam nitrogen
+      otherNbs.forEach((nb) => {
+        if (nb.sym === 'N' && nb.order === 1) {
+          amideNitrogens.add(nb.idx);
+        }
+      });
+
+      // Check for -OH attached to C=O -> Carboxylic acid (-COOH)
+      const ohNb = otherNbs.find((nb) => nb.sym === 'O' && nb.order === 1 && bondOrderSum[nb.idx] === 1);
+      if (ohNb && compound.id !== 'carbonic-acid') {
+        nCOOH++;
+        coohCarbons.add(cIdx);
+        coohOxygens.add(oDoubleIdx);
+        coohOxygens.add(ohNb.idx);
+        if (implicitH[cIdx] >= 1) {
+          isFormicAcid = true;
+        }
+        return;
+      }
+
+      // Check for -O-C attached to C=O -> Ester or Anhydride
+      const oBridgeNbs = otherNbs.filter((nb) => nb.sym === 'O' && nb.order === 1 && bondOrderSum[nb.idx] === 2);
+      if (oBridgeNbs.length > 0) {
+        oBridgeNbs.forEach((oNb) => {
+          const oEster = oNb.idx;
+          const rPrimeNb = adj[oEster].find((x) => x.idx !== cIdx);
+          if (!rPrimeNb || rPrimeNb.sym !== 'C') return;
+          const rPrimeC = rPrimeNb.idx;
+          // Skip anhydride C(=O)-O-C(=O) and cyclic lactone vitamin-c
+          if (carbonylMap.has(rPrimeC) || compound.id === 'vitamin-c') return;
+
+          let esterType = 'alkyl';
+          if (aromaticAtoms.has(rPrimeC)) {
+            esterType = 'phenol';
+          } else if (
+            adj[rPrimeC].some(
+              (x) => x.sym === 'C' && x.order === 2 && !aromaticBondKeys.has(makeBondKey(rPrimeC, x.idx))
+            )
+          ) {
+            esterType = 'vinyl';
+          }
+
+          const isFormate = implicitH[cIdx] >= 1;
+          if (isFormate) isFormateEster = true;
+          esterOxygens.add(oEster);
+          esters.push({
+            cAcyl: cIdx,
+            oDouble: oDoubleIdx,
+            oEster,
+            rPrimeC,
+            esterType,
+            isFormate
+          });
+        });
+        return;
+      }
+
+      // Otherwise if no heteroatom (O or N) is single-bonded to C=O: Aldehyde or Ketone
+      const hasHeteroSingle = otherNbs.some((nb) => nb.sym !== 'C' && nb.sym !== 'H');
+      if (!hasHeteroSingle) {
+        if (implicitH[cIdx] >= 1) {
+          nCHO++;
+        } else {
+          nKetone++;
+        }
+      }
+    });
+
+    // Identify Hydroxyl groups (-OH) not part of -COOH
+    let nPhenolOH = 0;
+    let nAlcoholOH = 0;
+    let primaryAlcoholCount = 0;
+    let secondaryAlcoholCount = 0;
+    let tertiaryAlcoholCount = 0;
+    const alcoholCarbons = [];
+    const phenolCarbons = [];
+
+    for (let i = 0; i < n; i++) {
+      if (els[i] !== 'O' || bondOrderSum[i] !== 1 || coohOxygens.has(i)) continue;
+      const nb = adj[i][0];
+      if (!nb || nb.sym !== 'C') continue;
+      const cIdx = nb.idx;
+
+      if (aromaticAtoms.has(cIdx)) {
+        nPhenolOH++;
+        phenolCarbons.push(cIdx);
+      } else {
+        nAlcoholOH++;
+        alcoholCarbons.push(cIdx);
+        const isSaturatedC = adj[cIdx].every((x) => x.order === 1);
+        const cNeighbors = adj[cIdx].filter((x) => x.sym === 'C').length;
+        if (isSaturatedC) {
+          if (cNeighbors <= 1 && implicitH[cIdx] >= 1) {
+            primaryAlcoholCount++;
+          } else if (cNeighbors === 2 && implicitH[cIdx] === 1) {
+            secondaryAlcoholCount++;
+          } else if (cNeighbors >= 3 && implicitH[cIdx] === 0) {
+            tertiaryAlcoholCount++;
+          }
+        }
+      }
+    }
+
+    // Check for vicinal diol (at least 2 -OH groups on adjacent saturated carbons)
+    const satAlcCarbons = alcoholCarbons.filter((cIdx) => adj[cIdx].every((x) => x.order === 1));
+    let hasVicinalDiol = false;
+    for (let i = 0; i < satAlcCarbons.length && !hasVicinalDiol; i++) {
+      for (let j = i + 1; j < satAlcCarbons.length; j++) {
+        if (satAlcCarbons[i] !== satAlcCarbons[j] && bondMap.has(makeBondKey(satAlcCarbons[i], satAlcCarbons[j]))) {
+          hasVicinalDiol = true;
+          break;
+        }
+      }
+    }
+
+    // Check for cyclic aldose hemiacetal center (saturated C with 1 H, 1 -OH, and 1 ring ether O)
+    let hasHemiacetalCHO = false;
+    for (let i = 0; i < satAlcCarbons.length; i++) {
+      const cIdx = satAlcCarbons[i];
+      if (implicitH[cIdx] !== 1) continue;
+      const hasRingEtherO = adj[cIdx].some(
+        (nb) =>
+          nb.sym === 'O' &&
+          bondOrderSum[nb.idx] === 2 &&
+          !esterOxygens.has(nb.idx) &&
+          rings.some((r) => r.includes(cIdx) && r.includes(nb.idx))
+      );
+      if (hasRingEtherO) {
+        hasHemiacetalCHO = true;
+        break;
+      }
+    }
+
+    const nReducingCHO = nCHO + (hasHemiacetalCHO ? 1 : 0) + (isFormicAcid ? 1 : 0);
+
+    // Count non-aromatic C=C double bonds (d) and C≡C triple bonds (t, terminal vs internal)
+    let nNonAromDoubleCC = 0;
+    let nTripleCC = 0;
+    let nTerminalAlkyneH = 0;
+
+    rawBonds.forEach((b) => {
+      const u = b[0];
+      const v = b[1];
+      const order = b[2] || 1;
+      if (els[u] !== 'C' || els[v] !== 'C') return;
+      const key = makeBondKey(u, v);
+      if (order === 2 && !aromaticBondKeys.has(key)) {
+        nNonAromDoubleCC++;
+      } else if (order === 3) {
+        nTripleCC++;
+        if (implicitH[u] >= 1) nTerminalAlkyneH++;
+        if (implicitH[v] >= 1) nTerminalAlkyneH++;
+      }
+    });
+
+    // Count basic amine / N-base groups (excluding amide, nitrile, nitro, pyrrole, caffeine)
+    let nBasicN = 0;
+    if (compound.id !== 'pyrrole' && compound.id !== 'caffeine') {
+      for (let i = 0; i < n; i++) {
+        if (els[i] !== 'N') continue;
+        if (bondOrderSum[i] > 3) continue;
+        if (amideNitrogens.has(i)) continue;
+        const hasMultipleToOorC = adj[i].some(
+          (nb) => (nb.sym === 'O' && nb.order >= 2) || nb.order === 3
+        );
+        if (hasMultipleToOorC) continue;
+        nBasicN++;
+      }
+    }
+
+    return {
+      atoms,
+      hillFormula,
+      implicitH,
+      bondOrderSum,
+      adj,
+      bondMap,
+      rings,
+      aromaticAtoms,
+      aromaticBondKeys,
+      nAromaticRings,
+      hasAromaticRing: nAromaticRings > 0,
+      coohCarbons,
+      coohOxygens,
+      esterOxygens,
+      amideNitrogens,
+      nCOOH,
+      nPhenolOH,
+      nAlcoholOH,
+      primaryAlcoholCount,
+      secondaryAlcoholCount,
+      tertiaryAlcoholCount,
+      hasVicinalDiol,
+      nCHO,
+      hasHemiacetalCHO,
+      nReducingCHO,
+      nKetone,
+      nNonAromDoubleCC,
+      nTripleCC,
+      nTerminalAlkyneH,
+      nBasicN,
+      esters,
+      nEster: esters.length,
+      isFormicAcid,
+      isFormateEster
+    };
+  }
+
+  function buildCleanOrganicToken(compound) {
+    if (TOKEN_OVERRIDE_BY_ID[compound.id]) {
+      return TOKEN_OVERRIDE_BY_ID[compound.id];
+    }
+    const baseEn = String(compound.nameEn || compound.name || compound.id || '')
+      .replace(/\s*\([^)]*\)\s*/g, ' ')
+      .replace(/^[εαβγδ]-/i, '')
+      .replace(/\s*\/\s*.+$/, '')
+      .trim();
+
+    if (!baseEn) return compound.id;
+
+    // PascalCase space-separated words while preserving hyphens/commas in IUPAC locants (e.g. Propan-1-ol, But-1-yne)
+    const words = baseEn.split(/\s+/).filter(Boolean);
+    if (words.length === 1) {
+      return words[0];
+    }
+    return words
+      .map((w, idx) => {
+        if (idx === 0) return w.charAt(0).toUpperCase() + w.slice(1);
+        return w.charAt(0).toUpperCase() + w.slice(1);
+      })
+      .join('');
+  }
+
+  function registerOrganicAlias(rawAlias, targetToken, allowOverwrite = false) {
+    if (!rawAlias || !targetToken) return;
+    const norm = normalizeSearchText(rawAlias);
+    if (!norm) return;
+    if (allowOverwrite || !NAME_ALIAS_MAP.has(norm)) {
+      NAME_ALIAS_MAP.set(norm, targetToken);
+    }
+    const compact = norm.replace(/\s+/g, '');
+    if (compact.length >= 3 && (allowOverwrite || !NAME_ALIAS_MAP.has(compact))) {
+      NAME_ALIAS_MAP.set(compact, targetToken);
+    }
+    const noHyphen = norm.replace(/[-,\s]+/g, '');
+    if (noHyphen.length >= 3 && (allowOverwrite || !NAME_ALIAS_MAP.has(noHyphen))) {
+      NAME_ALIAS_MAP.set(noHyphen, targetToken);
+    }
+  }
+
+  function bridgeOrganicDictionary() {
+    if (organicDictionaryBridged) return;
+    const list = window.ORGANIC_COMPOUNDS;
+    if (!Array.isArray(list) || list.length === 0) return;
+    organicDictionaryBridged = true;
+
+    const existingSubByFormula = new Map(COMMON_SUBSTANCES.map((s) => [s.formula, s]));
+    const hillCounts = new Map();
+    const hillSingleTarget = new Map();
+    const usedTokens = new Set(COMMON_SUBSTANCES.map((s) => s.formula));
+
+    list.forEach((compound) => {
+      if (!compound || !compound.id) return;
+      if (SKIPPED_ORGANIC_DUP_IDS.has(compound.id)) return;
+
+      const features = extractOrganicFeatures(compound);
+      const hillFormula = features.hillFormula;
+      if (!hillFormula) return;
+
+      const existingTier1Formula = EXISTING_TIER1_ID_MAP[compound.id];
+      if (existingTier1Formula) {
+        const entry = {
+          token: existingTier1Formula,
+          hillFormula,
+          displayFormula: existingTier1Formula,
+          compound,
+          features,
+          isTier1Existing: true
+        };
+        BRIDGED_ORGANIC_MAP.set(existingTier1Formula, entry);
+        BRIDGED_ORGANIC_BY_ID.set(compound.id, entry);
+        if (!HILL_TO_BRIDGED_MAP.has(hillFormula)) {
+          HILL_TO_BRIDGED_MAP.set(hillFormula, entry);
+        }
+
+        // Enrich existing COMMON_SUBSTANCES entry aliases without duplicating dropdown items
+        const sub = existingSubByFormula.get(existingTier1Formula);
+        if (sub) {
+          const extraAliases = normalizeSearchText(
+            `${compound.id} ${compound.name || ''} ${compound.nameEn || ''} ${hillFormula}`
+          );
+          if (extraAliases) {
+            sub.aliases = sub.aliases ? `${sub.aliases} ${extraAliases}` : extraAliases;
+          }
+        }
+
+        registerOrganicAlias(compound.id, existingTier1Formula, false);
+        registerOrganicAlias(compound.name, existingTier1Formula, false);
+        registerOrganicAlias(compound.nameEn, existingTier1Formula, false);
+        const stripVi = String(compound.name || '').replace(/\s*\([^)]*\)/g, '').trim();
+        const stripEn = String(compound.nameEn || '').replace(/\s*\([^)]*\)/g, '').trim();
+        registerOrganicAlias(stripVi, existingTier1Formula, false);
+        registerOrganicAlias(stripEn, existingTier1Formula, false);
+
+        hillCounts.set(hillFormula, (hillCounts.get(hillFormula) || 0) + 1);
+        if (!hillSingleTarget.has(hillFormula)) {
+          hillSingleTarget.set(hillFormula, existingTier1Formula);
+        }
+        return;
+      }
+
+      // New organic compound from window.ORGANIC_COMPOUNDS
+      let token = buildCleanOrganicToken(compound);
+      if (usedTokens.has(token) && !TOKEN_OVERRIDE_BY_ID[compound.id]) {
+        token = `${token}_${compound.id}`;
+      }
+      usedTokens.add(token);
+
+      const entry = {
+        token,
+        hillFormula,
+        displayFormula: hillFormula,
+        compound,
+        features,
+        isTier1Existing: false
+      };
+
+      BRIDGED_ORGANIC_MAP.set(token, entry);
+      BRIDGED_ORGANIC_BY_ID.set(compound.id, entry);
+      if (!HILL_TO_BRIDGED_MAP.has(hillFormula)) {
+        HILL_TO_BRIDGED_MAP.set(hillFormula, entry);
+      }
+
+      // Register token -> hillFormula in ISOMER_FORMULA_MAP and FORMULA_WHITELIST
+      ISOMER_FORMULA_MAP[token] = hillFormula;
+      FORMULA_WHITELIST.add(token);
+      FORMULA_WHITELIST.add(hillFormula);
+      LOWERCASE_CANONICAL_MAP.set(token.toLowerCase(), token);
+      if (!LOWERCASE_CANONICAL_MAP.has(hillFormula.toLowerCase())) {
+        LOWERCASE_CANONICAL_MAP.set(hillFormula.toLowerCase(), hillFormula);
+      }
+
+      // Extract parenthetical aliases from name & nameEn (e.g. "Isoamyl acetate (Dầu chuối)" -> "Dầu chuối")
+      const parenMatches = []
+        .concat(String(compound.name || '').match(/\(([^)]+)\)/g) || [])
+        .concat(String(compound.nameEn || '').match(/\(([^)]+)\)/g) || [])
+        .map((s) => s.slice(1, -1).trim());
+
+      const stripVi = String(compound.name || '').replace(/\s*\([^)]*\)/g, '').trim();
+      const stripEn = String(compound.nameEn || '').replace(/\s*\([^)]*\)/g, '').trim();
+      const realLifeKeywords = normalizeSearchText(String(compound.realLife || '').slice(0, 90));
+
+      const aliasBag = normalizeSearchText(
+        `${hillFormula} ${token} ${compound.id} ${compound.name || ''} ${compound.nameEn || ''} ${stripVi} ${stripEn} ${parenMatches.join(' ')} ${compound.category || ''} ${realLifeKeywords}`
+      );
+
+      if (!existingSubByFormula.has(token)) {
+        const subItem = {
+          formula: token,
+          displayFormula: hillFormula,
+          vi: compound.name || stripEn || token,
+          en: compound.nameEn || compound.name || token,
+          cat: 'organic',
+          aliases: aliasBag
+        };
+        COMMON_SUBSTANCES.push(subItem);
+        existingSubByFormula.set(token, subItem);
+      }
+
+      // Register rich name aliases in NAME_ALIAS_MAP
+      registerOrganicAlias(token, token, true);
+      registerOrganicAlias(compound.id, token, false);
+      registerOrganicAlias(compound.id.replace(/-/g, ' '), token, false);
+      registerOrganicAlias(compound.name, token, false);
+      registerOrganicAlias(compound.nameEn, token, false);
+      registerOrganicAlias(stripVi, token, false);
+      registerOrganicAlias(stripEn, token, false);
+      parenMatches.forEach((pm) => {
+        // Avoid mapping 3-letter amino acid abbreviations that might collide with elements or short words if < 3 chars
+        if (pm.length >= 3 && !pm.includes('·')) {
+          registerOrganicAlias(pm, token, false);
+        }
+      });
+
+      hillCounts.set(hillFormula, (hillCounts.get(hillFormula) || 0) + 1);
+      hillSingleTarget.set(hillFormula, token);
+    });
+
+    // If a Hill formula is unique across the entire organic dictionary (e.g. C9H8O4 -> Aspirin,
+    // C6H8O7 -> CitricAcid, C8H11NO2 -> Dopamine), map it directly in NAME_ALIAS_MAP!
+    hillCounts.forEach((cnt, hill) => {
+      if (cnt === 1) {
+        const target = hillSingleTarget.get(hill);
+        const hillLower = hill.toLowerCase();
+        if (target && !NAME_ALIAS_MAP.has(hillLower)) {
+          NAME_ALIAS_MAP.set(hillLower, target);
+        }
+      }
+    });
+  }
+
+  // Run bridge immediately at boot if window.ORGANIC_COMPOUNDS is already loaded
+  if (Array.isArray(window.ORGANIC_COMPOUNDS) && window.ORGANIC_COMPOUNDS.length > 0) {
+    bridgeOrganicDictionary();
+  }
+
+  // =========================================================================
   // TIER 1: CURATED DICTIONARY (~56 Classic, Redox & 3-Reactant Reactions)
   // =========================================================================
   const TIER1_REACTIONS = [
@@ -1388,21 +2068,43 @@
   }
 
   function formatFormulaHTML(formula) {
+    bridgeOrganicDictionary();
     if (formula === 'Fructose') {
       return 'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> <span class="rxn-isomer-tag">(Fructose)</span>';
+    }
+    const bridged = BRIDGED_ORGANIC_MAP.get(formula);
+    if (bridged && !bridged.isTier1Existing) {
+      const hillHTML = escapeHTML(bridged.hillFormula).replace(/([A-Za-z)\]])(\d+)/g, '$1<sub>$2</sub>');
+      return `${hillHTML} <span class="rxn-isomer-tag">(${escapeHTML(bridged.token)})</span>`;
+    }
+    const tagMatch = String(formula || '').match(/^([A-Za-z0-9()\[\]≡=]+)\s+\((.+)\)$/);
+    if (tagMatch) {
+      const baseHTML = escapeHTML(tagMatch[1]).replace(/([A-Za-z)\]])(\d+)/g, '$1<sub>$2</sub>');
+      return `${baseHTML} <span class="rxn-isomer-tag">(${escapeHTML(tagMatch[2])})</span>`;
     }
     const escaped = escapeHTML(formula);
     return escaped.replace(/([A-Za-z)\]])(\d+)/g, '$1<sub>$2</sub>');
   }
 
   function formatFormulaUnicode(formula) {
+    bridgeOrganicDictionary();
     if (formula === 'Fructose') {
       return 'C₆H₁₂O₆ (Fructose)';
     }
     const map = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
-    return String(formula || '').replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
-      return pre + digits.replace(/\d/g, (d) => map[d] || d);
-    });
+    const toSub = (str) =>
+      String(str || '').replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
+        return pre + digits.replace(/\d/g, (d) => map[d] || d);
+      });
+    const bridged = BRIDGED_ORGANIC_MAP.get(formula);
+    if (bridged && !bridged.isTier1Existing) {
+      return `${toSub(bridged.hillFormula)} (${bridged.token})`;
+    }
+    const tagMatch = String(formula || '').match(/^([A-Za-z0-9()\[\]≡=]+)\s+\((.+)\)$/);
+    if (tagMatch) {
+      return `${toSub(tagMatch[1])} (${tagMatch[2]})`;
+    }
+    return toSub(formula);
   }
 
   function romanValence(v) {
@@ -1622,6 +2324,7 @@
 
   // Normalize user input: trim, convert Unicode subscripts, resolve common substance names, auto-case formulas
   function normalizeInputFormula(raw) {
+    bridgeOrganicDictionary();
     const asciiSub = String(raw || '').replace(/[₀-₉]/g, (ch) => SUBSCRIPT_TO_ASCII[ch] || ch);
     const trimmed = asciiSub.trim();
     if (!trimmed) return '';
@@ -1639,6 +2342,11 @@
     const compactNorm = searchNorm.replace(/\s+/g, '');
     if (NAME_ALIAS_MAP.has(compactNorm)) {
       return NAME_ALIAS_MAP.get(compactNorm);
+    }
+
+    const noHyphenNorm = searchNorm.replace(/[-,\s]+/g, '');
+    if (NAME_ALIAS_MAP.has(noHyphenNorm)) {
+      return NAME_ALIAS_MAP.get(noHyphenNorm);
     }
 
     const cleaned = asciiSub.replace(/\s+/g, '');
@@ -2221,35 +2929,65 @@
       return vec;
     });
 
-    // Combine basis (for standard 1D nullspace, takes basis[0])
-    const sol = new Array(N).fill(null).map(() => makeFrac(0n, 1n));
-    for (let b = 0; b < basis.length; b++) {
+    // Helper to convert a rational combination vector into smallest positive integers
+    function extractPositiveIntCoeffs(solVec) {
+      let commonDen = 1n;
       for (let c = 0; c < N; c++) {
-        sol[c] = makeFrac(sol[c].num * basis[b][c].den + basis[b][c].num * sol[c].den, sol[c].den * basis[b][c].den);
+        commonDen = bigLcm(commonDen, solVec[c].den);
       }
+      let intVec = solVec.map((f) => f.num * (commonDen / f.den));
+      if (intVec.every((v) => v < 0n)) {
+        intVec = intVec.map((v) => -v);
+      }
+      if (intVec.some((v) => v <= 0n)) return null;
+      let overallGcd = intVec[0];
+      for (let c = 1; c < N; c++) {
+        overallGcd = bigGcd(overallGcd, intVec[c]);
+      }
+      intVec = intVec.map((v) => v / overallGcd);
+      const numVec = intVec.map((v) => Number(v));
+      if (numVec.some((v) => !Number.isInteger(v) || v < 1)) return null;
+      return numVec;
     }
 
-    // Convert rational vector to smallest positive integers
-    let commonDen = 1n;
-    for (let c = 0; c < N; c++) {
-      commonDen = bigLcm(commonDen, sol[c].den);
-    }
-    let intVec = sol.map((f) => f.num * (commonDen / f.den));
+    let bestNumVec = null;
 
-    if (intVec.every((v) => v < 0n)) {
-      intVec = intVec.map((v) => -v);
+    if (basis.length === 1) {
+      bestNumVec = extractPositiveIntCoeffs(basis[0]);
+    } else if (basis.length === 2) {
+      let bestSum = Infinity;
+      for (let w0 = 1n; w0 <= 8n; w0++) {
+        for (let w1 = 1n; w1 <= 8n; w1++) {
+          const comb = new Array(N);
+          for (let c = 0; c < N; c++) {
+            const b0 = makeFrac(basis[0][c].num * w0, basis[0][c].den);
+            const b1 = makeFrac(basis[1][c].num * w1, basis[1][c].den);
+            comb[c] = makeFrac(b0.num * b1.den + b1.num * b0.den, b0.den * b1.den);
+          }
+          const cand = extractPositiveIntCoeffs(comb);
+          if (cand) {
+            const sum = cand.reduce((acc, v) => acc + v, 0);
+            if (sum < bestSum) {
+              bestSum = sum;
+              bestNumVec = cand;
+            }
+          }
+        }
+      }
+    } else {
+      const sol = new Array(N).fill(null).map(() => makeFrac(0n, 1n));
+      for (let b = 0; b < basis.length; b++) {
+        for (let c = 0; c < N; c++) {
+          sol[c] = makeFrac(sol[c].num * basis[b][c].den + basis[b][c].num * sol[c].den, sol[c].den * basis[b][c].den);
+        }
+      }
+      bestNumVec = extractPositiveIntCoeffs(sol);
     }
-    if (intVec.some((v) => v <= 0n)) return null;
 
-    let overallGcd = intVec[0];
-    for (let c = 1; c < N; c++) {
-      overallGcd = bigGcd(overallGcd, intVec[c]);
-    }
-    intVec = intVec.map((v) => v / overallGcd);
+    if (!bestNumVec) return null;
 
-    const numVec = intVec.map((v) => Number(v));
-    const reactantCoeffs = numVec.slice(0, R);
-    const productCoeffs = numVec.slice(R);
+    const reactantCoeffs = bestNumVec.slice(0, R);
+    const productCoeffs = bestNumVec.slice(R);
 
     // Mandatory post-verification of exact atom conservation
     if (!verifyBalancedEquation(parsedR, parsedP, reactantCoeffs, productCoeffs)) {
@@ -3703,22 +4441,1579 @@
   }
 
   // =========================================================================
+  // TIER 2 ORGANIC: GRAPH-DRIVEN FUNCTIONAL GROUP INFERENCE ENGINE (11 RULES)
+  // =========================================================================
+  function getBridgedOrganic(formula) {
+    bridgeOrganicDictionary();
+    if (!formula) return null;
+    if (BRIDGED_ORGANIC_MAP.has(formula)) return BRIDGED_ORGANIC_MAP.get(formula);
+    const resolved = resolveChemicalFormula(formula);
+    if (BRIDGED_ORGANIC_MAP.has(resolved)) return BRIDGED_ORGANIC_MAP.get(resolved);
+    if (HILL_TO_BRIDGED_MAP.has(resolved)) return HILL_TO_BRIDGED_MAP.get(resolved);
+    return null;
+  }
+
+  function getOrganicName(entry, lang) {
+    if (!entry || !entry.compound) return entry ? entry.token : '';
+    const raw = lang === 'en' ? (entry.compound.nameEn || entry.compound.name) : (entry.compound.name || entry.compound.nameEn);
+    return String(raw || entry.token).replace(/\s*\([^)]*\)/g, '').trim() || entry.token;
+  }
+
+  function cloneAndModifyAtoms(baseAtoms, deltas) {
+    const next = { ...baseAtoms };
+    Object.keys(deltas).forEach((sym) => {
+      next[sym] = (next[sym] || 0) + deltas[sym];
+      if (next[sym] <= 0) delete next[sym];
+    });
+    return next;
+  }
+
+  // Known Acid ID -> canonical formula/token
+  const KNOWN_ACID_BY_HILL = {
+    CH2O2: 'HCOOH',
+    C2H4O2: 'CH3COOH',
+    C3H6O2: 'PropionicAcid',
+    C4H8O2: 'ButyricAcid',
+    C5H10O2: 'ValericAcid',
+    C7H6O2: 'BenzoicAcid',
+    C3H4O2: 'AcrylicAcid',
+    C4H6O2: 'MethacrylicAcid',
+    C7H6O3: 'SalicylicAcid'
+  };
+
+  // Known Alcohol Hill + topology -> canonical formula/token
+  const KNOWN_ALCOHOL_BY_HILL = {
+    CH4O: 'CH3OH',
+    C2H6O: 'C2H5OH',
+    C7H8O: 'BenzylAlcohol',
+    C5H12O: 'IsoamylAlcohol',
+    C3H6O: 'AllylAlcohol'
+  };
+
+  // Known (acidId, alcoholId) -> ester token in dictionary
+  const KNOWN_ESTER_PAIR_MAP = {
+    'formic-acid+methanol': 'HCOOCH3',
+    'formic-acid+ethanol': 'HCOOC2H5',
+    'formic-acid+propan-1-ol': 'PropylFormate',
+    'formic-acid+isopropanol': 'IsopropylFormate',
+    'acetic-acid+methanol': 'CH3COOCH3',
+    'acetic-acid+ethanol': 'CH3COOC2H5',
+    'acetic-acid+butan-1-ol': 'ButylAcetate',
+    'acetic-acid+isoamyl-alcohol': 'IsoamylAcetate',
+    'acetic-acid+benzyl-alcohol': 'BenzylAcetate',
+    'propionic-acid+methanol': 'MethylPropionate',
+    'butyric-acid+ethanol': 'EthylButyrate',
+    'benzoic-acid+methanol': 'MethylBenzoate',
+    'benzoic-acid+ethanol': 'EthylBenzoate',
+    'acrylic-acid+methanol': 'MethylAcrylate',
+    'methacrylic-acid+methanol': 'MethylMethacrylate',
+    'salicylic-acid+methanol': 'MethylSalicylate'
+  };
+
+  // Known alcohol oxidation product (CuO, t°) by compound.id
+  const KNOWN_CUO_OXIDATION_PRODUCT = {
+    'methanol': 'HCHO',
+    'ethanol': 'CH3CHO',
+    'propan-1-ol': 'Propanal',
+    'isopropanol': 'CH3COCH3',
+    'butan-1-ol': 'Butanal',
+    'butan-2-ol': 'Butanone',
+    'isobutanol': 'Isobutanal',
+    'allyl-alcohol': 'Acrolein',
+    'benzyl-alcohol': 'Benzaldehyde',
+    'cyclohexanol': 'Cyclohexanone'
+  };
+
+  // Split an acyclic monoester bond (cAcyl, oEster) directly on the molecular graph
+  function splitEsterOnGraph(orgEntry) {
+    const { compound, features } = orgEntry;
+    if (!features || features.esters.length !== 1) return null;
+    const est = features.esters[0];
+    const els = compound.elements;
+    const n = els.length;
+    const { adj, implicitH, aromaticAtoms, coohCarbons, coohOxygens } = features;
+
+    function collectComponent(startIdx, blockedIdx) {
+      const visited = new Set([startIdx]);
+      const queue = [startIdx];
+      while (queue.length > 0) {
+        const u = queue.shift();
+        (adj[u] || []).forEach((nb) => {
+          if ((u === est.cAcyl && nb.idx === blockedIdx) || (u === blockedIdx && nb.idx === est.cAcyl)) {
+            return;
+          }
+          if (!visited.has(nb.idx)) {
+            visited.add(nb.idx);
+            queue.push(nb.idx);
+          }
+        });
+      }
+      return visited;
+    }
+
+    const acylSet = collectComponent(est.cAcyl, est.oEster);
+    if (acylSet.has(est.oEster)) return null; // Cyclic lactone
+    const alkSet = collectComponent(est.oEster, est.cAcyl);
+
+    function sumFragment(nodeSet) {
+      const counts = Object.create(null);
+      let nPhenol = 0;
+      let nCOOHFrag = 0;
+      let maxCarbonDeg = 0;
+      nodeSet.forEach((idx) => {
+        const sym = els[idx];
+        counts[sym] = (counts[sym] || 0) + 1;
+        if (implicitH[idx] > 0) {
+          counts.H = (counts.H || 0) + implicitH[idx];
+        }
+        if (coohCarbons.has(idx)) {
+          nCOOHFrag++;
+        }
+        if (sym === 'O' && idx !== est.oEster && !coohOxygens.has(idx) && (adj[idx] || []).length === 1) {
+          const nb = adj[idx][0];
+          if (nb && nb.sym === 'C' && aromaticAtoms.has(nb.idx)) {
+            nPhenol++;
+          }
+        }
+        if (sym === 'C') {
+          const cDeg = (adj[idx] || []).filter((x) => nodeSet.has(x.idx) && x.sym === 'C').length;
+          if (cDeg > maxCarbonDeg) maxCarbonDeg = cDeg;
+        }
+      });
+      return { counts, nPhenol, nCOOHFrag, maxCarbonDeg };
+    }
+
+    const acylFrag = sumFragment(acylSet);
+    const alkFrag = sumFragment(alkSet);
+
+    // Free carboxylic acid R-COOH from acyl fragment (+1 O, +1 H)
+    const acylAcidAtoms = cloneAndModifyAtoms(acylFrag.counts, { O: 1, H: 1 });
+    const acylAcidHill = buildHillFormulaFromAtoms(acylAcidAtoms);
+    let acylAcidFormula = KNOWN_ACID_BY_HILL[acylAcidHill] || registerDynamicFormula(acylAcidHill);
+    if (acylAcidHill === 'C4H8O2' && acylFrag.maxCarbonDeg >= 3) {
+      acylAcidFormula = 'IsobutyricAcid';
+    }
+
+    // Free R'-OH from alkoxide fragment (+1 H on oEster)
+    const alkOHAtoms = cloneAndModifyAtoms(alkFrag.counts, { H: 1 });
+    const alkOHHill = buildHillFormulaFromAtoms(alkOHAtoms);
+    let alkOHFormula = KNOWN_ALCOHOL_BY_HILL[alkOHHill];
+    if (!alkOHFormula) {
+      if (alkOHHill === 'C3H8O') {
+        // Distinguish Propan-1-ol vs Isopropanol (Propan-2-ol) by whether rPrimeC is bonded to 2 carbons
+        const rPrimeCNbs = (adj[est.rPrimeC] || []).filter((x) => alkSet.has(x.idx) && x.sym === 'C').length;
+        alkOHFormula = rPrimeCNbs >= 2 ? 'Isopropanol' : 'Propan-1-ol';
+      } else if (alkOHHill === 'C4H10O') {
+        alkOHFormula = 'Butan-1-ol';
+      } else if (alkOHHill === 'C6H6O' && est.esterType === 'phenol') {
+        alkOHFormula = 'C6H5OH';
+      } else if (alkOHHill === 'C7H6O3' && est.esterType === 'phenol') {
+        alkOHFormula = 'SalicylicAcid';
+      } else {
+        alkOHFormula = registerDynamicFormula(alkOHHill);
+      }
+    }
+
+    return {
+      est,
+      acylFrag,
+      alkFrag,
+      acylAcidAtoms,
+      acylAcidHill,
+      acylAcidFormula,
+      alkOHAtoms,
+      alkOHHill,
+      alkOHFormula
+    };
+  }
+
+  function inferOrganicEsterification(fA, fB, catalystFormula = null) {
+    const orgA = getBridgedOrganic(fA);
+    const orgB = getBridgedOrganic(fB);
+    if (!orgA || !orgB) return null;
+
+    const isMonoAcid = (e) =>
+      e.features.nCOOH === 1 &&
+      e.features.nAlcoholOH === 0 &&
+      e.features.nBasicN === 0 &&
+      e.features.nEster === 0 &&
+      (e.features.nPhenolOH === 0 || e.compound.id === 'salicylic-acid');
+
+    const isMonoAlcohol = (e) =>
+      e.features.nAlcoholOH === 1 &&
+      e.features.nCOOH === 0 &&
+      e.features.nPhenolOH === 0 &&
+      e.features.nBasicN === 0 &&
+      e.features.nEster === 0 &&
+      e.compound.id !== 'vinyl-alcohol';
+
+    let acidEntry = null;
+    let alcEntry = null;
+    if (isMonoAcid(orgA) && isMonoAlcohol(orgB)) {
+      acidEntry = orgA;
+      alcEntry = orgB;
+    } else if (isMonoAcid(orgB) && isMonoAlcohol(orgA)) {
+      acidEntry = orgB;
+      alcEntry = orgA;
+    }
+    if (!acidEntry || !alcEntry) return null;
+
+    const pairKey = `${acidEntry.compound.id}+${alcEntry.compound.id}`;
+    const knownEsterToken = KNOWN_ESTER_PAIR_MAP[pairKey];
+
+    const esterAtoms = cloneAndModifyAtoms(acidEntry.features.atoms, {
+      ...alcEntry.features.atoms,
+      H: (alcEntry.features.atoms.H || 0) - 2,
+      O: (alcEntry.features.atoms.O || 0) - 1
+    });
+    const esterHill = buildHillFormulaFromAtoms(esterAtoms);
+    const esterFormula = knownEsterToken || registerDynamicFormula(esterHill);
+
+    const acidNameVi = getOrganicName(acidEntry, 'vi');
+    const acidNameEn = getOrganicName(acidEntry, 'en');
+    const alcNameVi = getOrganicName(alcEntry, 'vi');
+    const alcNameEn = getOrganicName(alcEntry, 'en');
+    const esterEntry = getBridgedOrganic(esterFormula);
+    const esterLabelVi = esterEntry ? getOrganicName(esterEntry, 'vi') : formatFormulaUnicode(esterFormula);
+    const esterLabelEn = esterEntry ? getOrganicName(esterEntry, 'en') : formatFormulaUnicode(esterFormula);
+
+    return makeBalancedResult(
+      [fA, fB],
+      [
+        { formula: esterFormula, state: null },
+        { formula: 'H2O', state: null }
+      ],
+      {
+        tier: 2,
+        type: 'esterification',
+        reversible: true,
+        catalyst: catalystFormula,
+        condVi: 'H₂SO₄ đặc, t°',
+        condEn: 'conc. H₂SO₄, Δ',
+        phenVi: `Khi đun nóng hỗn hợp ${acidNameVi} và ${alcNameVi} với H₂SO₄ đặc, xuất hiện lớp ester ${esterLabelVi} mùi thơm đặc trưng, nhẹ hơn nước và tách lớp nổi lên trên.`,
+        phenEn: `Warming ${acidNameEn} and ${alcNameEn} with concentrated H₂SO₄ produces a fragrant upper layer of ester ${esterLabelEn}.`,
+        expVi: `Phản ứng ester hóa thuận nghịch giữa carboxylic acid đơn chức (${formatFormulaUnicode(acidEntry.token)}) và alcohol đơn chức (${formatFormulaUnicode(alcEntry.token)}): nhóm -OH của nhóm carboxyl kết hợp với H của nhóm -OH alcohol tách ra phân tử H₂O và ghép thành ester ${formatFormulaUnicode(esterFormula)}.`,
+        expEn: `Reversible Fischer esterification between monocarboxylic acid ${formatFormulaUnicode(acidEntry.token)} and monohydric alcohol ${formatFormulaUnicode(alcEntry.token)} eliminates H₂O to form ${formatFormulaUnicode(esterFormula)}.`
+      }
+    );
+  }
+
+  function inferTier2Organic(fA, fB) {
+    const orgA = getBridgedOrganic(fA);
+    const orgB = getBridgedOrganic(fB);
+    if (!orgA && !orgB) return null;
+
+    // Rule 10a: Both reactants are organic -> check Esterification (Carboxylic acid + Alcohol)
+    if (orgA && orgB) {
+      const esterRes = inferOrganicEsterification(fA, fB, null);
+      if (esterRes) return esterRes;
+    }
+
+    const org = orgA || orgB;
+    const orgInput = org === orgA ? fA : fB;
+    const other = org === orgA ? fB : fA;
+    const feat = org.features;
+    const comp = org.compound;
+    const nameVi = getOrganicName(org, 'vi');
+    const nameEn = getOrganicName(org, 'en');
+    const dispOrg = formatFormulaUnicode(orgInput);
+
+    // =========================================================================
+    // RULE 1: COMPLETE COMBUSTION (+ O2, t°)
+    // =========================================================================
+    if (other === 'O2') {
+      const atoms = feat.atoms;
+      const elKeys = Object.keys(atoms);
+      if (comp.id === 'carbon-tetrachloride') {
+        return makeNoReactionResult(
+          [fA, fB],
+          `${dispOrg} không cháy trong khí O₂ (từng được dùng làm chất dập lửa).`,
+          `${dispOrg} is non-flammable and does not burn in O₂.`,
+          `Nguyên tử C trong CCl₄ đã ở trạng thái oxi hóa cực đại +4 nên không bị oxi hóa thêm bởi O₂.`,
+          `Carbon in CCl₄ is already at its maximum +4 oxidation state and cannot be combusted by O₂.`
+        );
+      }
+
+      // 1a. Contains only C, H or C, H, O (or C, O like C3O2)
+      if (atoms.C > 0 && elKeys.every((k) => k === 'C' || k === 'H' || k === 'O')) {
+        const prods = atoms.H > 0
+          ? [{ formula: 'CO2', state: 'gas' }, { formula: 'H2O', state: null }]
+          : [{ formula: 'CO2', state: 'gas' }];
+        const res = makeBalancedResult([fA, fB], prods, {
+          tier: 2,
+          type: 'combustion',
+          condVi: 't°',
+          condEn: 'Δ',
+          phenVi: `${nameVi} (${dispOrg}) cháy hoàn toàn trong khí O₂ dư, tỏa nhiều nhiệt, tạo khí CO₂ không màu và hơi nước.`,
+          phenEn: `${nameEn} (${dispOrg}) burns completely in excess O₂, releasing heat, CO₂ gas, and water vapor.`,
+          expVi: `Phản ứng đốt cháy hoàn toàn hợp chất hữu cơ chứa ${atoms.O ? 'C, H, O' : 'C, H'}: toàn bộ C chuyển thành CO₂↑ và toàn bộ H chuyển thành H₂O.`,
+          expEn: `Complete combustion of ${atoms.O ? 'a C, H, O organic compound' : 'a hydrocarbon'} converts all carbon to CO₂↑ and all hydrogen to H₂O.`
+        });
+        if (res) return res;
+      }
+
+      // 1b. Contains C, H, N or C, H, O, N -> CO2↑ + H2O + N2↑
+      if (atoms.C > 0 && atoms.H > 0 && atoms.N > 0 && elKeys.every((k) => k === 'C' || k === 'H' || k === 'O' || k === 'N')) {
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: 'CO2', state: 'gas' },
+            { formula: 'H2O', state: null },
+            { formula: 'N2', state: 'gas' }
+          ],
+          {
+            tier: 2,
+            type: 'combustion',
+            condVi: 't°',
+            condEn: 'Δ',
+            phenVi: `${nameVi} (${dispOrg}) cháy hoàn toàn trong O₂ dư tỏa nhiệt, giải phóng hỗn hợp khí không màu gồm CO₂, N₂ và hơi nước.`,
+            phenEn: `${nameEn} (${dispOrg}) undergoes complete combustion in excess O₂ to produce CO₂ gas, water vapor, and N₂ gas.`,
+            expVi: `Đốt cháy hoàn toàn hợp chất hữu cơ chứa Nitrogen (${atoms.O ? 'C, H, O, N' : 'C, H, N'}): C oxi hóa thành CO₂↑, H thành H₂O và N chuyển về đơn chất khí N₂↑ bền vững.`,
+            expEn: `Complete combustion of a nitrogen-containing organic molecule (${atoms.O ? 'C, H, O, N' : 'C, H, N'}) yields CO₂↑, H₂O, and elemental N₂↑ gas.`
+          }
+        );
+        if (res) return res;
+      }
+    }
+
+    // =========================================================================
+    // RULE 2: ALKALI METAL REACTION (+ Na or + K)
+    // =========================================================================
+    if (other === 'Na' || other === 'K') {
+      const M = other;
+      const k = feat.nCOOH + feat.nPhenolOH + feat.nAlcoholOH + (comp.id === 'pyrrole' ? 1 : 0);
+      if (k > 0) {
+        const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, [M]: k });
+        const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        const groupDescVi = [
+          feat.nCOOH > 0 ? `${feat.nCOOH} nhóm -COOH` : '',
+          feat.nPhenolOH > 0 ? `${feat.nPhenolOH} nhóm -OH phenol` : '',
+          feat.nAlcoholOH > 0 ? `${feat.nAlcoholOH} nhóm -OH alcohol` : ''
+        ].filter(Boolean).join(' và ');
+        const groupDescEn = [
+          feat.nCOOH > 0 ? `${feat.nCOOH} -COOH group(s)` : '',
+          feat.nPhenolOH > 0 ? `${feat.nPhenolOH} phenolic -OH group(s)` : '',
+          feat.nAlcoholOH > 0 ? `${feat.nAlcoholOH} alcoholic -OH group(s)` : ''
+        ].filter(Boolean).join(' and ');
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: saltFormula, state: null },
+            { formula: 'H2', state: 'gas' }
+          ],
+          {
+            tier: 2,
+            type: 'displacement',
+            condVi: '',
+            condEn: '',
+            phenVi: `Kim loại ${M} tan dần khi tác dụng với ${nameVi} (${dispOrg}), sủi bọt khí H₂ không màu đều đặn.`,
+            phenEn: `Alkali metal ${M} dissolves steadily in ${nameEn} (${dispOrg}) with effervescence of colorless H₂ gas.`,
+            expVi: `Phân tử ${nameVi} có tổng cộng k = ${k} nguyên tử H linh động (${groupDescVi || 'nhóm phân cực'}), nên 1 mol chất hữu cơ tác dụng tối đa với ${k} mol ${M} tạo muối ${formatFormulaUnicode(saltFormula)} và giải phóng ${k / 2} mol khí H₂↑.`,
+            expEn: `${nameEn} possesses k = ${k} active hydrogen atom(s) (${groupDescEn || 'polar group'}), reacting in a 1:${k} molar ratio with ${M} to form ${formatFormulaUnicode(saltFormula)} and liberate ${k / 2} mol H₂↑.`
+          }
+        );
+        if (res) return res;
+      } else {
+        return makeNoReactionResult(
+          [fA, fB],
+          `Không xảy ra phản ứng: mẫu kim loại ${M} không sủi bọt khí H₂ trong ${nameVi} (${dispOrg}).`,
+          `No reaction: alkali metal ${M} does not evolve H₂ gas with ${nameEn} (${dispOrg}).`,
+          `Phân tử ${nameVi} (${comp.category || 'hợp chất hữu cơ'}) không có nguyên tử H linh động ở nhóm chức -OH hay -COOH nên không phản ứng với kim loại kiềm ${M}.`,
+          `${nameEn} (${comp.categoryEn || 'organic compound'}) lacks active -OH or -COOH hydrogen atoms and is therefore unreactive toward alkali metal ${M}.`
+        );
+      }
+    }
+
+    // =========================================================================
+    // RULE 3: AQUEOUS ALKALI (+ NaOH or + KOH)
+    // =========================================================================
+    if (other === 'NaOH' || other === 'KOH') {
+      const M = other === 'NaOH' ? 'Na' : 'K';
+
+      // 3a. Ester Saponification (t°)
+      if (feat.nEster > 0) {
+        // Diester special check (e.g. Dimethyl oxalate)
+        if (comp.id === 'dimethyl-oxalate') {
+          const saltF = registerDynamicFormula(M === 'Na' ? 'C2Na2O4' : 'C2K2O4');
+          const saltDisp = M === 'Na' ? 'Na2C2O4' : 'K2C2O4';
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: saltF, displayFormula: saltDisp, state: null },
+              { formula: 'CH3OH', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'hydrolysis',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Tinh thể ${nameVi} tan hoàn toàn khi đun nóng với dung dịch ${other}, tạo dung dịch muối oxalate và methanol.`,
+              phenEn: `${nameEn} saponifies completely upon warming with aqueous ${other} to yield soluble oxalate salt and methanol.`,
+              expVi: `Phản ứng xà phòng hóa ester hai chức ${dispOrg} cần 2 mol ${other}, cắt hai liên kết ester tạo muối ${formatFormulaUnicode(saltDisp)} và 2 mol CH₃OH.`,
+              expEn: `Saponification of diester ${dispOrg} consumes 2 equivalents of ${other}, cleaving both ester linkages to form ${formatFormulaUnicode(saltDisp)} and 2 mol CH₃OH.`
+            }
+          );
+          if (res) return res;
+        }
+
+        const split = splitEsterOnGraph(org);
+        if (split) {
+          const { est, acylFrag, alkFrag, acylAcidAtoms, acylAcidFormula, alkOHAtoms, alkOHFormula } = split;
+          const mAcyl = 1 + acylFrag.nPhenol + acylFrag.nCOOHFrag;
+          const acylSaltAtoms = cloneAndModifyAtoms(acylAcidAtoms, { H: -mAcyl, [M]: mAcyl });
+          let acylSaltFormula;
+          if (acylAcidFormula === 'CH3COOH' && mAcyl === 1) {
+            acylSaltFormula = M === 'Na' ? 'CH3COONa' : 'CH3COOK';
+          } else if (acylAcidFormula === 'HCOOH' && mAcyl === 1) {
+            acylSaltFormula = M === 'Na' ? 'HCOONa' : 'HCOOK';
+          } else {
+            acylSaltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(acylSaltAtoms));
+          }
+
+          // Case 3a-i: Vinyl ester (e.g. Vinyl acetate -> salt + CH3CHO)
+          if (est.esterType === 'vinyl') {
+            const aldFormula = alkOHAtoms.C === 2 && alkOHAtoms.H === 4 && alkOHAtoms.O === 1
+              ? 'CH3CHO'
+              : registerDynamicFormula(buildHillFormulaFromAtoms(alkOHAtoms));
+            const res = makeBalancedResult(
+              [fA, fB],
+              [
+                { formula: acylSaltFormula, state: null },
+                { formula: aldFormula, state: null }
+              ],
+              {
+                tier: 2,
+                type: 'hydrolysis',
+                condVi: 't°',
+                condEn: 'Δ',
+                phenVi: `Lớp ester ${nameVi} tan hết khi đun nóng với dung dịch ${other}, tạo muối carboxylate và aldehyde (${formatFormulaUnicode(aldFormula)}) có khả năng tráng bạc.`,
+                phenEn: `${nameEn} hydrolyzes completely in warm aqueous ${other} to produce a carboxylate salt and aldehyde (${formatFormulaUnicode(aldFormula)}).`,
+                expVi: `Thủy phân ester gốc vinyl (${dispOrg}) trong kiềm ${other}: gốc vinyl alcohol (CH₂=CH–OH) sinh ra không bền, tự chuyển vị (tautomer hóa) ngay lập tức thành aldehyde ${formatFormulaUnicode(aldFormula)} thay vì alcohol!`,
+                expEn: `Alkaline hydrolysis of vinyl ester ${dispOrg} releases unstable vinyl alcohol (CH₂=CH–OH), which immediately tautomerizes into aldehyde ${formatFormulaUnicode(aldFormula)} rather than forming an alcohol.`
+              }
+            );
+            if (res) return res;
+          }
+
+          // Case 3a-ii: Phenolic ester (e.g. Phenyl acetate 1:2, Aspirin 1:3)
+          if (est.esterType === 'phenol') {
+            const mAlk = 1 + alkFrag.nCOOHFrag + alkFrag.nPhenol;
+            const alkSaltAtoms = cloneAndModifyAtoms(alkOHAtoms, { H: -mAlk, [M]: mAlk });
+            const alkSaltFormula = alkOHFormula === 'C6H5OH' && mAlk === 1
+              ? (M === 'Na' ? 'C6H5ONa' : 'C6H5OK')
+              : registerDynamicFormula(buildHillFormulaFromAtoms(alkSaltAtoms));
+            const totalBase = mAcyl + mAlk;
+
+            const res = makeBalancedResult(
+              [fA, fB],
+              [
+                { formula: acylSaltFormula, state: null },
+                { formula: alkSaltFormula, state: null },
+                { formula: 'H2O', state: null }
+              ],
+              {
+                tier: 2,
+                type: 'hydrolysis',
+                condVi: 't°',
+                condEn: 'Δ',
+                phenVi: `${nameVi} (${dispOrg}) phản ứng hoàn toàn khi đun nóng với dung dịch ${other} theo tỉ lệ mol 1 : ${totalBase}, thu được dung dịch chứa hai muối tan và nước (không tạo alcohol).`,
+                phenEn: `${nameEn} (${dispOrg}) saponifies completely in warm ${other} in a 1:${totalBase} molar ratio, forming two soluble salts and water (no alcohol is formed).`,
+                expVi: `${nameVi} là ester của phenol: khi cắt liên kết ester C(=O)–O–C(vòng thơm), nhóm -OH phenol sinh ra${alkFrag.nCOOHFrag > 0 ? ' (cùng nhóm -COOH trên vòng)' : ''} tiếp tục phản ứng ngay với ${other} tạo muối phenolate ${formatFormulaUnicode(alkSaltFormula)}, muối ${formatFormulaUnicode(acylSaltFormula)} và H₂O (tỉ lệ 1 : ${totalBase}).`,
+                expEn: `${nameEn} is a phenolic ester: cleavage of the acyl–aryl oxygen bond releases a phenolic -OH${alkFrag.nCOOHFrag > 0 ? ' (alongside the ring -COOH)' : ''}, which immediately neutralizes additional ${other} to yield two salts (${formatFormulaUnicode(acylSaltFormula)} and ${formatFormulaUnicode(alkSaltFormula)}) plus H₂O in a 1:${totalBase} ratio.`
+              }
+            );
+            if (res) return res;
+          }
+
+          // Case 3a-iii: Alkyl ester with extra phenolic -OH on acyl ring (e.g. Methyl salicylate 1:2)
+          if (mAcyl > 1) {
+            const res = makeBalancedResult(
+              [fA, fB],
+              [
+                { formula: acylSaltFormula, state: null },
+                { formula: alkOHFormula, state: null },
+                { formula: 'H2O', state: null }
+              ],
+              {
+                tier: 2,
+                type: 'hydrolysis',
+                condVi: 't°',
+                condEn: 'Δ',
+                phenVi: `${nameVi} (${dispOrg}) tan hoàn toàn khi đun nóng với dung dịch ${other} theo tỉ lệ mol 1 : ${mAcyl}, giải phóng alcohol ${formatFormulaUnicode(alkOHFormula)} và nước.`,
+                phenEn: `${nameEn} (${dispOrg}) reacts completely with warm ${other} in a 1:${mAcyl} molar ratio to yield ${formatFormulaUnicode(acylSaltFormula)}, ${formatFormulaUnicode(alkOHFormula)}, and water.`,
+                expVi: `Phân tử ${nameVi} vừa có chức ester (-COO-) vừa có nhóm -OH phenol tự do, nên phản ứng với ${mAcyl} mol ${other} (1 mol xà phòng hóa chức ester tạo alcohol ${formatFormulaUnicode(alkOHFormula)}, ${mAcyl - 1} mol trung hòa nhóm -OH phenol tạo H₂O).`,
+                expEn: `${nameEn} contains both an alkyl ester group and a free phenolic -OH, consuming ${mAcyl} equivalents of ${other} (1 for ester saponification to ${formatFormulaUnicode(alkOHFormula)} and ${mAcyl - 1} for phenolic neutralization to H₂O).`
+              }
+            );
+            if (res) return res;
+          }
+
+          // Case 3a-iv: Standard alkyl monoester (1:1 -> carboxylate salt + alcohol)
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: acylSaltFormula, state: null },
+              { formula: alkOHFormula, state: null }
+            ],
+            {
+              tier: 2,
+              type: 'hydrolysis',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Khi đun nóng với dung dịch ${other}, lớp ester ${nameVi} (${dispOrg}) tan dần tạo dung dịch đồng nhất gồm muối ${formatFormulaUnicode(acylSaltFormula)} và alcohol ${formatFormulaUnicode(alkOHFormula)}.`,
+              phenEn: `Upon heating with aqueous ${other}, the ester layer of ${nameEn} (${dispOrg}) dissolves completely to form carboxylate salt ${formatFormulaUnicode(acylSaltFormula)} and alcohol ${formatFormulaUnicode(alkOHFormula)}.`,
+              expVi: `Phản ứng xà phòng hóa (thủy phân ester trong môi trường kiềm, một chiều) cắt liên kết C(=O)–O của ${nameVi} theo tỉ lệ mol 1 : 1 tạo muối carboxylate ${formatFormulaUnicode(acylSaltFormula)} và alcohol ${formatFormulaUnicode(alkOHFormula)}.`,
+              expEn: `Irreversible alkaline saponification cleaves the C(=O)–O ester bond of ${nameEn} in a 1:1 molar ratio to yield carboxylate salt ${formatFormulaUnicode(acylSaltFormula)} and alcohol ${formatFormulaUnicode(alkOHFormula)}.`
+            }
+          );
+          if (res) return res;
+        }
+      }
+
+      // 3b. Carboxylic Acids & Phenols (nAcidBase = nCOOH + nPhenolOH > 0)
+      const nAcidBase = feat.nCOOH + feat.nPhenolOH + (comp.id === 'squaric-acid' ? 2 : comp.id === 'vitamin-c' ? 1 : 0);
+      if (nAcidBase > 0) {
+        const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -nAcidBase, [M]: nAcidBase });
+        const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        const alcUntouchedNoteVi = feat.nAlcoholOH > 0 && comp.id !== 'squaric-acid' && comp.id !== 'vitamin-c'
+          ? ` (Lưu ý: ${feat.nAlcoholOH} nhóm -OH alcohol trong phân tử không phản ứng với ${other}).`
+          : '';
+        const alcUntouchedNoteEn = feat.nAlcoholOH > 0 && comp.id !== 'squaric-acid' && comp.id !== 'vitamin-c'
+          ? ` (Note: the ${feat.nAlcoholOH} alcoholic -OH group(s) do not react with ${other}.)`
+          : '';
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: saltFormula, state: null },
+            { formula: 'H2O', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'neutralization',
+            condVi: '',
+            condEn: '',
+            phenVi: `${nameVi} (${dispOrg}) phản ứng trung hòa với dung dịch ${other} theo tỉ lệ mol 1 : ${nAcidBase} tạo dung dịch muối ${formatFormulaUnicode(saltFormula)} tan tốt và nước.`,
+            phenEn: `${nameEn} (${dispOrg}) neutralizes aqueous ${other} in a 1:${nAcidBase} molar ratio to form a clear solution of ${formatFormulaUnicode(saltFormula)} and water.`,
+            expVi: `Phân tử ${nameVi} có ${nAcidBase} nhóm mang tính acid (${[feat.nCOOH > 0 ? `${feat.nCOOH} nhóm -COOH` : '', feat.nPhenolOH > 0 ? `${feat.nPhenolOH} nhóm -OH phenol` : ''].filter(Boolean).join(' và ') || 'nhóm enol acid'}), nên trung hòa đúng ${nAcidBase} mol ${other} tạo muối ${formatFormulaUnicode(saltFormula)} và ${nAcidBase} mol H₂O.${alcUntouchedNoteVi}`,
+            expEn: `${nameEn} contains ${nAcidBase} acidic group(s) (${[feat.nCOOH > 0 ? `${feat.nCOOH} -COOH` : '', feat.nPhenolOH > 0 ? `${feat.nPhenolOH} phenolic -OH` : ''].filter(Boolean).join(' and ') || 'acidic enol'}), neutralizing ${nAcidBase} equivalents of ${other} to yield ${formatFormulaUnicode(saltFormula)} and ${nAcidBase} H₂O.${alcUntouchedNoteEn}`
+          }
+        );
+        if (res) return res;
+      }
+
+      // 3c. Pure Alcohol (nAcidBase === 0 && nAlcoholOH > 0) -> No Reaction
+      if (nAcidBase === 0 && feat.nAlcoholOH > 0) {
+        return makeNoReactionResult(
+          [fA, fB],
+          `Không xảy ra phản ứng giữa alcohol ${nameVi} (${dispOrg}) và dung dịch kiềm ${other}.`,
+          `No reaction occurs between alcohol ${nameEn} (${dispOrg}) and aqueous alkali ${other}.`,
+          `Khác với Phenol và Carboxylic acid, nhóm -OH của alcohol không có tính acid đủ mạnh (gốc hydrocarbon không hút electron mạnh như vòng benzene hay nhóm C=O) nên chỉ phản ứng với kim loại kiềm (Na, K) mà KHÔNG phản ứng với dung dịch ${other}.`,
+          `Unlike phenols and carboxylic acids, alcoholic -OH groups are too weakly acidic to be deprotonated by aqueous ${other} (they react only with active alkali metals like Na or K).`
+        );
+      }
+
+      return makeNoReactionResult(
+        [fA, fB],
+        `Không xảy ra phản ứng giữa ${nameVi} (${dispOrg}) và dung dịch ${other} ở điều kiện thường.`,
+        `No reaction occurs between ${nameEn} (${dispOrg}) and aqueous ${other} under standard conditions.`,
+        `${nameVi} không có nhóm chức acid (-COOH, -OH phenol) hay liên kết ester để tác dụng với dung dịch kiềm ${other}.`,
+        `${nameEn} lacks acidic (-COOH, phenolic -OH) or hydrolyzable ester functional groups to react with aqueous ${other}.`
+      );
+    }
+
+    // =========================================================================
+    // RULE 4: CARBONATE / BICARBONATE SALTS (+ Na2CO3, + NaHCO3, + CaCO3)
+    // =========================================================================
+    if (other === 'Na2CO3' || other === 'NaHCO3' || other === 'CaCO3') {
+      const k = feat.nCOOH > 0
+        ? feat.nCOOH
+        : (comp.id === 'picric-acid' ? 1 : comp.id === 'squaric-acid' || comp.id === 'vitamin-c' ? 1 : 0);
+
+      if (k > 0) {
+        let saltFormula;
+        if (other === 'Na2CO3' || other === 'NaHCO3') {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Na: k });
+          saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        } else {
+          // CaCO3 (Ca has valence 2)
+          if (k % 2 === 0) {
+            const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Ca: k / 2 });
+            saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+          } else {
+            const doubled = Object.create(null);
+            Object.keys(feat.atoms).forEach((sym) => {
+              doubled[sym] = feat.atoms[sym] * 2;
+            });
+            doubled.H -= 2 * k;
+            if (doubled.H <= 0) delete doubled.H;
+            doubled.Ca = k;
+            saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(doubled));
+          }
+        }
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: saltFormula, state: null },
+            { formula: 'CO2', state: 'gas' },
+            { formula: 'H2O', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'exchange',
+            condVi: '',
+            condEn: '',
+            phenVi: `Sủi bọt khí CO₂ không màu mạnh khi cho ${nameVi} (${dispOrg}) tác dụng với ${formatFormulaUnicode(other)}${other === 'CaCO3' ? ', chất rắn đá vôi CaCO₃ tan dần' : ''}.`,
+            phenEn: `Vigorous effervescence of colorless CO₂ gas occurs when ${nameEn} (${dispOrg}) reacts with ${formatFormulaUnicode(other)}.`,
+            expVi: comp.id === 'picric-acid'
+              ? `Nhờ 3 nhóm -NO₂ hút electron cực mạnh trên vòng thơm, Picric acid có lực acid mạnh vượt trội so với Phenol thường (mạnh hơn cả H₂CO₃) nên đẩy được khí CO₂↑ ra khỏi muối ${formatFormulaUnicode(other)}.`
+              : `Do có lực acid mạnh hơn Carbonic acid (Carboxylic acid > H₂CO₃ > Phenol > Alcohol), ${nameVi} (${feat.nCOOH} nhóm -COOH) đẩy được CO₂↑ và H₂O ra khỏi muối ${formatFormulaUnicode(other)} tạo muối carboxylate ${formatFormulaUnicode(saltFormula)}.`,
+            expEn: comp.id === 'picric-acid'
+              ? `Three strongly electron-withdrawing -NO₂ groups make Picric acid a strong organic acid (stronger than H₂CO₃, unlike ordinary Phenol), displacing CO₂↑ gas from ${formatFormulaUnicode(other)}.`
+              : `Because carboxylic acids are stronger acids than carbonic acid (Carboxylic acid > H₂CO₃ > Phenol > Alcohol), ${nameEn} displaces CO₂↑ gas and H₂O from ${formatFormulaUnicode(other)} to form ${formatFormulaUnicode(saltFormula)}.`
+          }
+        );
+        if (res) return res;
+      } else {
+        const isPhenol = feat.nPhenolOH > 0;
+        return makeNoReactionResult(
+          [fA, fB],
+          `Không xảy ra phản ứng (không có bọt khí CO₂ thoát ra) khi trộn ${nameVi} (${dispOrg}) với ${formatFormulaUnicode(other)}.`,
+          `No reaction (no CO₂ effervescence) occurs between ${nameEn} (${dispOrg}) and ${formatFormulaUnicode(other)}.`,
+          isPhenol
+            ? `Thứ tự lực acid chuẩn: Carboxylic acid > H₂CO₃ > Phenol > Alcohol. Vì Phenol thường (${nameVi}) có tính acid rất yếu (yếu hơn cả H₂CO₃) nên không thể đẩy CO₂ ra khỏi muối carbonate ${formatFormulaUnicode(other)}.`
+            : `Thứ tự lực acid chuẩn: Carboxylic acid > H₂CO₃ > Phenol > Alcohol. ${nameVi} không có nhóm -COOH nên không phản ứng với muối carbonate ${formatFormulaUnicode(other)}.`,
+          isPhenol
+            ? `Acid strength order: Carboxylic acid > H₂CO₃ > Phenol > Alcohol. Ordinary phenols (${nameEn}) are weaker acids than carbonic acid (H₂CO₃) and cannot liberate CO₂ from ${formatFormulaUnicode(other)}.`
+            : `Acid strength order: Carboxylic acid > H₂CO₃ > Phenol > Alcohol. ${nameEn} lacks a -COOH group and cannot displace CO₂ from ${formatFormulaUnicode(other)}.`
+        );
+      }
+    }
+
+    // =========================================================================
+    // RULE 5: AMINE / AMINO ACID / PYRIDINE / NICOTINE + STRONG ACID (+ HCl or + HBr)
+    // =========================================================================
+    if (other === 'HCl' || other === 'HBr') {
+      const X = other === 'HCl' ? 'Cl' : 'Br';
+      const b = feat.nBasicN;
+      if (b > 0) {
+        const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: b, [X]: b });
+        const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        const isAminoAcid = feat.nCOOH > 0;
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: saltFormula, state: null }],
+          {
+            tier: 2,
+            type: 'neutralization',
+            condVi: '',
+            condEn: '',
+            phenVi: `${nameVi} (${dispOrg}) phản ứng nhanh với dung dịch ${other} theo tỉ lệ mol 1 : ${b} tạo muối ammonium halide (${formatFormulaUnicode(saltFormula)}) tan tốt trong nước.`,
+            phenEn: `${nameEn} (${dispOrg}) reacts with ${other} in a 1:${b} molar ratio to form water-soluble ammonium salt ${formatFormulaUnicode(saltFormula)}.`,
+            expVi: `Phân tử ${nameVi} có ${b} nguyên tử Nitrogen mang cặp electron tự do có tính base${isAminoAcid ? ' (thể hiện tính base của amino acid lưỡng tính)' : ''}, nhận đúng ${b} proton H⁺ từ ${b} phân tử ${other} tạo muối ${formatFormulaUnicode(saltFormula)}.`,
+            expEn: `${nameEn} possesses ${b} basic Nitrogen center(s) with available lone pairs${isAminoAcid ? ' (demonstrating the basic side of an amphoteric amino acid)' : ''}, accepting ${b} H⁺ from ${other} in a 1:${b} ratio to yield ${formatFormulaUnicode(saltFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // If no basic N, check alkene/alkyne hydrohalogenation (+ HCl / + HBr across C=C / C≡C)
+      const m = feat.nNonAromDoubleCC + 2 * feat.nTripleCC;
+      if (m > 0 && feat.nCOOH === 0 && feat.nCHO === 0) {
+        const addAtoms = cloneAndModifyAtoms(feat.atoms, { H: m, [X]: m });
+        const addFormula = registerDynamicFormula(buildHillFormulaFromAtoms(addAtoms));
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: addFormula, state: null }],
+          {
+            tier: 2,
+            type: 'addition',
+            condVi: '',
+            condEn: '',
+            phenVi: `${nameVi} (${dispOrg}) tham gia phản ứng cộng với ${other} tạo dẫn xuất halogen ${formatFormulaUnicode(addFormula)}.`,
+            phenEn: `${nameEn} (${dispOrg}) undergoes hydrohalogenation addition with ${other} to form ${formatFormulaUnicode(addFormula)}.`,
+            expVi: `Phản ứng cộng ${other} vào liên kết bội không no của ${nameVi} tuân theo quy tắc Markovnikov (H ưu tiên cộng vào nguyên tử C bậc thấp hơn mang nhiều H hơn, còn ${X} gắn vào C bậc cao hơn).`,
+            expEn: `Electrophilic addition of ${other} across the unsaturated bond(s) of ${nameEn} follows Markovnikov’s rule to yield ${formatFormulaUnicode(addFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+    }
+
+    // =========================================================================
+    // RULE 6: UNSATURATED ADDITION (+ Br2 or + H2)
+    // =========================================================================
+    if (other === 'Br2') {
+      const d = feat.nNonAromDoubleCC;
+      const t = feat.nTripleCC;
+      const m = d + 2 * t;
+
+      // 6a. Has non-aromatic C=C or C≡C pi bonds (m = d + 2*t > 0)
+      if (m > 0) {
+        const brAtoms = cloneAndModifyAtoms(feat.atoms, { Br: 2 * m });
+        const brFormula = registerDynamicFormula(buildHillFormulaFromAtoms(brAtoms));
+        const bondDetailVi = [
+          d > 0 ? `${d} liên kết đôi C=C` : '',
+          t > 0 ? `${t} liên kết ba C≡C` : ''
+        ].filter(Boolean).join(' và ');
+        const bondDetailEn = [
+          d > 0 ? `${d} non-aromatic C=C double bond(s)` : '',
+          t > 0 ? `${t} C≡C triple bond(s)` : ''
+        ].filter(Boolean).join(' and ');
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: brFormula, state: null }],
+          {
+            tier: 2,
+            type: 'addition',
+            condVi: m > 1 ? 'Br₂ dư' : '',
+            condEn: m > 1 ? 'excess Br₂' : '',
+            phenVi: `Dung dịch nước bromine (Br₂) màu vàng nâu bị mất màu nhanh chóng khi tác dụng với ${nameVi} (${dispOrg}) ngay ở nhiệt độ thường.`,
+            phenEn: `Orange-brown bromine water (Br₂) rapidly decolorizes at room temperature upon reaction with ${nameEn} (${dispOrg}).`,
+            expVi: `Phân tử ${nameVi} chứa ${bondDetailVi} (tổng số liên kết π không thơm m = ${m}), nên 1 mol chất hữu cơ cộng tối đa ${m} mol Br₂ tạo dẫn xuất bromo bão hòa ${formatFormulaUnicode(brFormula)}.`,
+            expEn: `${nameEn} contains ${bondDetailEn} (m = ${m} reactive π bonds), adding up to ${m} equivalents of Br₂ across the multiple bond(s) to form ${formatFormulaUnicode(brFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Strained 3-membered cyclopropane / spiropentane ring-opening with Br2
+      if (comp.id === 'cyclopropane' || comp.id === 'spiropentane') {
+        const mRing = comp.id === 'spiropentane' ? 2 : 1;
+        const brAtoms = cloneAndModifyAtoms(feat.atoms, { Br: 2 * mRing });
+        const brFormula = registerDynamicFormula(buildHillFormulaFromAtoms(brAtoms));
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: brFormula, state: null }],
+          {
+            tier: 2,
+            type: 'addition',
+            condVi: '',
+            condEn: '',
+            phenVi: `Dung dịch nước Br₂ màu vàng nâu bị mất màu do phản ứng cộng mở vòng 3 cạnh của ${nameVi} (${dispOrg}).`,
+            phenEn: `Bromine water is decolorized via ring-opening addition across the strained 3-membered ring of ${nameEn} (${dispOrg}).`,
+            expVi: `Do vòng 3 cạnh của ${nameVi} có sức căng góc (~60°) rất lớn nên liên kết σ trong vòng kém bền, dễ bị cắt đứt để cộng mở vòng với Br₂ tạo ${formatFormulaUnicode(brFormula)}.`,
+            expEn: `High 60° angle strain in the 3-membered ring of ${nameEn} enables ring-opening addition with Br₂ to yield ${formatFormulaUnicode(brFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Saturated / aromatic Aldehyde or Reducing Sugar or Formic acid/Formate + Br2(aq) (+ H2O)
+      if (feat.nReducingCHO > 0) {
+        const k = feat.nReducingCHO;
+        const oxAtoms = cloneAndModifyAtoms(feat.atoms, { O: k });
+        const oxHill = buildHillFormulaFromAtoms(oxAtoms);
+        const oxFormula = KNOWN_ACID_BY_HILL[oxHill] || (oxHill === 'C6H12O7' ? 'GluconicAcid' : registerDynamicFormula(oxHill));
+        const res = makeBalancedResult(
+          [fA, fB, 'H2O'],
+          [
+            { formula: oxFormula, state: null },
+            { formula: 'HBr', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'redox',
+            condVi: 'nước brom',
+            condEn: 'Br₂(aq)',
+            phenVi: `Nước bromine màu vàng nâu bị mất màu hoàn toàn khi nhỏ vào ${nameVi} (${dispOrg}).`,
+            phenEn: `Orange-brown bromine water decolorizes completely when mixed with ${nameEn} (${dispOrg}).`,
+            expVi: `Trong môi trường nước (Br₂ + H₂O), nhóm chức aldehyde (-CHO) của ${nameVi} thể hiện tính khử, bị Br₂ oxi hóa thành nhóm carboxyl (-COOH) tạo ${formatFormulaUnicode(oxFormula)} và HBr.`,
+            expEn: `Aqueous bromine water (Br₂ + H₂O) oxidizes the reducing aldehyde (-CHO) group of ${nameEn} into a carboxylic acid (${formatFormulaUnicode(oxFormula)}) and HBr.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Phenol derivative without C=C/CHO -> ring bromination if ortho/para sites are available
+      if (
+        feat.nPhenolOH > 0 &&
+        comp.id !== '2,4,6-tribromophenol' &&
+        comp.id !== 'picric-acid'
+      ) {
+        const subAtoms = cloneAndModifyAtoms(feat.atoms, { H: -1, Br: 1 });
+        const subFormula = registerDynamicFormula(buildHillFormulaFromAtoms(subAtoms));
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: subFormula, state: 'precipitate' },
+            { formula: 'HBr', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'substitution',
+            condVi: 'nước brom',
+            condEn: 'Br₂(aq)',
+            phenVi: `Nước bromine màu vàng nâu mất màu nhanh và xuất hiện kết tủa của dẫn xuất bromophenol khi gặp ${nameVi} (${dispOrg}).`,
+            phenEn: `Bromine water rapidly decolorizes and forms a brominated phenol precipitate with ${nameEn} (${dispOrg}).`,
+            expVi: `Nhóm -OH phenol đẩy electron hoạt hóa mạnh vòng benzene, giúp ${nameVi} tham gia phản ứng thế nguyên tử H trên vòng thơm bằng Br ngay ở điều kiện thường.`,
+            expEn: `The strongly activating phenolic -OH group promotes immediate electrophilic aromatic bromination of ${nameEn} at room temperature.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // m === 0 (alkane, cycloalkane >= 4C, arene without phenol/aniline, saturated alcohol/ether/acid/ester/ketone)
+      return makeNoReactionResult(
+        [fA, fB],
+        `Nước bromine giữ nguyên màu vàng nâu — KHÔNG xảy ra phản ứng giữa ${nameVi} (${dispOrg}) và dung dịch Br₂ ở điều kiện thường.`,
+        `Bromine water retains its orange-brown color — NO reaction occurs between ${nameEn} (${dispOrg}) and aqueous Br₂ at room temperature.`,
+        feat.hasAromaticRing
+          ? `Phân tử ${nameVi} có hệ liên hợp vòng thơm bền vững và không có liên kết bội C=C/C≡C ở mạch nhánh (cũng không có nhóm -OH phenol, -NH₂ aniline hay -CHO), nên không làm mất màu nước bromine ở điều kiện thường.`
+          : `Phân tử ${nameVi} không chứa liên kết bội C=C hay C≡C không no (m = 0) và không có nhóm -CHO có tính khử nên hoàn toàn không làm mất màu nước bromine.`,
+        feat.hasAromaticRing
+          ? `${nameEn} possesses a stable aromatic ring system with no unsaturated side-chain C=C/C≡C bonds (and no phenolic -OH, aniline -NH₂, or aldehyde -CHO), so it does not decolorize aqueous bromine water.`
+          : `${nameEn} contains no unsaturated C=C or C≡C bonds (m = 0) and no reducing -CHO group, leaving bromine water unchanged.`
+      );
+    }
+
+    if (other === 'H2') {
+      const d = feat.nNonAromDoubleCC;
+      const t = feat.nTripleCC;
+      const nAld = feat.nCHO + (feat.hasHemiacetalCHO ? 1 : 0);
+      const nKet = feat.nKetone;
+      const mH2 = d + 2 * t + nAld + nKet;
+
+      if (mH2 > 0) {
+        const satAtoms = cloneAndModifyAtoms(feat.atoms, { H: 2 * mH2 });
+        const satHill = buildHillFormulaFromAtoms(satAtoms);
+        // Check if saturated product matches a known bridged compound or Tier 1 formula
+        let satFormula = registerDynamicFormula(satHill);
+        if (satHill === 'C6H14O6') satFormula = 'Sorbitol';
+        else if (satHill === 'C6H12' && (comp.id === 'cyclohexene' || comp.id === 'cyclohexa-1,3-diene')) satFormula = 'C6H12';
+        else if (satHill === 'C6H12O' && comp.id === 'cyclohexanone') satFormula = 'Cyclohexanol';
+        else if (satHill === 'C4H10O' && comp.id === 'butanal') satFormula = 'Butan-1-ol';
+        else if (satHill === 'C4H10O' && comp.id === 'butanone') satFormula = 'Butan-2-ol';
+        else if (satHill === 'C4H10O' && comp.id === 'isobutanal') satFormula = 'Isobutanol';
+        else if (satHill === 'C3H8O' && (comp.id === 'propanal' || comp.id === 'acrolein')) satFormula = 'Propan-1-ol';
+        else if (satHill === 'C3H6O3' && comp.id === 'pyruvic-acid') satFormula = 'LacticAcid';
+        else if (satHill === 'C4H6O4' && comp.id === 'fumaric-acid') satFormula = 'SuccinicAcid';
+        else if (satHill === 'C3H6O2' && comp.id === 'acrylic-acid') satFormula = 'PropionicAcid';
+
+        const partsVi = [
+          d > 0 ? `${d} liên kết đôi C=C` : '',
+          t > 0 ? `${t} liên kết ba C≡C` : '',
+          nAld > 0 ? `${nAld} nhóm aldehyde -CHO` : '',
+          nKet > 0 ? `${nKet} nhóm ketone >C=O` : ''
+        ].filter(Boolean).join(', ');
+        const partsEn = [
+          d > 0 ? `${d} C=C double bond(s)` : '',
+          t > 0 ? `${t} C≡C triple bond(s)` : '',
+          nAld > 0 ? `${nAld} aldehyde -CHO group(s)` : '',
+          nKet > 0 ? `${nKet} ketone >C=O group(s)` : ''
+        ].filter(Boolean).join(', ');
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: satFormula, state: null }],
+          {
+            tier: 2,
+            type: 'addition',
+            condVi: 'Ni, t°',
+            condEn: 'Ni, Δ',
+            phenVi: `${nameVi} (${dispOrg}) cộng hợp với khí H₂ trên bề mặt xúc tác Ni đun nóng theo tỉ lệ mol 1 : ${mH2} tạo sản phẩm bão hòa ${formatFormulaUnicode(satFormula)}.`,
+            phenEn: `${nameEn} (${dispOrg}) undergoes catalytic hydrogenation over heated Ni in a 1:${mH2} molar ratio to form ${formatFormulaUnicode(satFormula)}.`,
+            expVi: `Phản ứng cộng H₂ (Ni, t°) bão hòa đồng thời ${partsVi} trong phân tử ${nameVi} (tổng cộng m = ${mH2} mol H₂ cho 1 mol chất hữu cơ) tạo ${formatFormulaUnicode(satFormula)}.`,
+            expEn: `Catalytic hydrogenation (Ni, Δ) saturates ${partsEn} in ${nameEn} (consuming m = ${mH2} mol H₂ per mole) to yield ${formatFormulaUnicode(satFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Arene ring hydrogenation under elevated temperature & pressure (Ni, t°, P)
+      if (feat.nAromaticRings > 0 && feat.nCOOH === 0 && feat.nEster === 0) {
+        const mArom = 3 * feat.nAromaticRings;
+        const satAtoms = cloneAndModifyAtoms(feat.atoms, { H: 2 * mArom });
+        const satHill = buildHillFormulaFromAtoms(satAtoms);
+        const satFormula = satHill === 'C7H14' ? 'Methylcyclohexane' : registerDynamicFormula(satHill);
+        const res = makeBalancedResult(
+          [fA, fB],
+          [{ formula: satFormula, state: null }],
+          {
+            tier: 2,
+            type: 'addition',
+            condVi: 'Ni, t°, P',
+            condEn: 'Ni, Δ, P',
+            phenVi: `Ở nhiệt độ và áp suất cao có xúc tác Ni, vòng thơm của ${nameVi} (${dispOrg}) cộng ${mArom} phân tử H₂ tạo vòng no ${formatFormulaUnicode(satFormula)}.`,
+            phenEn: `Under elevated temperature, pressure, and Ni catalyst, the aromatic ring of ${nameEn} (${dispOrg}) adds ${mArom} equivalents of H₂ to form ${formatFormulaUnicode(satFormula)}.`,
+            expVi: `Hệ liên hợp thơm rất bền nên cần điều kiện nhiệt độ và áp suất cao (Ni, t°, P) để bão hòa vòng thơm với ${mArom} mol H₂ tạo ${formatFormulaUnicode(satFormula)}.`,
+            expEn: `Vigorous catalytic hydrogenation (Ni, Δ, P) saturates the aromatic π system with ${mArom} equivalents of H₂ to yield ${formatFormulaUnicode(satFormula)}.`
+          }
+        );
+        if (res) return res;
+      }
+
+      return makeNoReactionResult(
+        [fA, fB],
+        `Không xảy ra phản ứng cộng H₂ với ${nameVi} (${dispOrg}) trên xúc tác Ni.`,
+        `No catalytic hydrogenation reaction occurs between ${nameEn} (${dispOrg}) and H₂.`,
+        `Phân tử ${nameVi} đã bão hòa (hoặc chỉ chứa nhóm chức bền với H₂/Ni như -COOH, -COO-, -OH) nên không cộng thêm H₂.`,
+        `${nameEn} is already saturated (or contains only carboxyl/ester/hydroxyl groups resistant to Ni-catalyzed H₂ addition).`
+      );
+    }
+
+    // =========================================================================
+    // RULE 7 & RULE 8: TOLLENS' REAGENT (+ [Ag(NH3)2]OH or + Ag2O)
+    // =========================================================================
+    if (other === '[Ag(NH3)2]OH' || other === 'Ag2O') {
+      // RULE 7: Alkyne (terminal vs internal)
+      if (feat.nTripleCC > 0 && feat.nReducingCHO === 0 && !feat.isFormateEster) {
+        const k = feat.nTerminalAlkyneH;
+        if (k > 0) {
+          const agAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Ag: k });
+          const agFormula = registerDynamicFormula(buildHillFormulaFromAtoms(agAtoms));
+          const prods = other === '[Ag(NH3)2]OH'
+            ? [
+                { formula: agFormula, state: 'precipitate' },
+                { formula: 'NH3', state: 'gas' },
+                { formula: 'H2O', state: null }
+              ]
+            : [
+                { formula: agFormula, state: 'precipitate' },
+                { formula: 'H2O', state: null }
+              ];
+          const res = makeBalancedResult([fA, fB], prods, {
+            tier: 2,
+            type: 'substitution',
+            condVi: other === 'Ag2O' ? 'NH₃' : '',
+            condEn: other === 'Ag2O' ? 'NH₃' : '',
+            phenVi: `Xuất hiện ngay kết tủa màu vàng nhạt (${formatFormulaUnicode(agFormula)}↓) khi cho ${nameVi} (${dispOrg}) tác dụng với thuốc thử Tollens.`,
+            phenEn: `A pale yellow silver acetylide precipitate (${formatFormulaUnicode(agFormula)}↓) forms immediately when ${nameEn} (${dispOrg}) reacts with Tollens’ reagent.`,
+            expVi: `Phản ứng nhận biết alkyne đầu mạch (alk-1-yne): phân tử ${nameVi} có ${k} nguyên tử H linh động gắn trực tiếp vào carbon nối ba (≡C–H), bị ion Ag⁺ thế chỗ tạo kết tủa vàng nhạt ${formatFormulaUnicode(agFormula)}↓.`,
+            expEn: `Diagnostic test for terminal alkynes (alk-1-ynes): ${nameEn} bears ${k} acidic terminal ≡C–H proton(s) displaced by Ag⁺ to precipitate pale yellow ${formatFormulaUnicode(agFormula)}↓.`
+          });
+          if (res) return res;
+        } else {
+          return makeNoReactionResult(
+            [fA, fB],
+            `Không xuất hiện kết tủa vàng nhạt — ${nameVi} (${dispOrg}) KHÔNG phản ứng với thuốc thử Tollens.`,
+            `No precipitate forms — internal alkyne ${nameEn} (${dispOrg}) does NOT react with Tollens’ reagent.`,
+            `${nameVi} là alkyne có liên kết ba C≡C nằm ở giữa mạch, không còn nguyên tử H linh động gắn trực tiếp trên carbon mang nối ba (≡C–H) nên không thể thế ion Ag⁺ (dùng để phân biệt với đồng phân alkyne đầu mạch như But-1-yne).`,
+            `${nameEn} is an internal alkyne lacking any terminal ≡C–H hydrogen atom on its sp-hybridized carbons, so Ag⁺ substitution cannot occur (distinguishing it cleanly from terminal alk-1-ynes like But-1-yne).`
+          );
+        }
+      }
+
+      // RULE 8: Silver-Mirror Test for Aldehydes / Reducing Sugars / Formate Esters
+      const kCHO = feat.nReducingCHO > 0 ? feat.nReducingCHO : (feat.isFormateEster ? 1 : 0);
+      if (kCHO > 0) {
+        if (other === '[Ag(NH3)2]OH') {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { O: kCHO, N: kCHO, H: 3 * kCHO });
+          const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: saltFormula, state: null },
+              { formula: 'Ag', state: 'precipitate' },
+              { formula: 'NH3', state: 'gas' },
+              { formula: 'H2O', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Khi đun nóng nhẹ ${nameVi} (${dispOrg}) với thuốc thử Tollens, xuất hiện lớp bạc kim loại (Ag↓) sáng bóng bám đều lên thành ống nghiệm như gương (tỉ lệ 1 : ${2 * kCHO} mol Ag↓).`,
+              phenEn: `Gentle warming of ${nameEn} (${dispOrg}) with Tollens’ reagent deposits a gleaming metallic silver mirror (Ag↓) on the glass wall in a 1:${2 * kCHO} molar ratio.`,
+              expVi: feat.isFormateEster
+                ? `Do là ester của formic acid có đầu cấu tạo H–C(=O)–O– mang tính khử giống nhóm aldehyde (-CHO), ${nameVi} tham gia phản ứng tráng bạc khử phức [Ag(NH₃)₂]OH tạo 2 mol kết tủa bạc Ag↓.`
+                : feat.hasHemiacetalCHO
+                  ? `Trong dung dịch kiềm NH₃, ${nameVi} mở vòng cân bằng ở nhóm hemiacetal tạo dạng aldehyde (-CHO) tự do, khử [Ag(NH₃)₂]OH tạo muối ammonium ${formatFormulaUnicode(saltFormula)} và giải phóng ${2 * kCHO} mol Ag↓.`
+                  : `Phản ứng tráng bạc đặc trưng của nhóm chức aldehyde (-CHO): 1 mol ${nameVi} (${kCHO} nhóm -CHO) khử ${2 * kCHO} mol [Ag(NH₃)₂]OH tạo muối ammonium ${formatFormulaUnicode(saltFormula)} và kết tủa ${2 * kCHO} mol Ag↓ sáng bóng.`,
+              expEn: feat.isFormateEster
+                ? `Because formate esters (H–COO–R') retain an aldehyde-like formyl H–C(=O)– group, ${nameEn} reduces Tollens’ reagent to deposit 2 moles of metallic silver (Ag↓).`
+                : feat.hasHemiacetalCHO
+                  ? `In alkaline solution, reducing carbohydrate ${nameEn} equilibrates with its open-chain aldehyde (-CHO) form, reducing [Ag(NH₃)₂]OH to deposit ${2 * kCHO} moles of metallic Ag↓.`
+                  : `Classic Tollens’ silver-mirror oxidation of aldehyde group(s): 1 mole of ${nameEn} (${kCHO} -CHO group(s)) reduces ${2 * kCHO} moles of [Ag(NH₃)₂]OH to yield ${formatFormulaUnicode(saltFormula)} and ${2 * kCHO} moles of metallic Ag↓.`
+            }
+          );
+          if (res) return res;
+        } else {
+          // Ag2O compact representation
+          const acidAtoms = cloneAndModifyAtoms(feat.atoms, { O: kCHO });
+          const acidHill = buildHillFormulaFromAtoms(acidAtoms);
+          const acidFormula = KNOWN_ACID_BY_HILL[acidHill] || registerDynamicFormula(acidHill);
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: acidFormula, state: null },
+              { formula: 'Ag', state: 'precipitate' }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 'NH₃, t°',
+              condEn: 'NH₃, Δ',
+              phenVi: `Xuất hiện lớp bạc kim loại (Ag↓) sáng bóng tráng đều lên thành ống nghiệm (tỉ lệ 1 mol ${dispOrg} : ${2 * kCHO} mol Ag↓).`,
+              phenEn: `A bright metallic silver mirror (Ag↓) deposits on the glass wall (1 mol ${dispOrg} : ${2 * kCHO} mol Ag↓).`,
+              expVi: `Phương trình dạng rút gọn với Ag₂O/NH₃ của phản ứng tráng bạc: ${nameVi} bị oxi hóa tạo ${formatFormulaUnicode(acidFormula)} và giải phóng ${2 * kCHO} mol Ag↓.`,
+              expEn: `Compact Ag₂O/NH₃ representation of the silver-mirror reaction of ${nameEn}, depositing ${2 * kCHO} moles of metallic Ag↓.`
+            }
+          );
+          if (res) return res;
+        }
+      }
+
+      // Ketones, Sucrose, non-reducing alcohols/esters -> No Tollens reaction
+      return makeNoReactionResult(
+        [fA, fB],
+        `Không xuất hiện lớp bạc kết tủa — ${nameVi} (${dispOrg}) KHÔNG tham gia phản ứng tráng bạc với thuốc thử Tollens.`,
+        `No silver mirror forms — ${nameEn} (${dispOrg}) gives a NEGATIVE Tollens’ test.`,
+        feat.nKetone > 0
+          ? `Khác với Aldehyde (-CHO), nhóm carbonyl (>C=O) của Ketone (${nameVi}) không còn nguyên tử H gắn trực tiếp vào C=O nên bền với chất oxi hóa nhẹ, không khử được thuốc thử Tollens (dùng để phân biệt Aldehyde với Ketone).`
+          : comp.id === 'sucrose'
+            ? `Trong phân tử Saccharose (Sucrose), gốc α-glucose và β-fructose liên kết với nhau qua đúng hai carbon anomeric (C₁–O–C₂) nên không còn nhóm -OH hemiacetal tự do để mở vòng thành aldehyde → không có phản ứng tráng bạc (phân biệt với Maltose và Glucose).`
+            : `Phân tử ${nameVi} không có nhóm chức aldehyde (-CHO), gốc formate (HCOO–) hay liên kết ba đầu mạch (≡C–H) nên không phản ứng với thuốc thử Tollens.`,
+        feat.nKetone > 0
+          ? `Unlike aldehydes (-CHO), ketones (${nameEn}) lack a hydrogen attached to the carbonyl carbon (>C=O) and cannot be oxidized by mild Tollens’ reagent — the classic test distinguishing aldehydes from ketones.`
+          : comp.id === 'sucrose'
+            ? `Sucrose links α-glucose (C₁) and β-fructose (C₂) through both anomeric carbons, locking both rings so it cannot open into a free aldehyde — making Sucrose a non-reducing sugar (unlike Maltose or Glucose).`
+            : `${nameEn} lacks a reducing aldehyde (-CHO) group, formate group (HCOO–), or terminal alkyne (≡C–H) and therefore does not react with Tollens’ reagent.`
+      );
+    }
+
+    // =========================================================================
+    // RULE 9: POLYALCOHOL WITH ADJACENT -OH GROUPS (+ Cu(OH)2, room temp)
+    // =========================================================================
+    if (other === 'Cu(OH)2') {
+      if (feat.hasVicinalDiol) {
+        const doubled = Object.create(null);
+        Object.keys(feat.atoms).forEach((sym) => {
+          doubled[sym] = feat.atoms[sym] * 2;
+        });
+        doubled.H -= 2;
+        doubled.Cu = 1;
+        const complexFormula = registerDynamicFormula(buildHillFormulaFromAtoms(doubled));
+        const ligandAtoms = cloneAndModifyAtoms(feat.atoms, { H: -1 });
+        const ligandHill = buildHillFormulaFromAtoms(ligandAtoms);
+        const displayComplex = `[${ligandHill}]2Cu`;
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: complexFormula, displayFormula: displayComplex, state: null },
+            { formula: 'H2O', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'exchange',
+            condVi: 'nhiệt độ thường',
+            condEn: 'room temp.',
+            phenVi: `Ở nhiệt độ thường, kết tủa xanh lam Cu(OH)₂ tan hoàn toàn trong ${nameVi} (${dispOrg}) tạo dung dịch phức đồng(II) màu xanh lam đậm trong suốt.`,
+            phenEn: `At room temperature, pale-blue Cu(OH)₂ precipitate dissolves completely in ${nameEn} (${dispOrg}) to form a clear, deep royal-blue copper(II) complex solution.`,
+            expVi: `Phân tử ${nameVi} có các nhóm -OH gắn trên hai nguyên tử carbon no kề nhau (vicinal diol / polyalcohol), nên hòa tan được Cu(OH)₂ ở nhiệt độ thường tạo phức chất vòng càng màu xanh lam đậm ${formatFormulaUnicode(displayComplex)} và H₂O.`,
+            expEn: `Because ${nameEn} possesses adjacent -OH groups on neighboring saturated carbons (vicinal diol / polyol), it chelates and dissolves Cu(OH)₂ at room temperature into the deep-blue copper(II) complex ${formatFormulaUnicode(displayComplex)} and H₂O.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Carboxylic acid without vicinal diol + Cu(OH)2 -> copper(II) carboxylate + H2O
+      if (feat.nCOOH > 0) {
+        const k = feat.nCOOH;
+        let saltFormula;
+        if (k % 2 === 0) {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Cu: k / 2 });
+          saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        } else {
+          const doubled = Object.create(null);
+          Object.keys(feat.atoms).forEach((sym) => {
+            doubled[sym] = feat.atoms[sym] * 2;
+          });
+          doubled.H -= 2 * k;
+          doubled.Cu = k;
+          saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(doubled));
+        }
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: saltFormula, state: null },
+            { formula: 'H2O', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'neutralization',
+            condVi: '',
+            condEn: '',
+            phenVi: `Kết tủa Cu(OH)₂ tan dần trong dung dịch ${nameVi} (${dispOrg}) tạo dung dịch muối đồng(II) màu xanh.`,
+            phenEn: `Cu(OH)₂ precipitate dissolves in ${nameEn} (${dispOrg}) to form a blue copper(II) carboxylate solution.`,
+            expVi: `Nhóm carboxyl (-COOH) của ${nameVi} phản ứng trung hòa với base không tan Cu(OH)₂ tạo muối ${formatFormulaUnicode(saltFormula)} và nước.`,
+            expEn: `The carboxylic acid group(s) (-COOH) of ${nameEn} neutralize Cu(OH)₂ to yield soluble copper(II) salt ${formatFormulaUnicode(saltFormula)} and water.`
+          }
+        );
+        if (res) return res;
+      }
+
+      // Monohydric alcohol or separated diol (e.g. Propane-1,3-diol, Deoxyribose) -> No Reaction at room temp
+      return makeNoReactionResult(
+        [fA, fB],
+        `Kết tủa xanh lam Cu(OH)₂ không tan — KHÔNG xảy ra phản ứng giữa ${nameVi} (${dispOrg}) và Cu(OH)₂ ở nhiệt độ thường.`,
+        `Blue Cu(OH)₂ precipitate remains undissolved — NO reaction occurs with ${nameEn} (${dispOrg}) at room temperature.`,
+        feat.nAlcoholOH >= 2
+          ? `Tuy ${nameVi} có ${feat.nAlcoholOH} nhóm -OH nhưng các nhóm -OH này nằm cách xa nhau (không gắn trên 2 nguyên tử C kề nhau), nên không thể khép vòng chelat tạo phức xanh lam với Cu(OH)₂ (dùng để phân biệt ${nameVi} với Propane-1,2-diol hay Glycerol).`
+          : feat.nAlcoholOH === 1
+            ? `${nameVi} là alcohol đơn chức (chỉ có 1 nhóm -OH); điều kiện hòa tan Cu(OH)₂ ở nhiệt độ thường tạo phức màu xanh lam đậm là phân tử phải có ít nhất 2 nhóm -OH gắn trên 2 nguyên tử C kề nhau.`
+            : `${nameVi} không có cặp nhóm -OH liền kề hay nhóm -COOH nên không hòa tan được Cu(OH)₂ ở nhiệt độ thường.`,
+        feat.nAlcoholOH >= 2
+          ? `Although ${nameEn} contains ${feat.nAlcoholOH} -OH groups, they are separated on non-adjacent carbons rather than vicinal (adjacent), so it cannot chelate Cu(OH)₂ into a deep-blue complex at room temperature.`
+          : feat.nAlcoholOH === 1
+            ? `${nameEn} is a monohydric alcohol (only 1 -OH group); dissolving Cu(OH)₂ at room temperature into a deep-blue chelate requires at least two -OH groups on adjacent carbons (vicinal diol).`
+            : `${nameEn} lacks adjacent vicinal -OH groups or -COOH groups and does not react with Cu(OH)₂ at room temperature.`
+      );
+    }
+
+    // =========================================================================
+    // RULE 10b: ESTER ACID-CATALYZED HYDROLYSIS (+ H2O, H⁺, t°, reversible ⇌)
+    // =========================================================================
+    if (other === 'H2O' && feat.nEster > 0) {
+      if (comp.id === 'dimethyl-oxalate') {
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: 'OxalicAcid', state: null },
+            { formula: 'CH3OH', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'hydrolysis',
+            reversible: true,
+            condVi: 'H⁺, t°',
+            condEn: 'H⁺, Δ',
+            phenVi: `Khi đun nóng với dung dịch acid loãng, ${nameVi} (${dispOrg}) thủy phân thuận nghịch tạo Oxalic acid và Methanol.`,
+            phenEn: `Upon warming with dilute acid, ${nameEn} (${dispOrg}) undergoes reversible hydrolysis into Oxalic acid and Methanol.`,
+            expVi: `Phản ứng thủy phân ester hai chức trong môi trường acid (H⁺, t°) diễn ra thuận nghịch tái tạo Oxalic acid và 2 phân tử CH₃OH.`,
+            expEn: `Reversible acid-catalyzed hydrolysis of diester ${nameEn} regenerates Oxalic acid and 2 equivalents of Methanol.`
+          }
+        );
+        if (res) return res;
+      }
+
+      const split = splitEsterOnGraph(org);
+      if (split) {
+        const { est, acylAcidFormula, alkOHFormula, alkOHAtoms } = split;
+        const secondProd = est.esterType === 'vinyl'
+          ? (alkOHAtoms.C === 2 && alkOHAtoms.H === 4 && alkOHAtoms.O === 1 ? 'CH3CHO' : alkOHFormula)
+          : alkOHFormula;
+
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: acylAcidFormula, state: null },
+            { formula: secondProd, state: null }
+          ],
+          {
+            tier: 2,
+            type: 'hydrolysis',
+            reversible: isMonoReversibleEster(est),
+            condVi: 'H⁺, t°',
+            condEn: 'H⁺, Δ',
+            phenVi: `Đun nóng ${nameVi} (${dispOrg}) với nước có xúc tác acid loãng (H⁺) thu được hỗn hợp gồm ${formatFormulaUnicode(acylAcidFormula)} và ${formatFormulaUnicode(secondProd)}.`,
+            phenEn: `Heating ${nameEn} (${dispOrg}) with water in the presence of dilute acid (H⁺) hydrolyzes the ester into ${formatFormulaUnicode(acylAcidFormula)} and ${formatFormulaUnicode(secondProd)}.`,
+            expVi: est.esterType === 'vinyl'
+              ? `Thủy phân ${nameVi} trong môi trường acid cắt liên kết ester tạo ${formatFormulaUnicode(acylAcidFormula)} và vinyl alcohol không bền chuyển vị ngay thành aldehyde ${formatFormulaUnicode(secondProd)}.`
+              : `Phản ứng thủy phân ester trong môi trường acid (H⁺, t°) là phản ứng thuận nghịch (ngược với phản ứng ester hóa), cắt liên kết C(=O)–O tái tạo carboxylic acid ${formatFormulaUnicode(acylAcidFormula)} và ${formatFormulaUnicode(secondProd)}.`,
+            expEn: est.esterType === 'vinyl'
+              ? `Acid-catalyzed hydrolysis of vinyl ester ${nameEn} yields ${formatFormulaUnicode(acylAcidFormula)} and unstable vinyl alcohol, which tautomerizes to ${formatFormulaUnicode(secondProd)}.`
+              : `Acid-catalyzed ester hydrolysis (H⁺, Δ) proceeds reversibly (the reverse of Fischer esterification), regenerating ${formatFormulaUnicode(acylAcidFormula)} and ${formatFormulaUnicode(secondProd)}.`
+          }
+        );
+        if (res) return res;
+      }
+    }
+
+    // Special hydration: Carbon suboxide (C3O2) + 2 H2O -> MalonicAcid
+    if (other === 'H2O' && comp.id === 'carbon-suboxide') {
+      const res = makeBalancedResult(
+        [fA, fB],
+        [{ formula: 'MalonicAcid', state: null }],
+        {
+          tier: 2,
+          type: 'hydrolysis',
+          condVi: '',
+          condEn: '',
+          phenVi: `Khí Carbon suboxide (${dispOrg}) phản ứng nhanh với nước tạo dung dịch Malonic acid có tính acid.`,
+          phenEn: `Carbon suboxide gas (${dispOrg}) hydrates rapidly in water to form Malonic acid.`,
+          expVi: `Carbon suboxide (O=C=C=C=O) đóng vai trò là anhydride kép của Malonic acid, kết hợp với 2 phân tử H₂O tái tạo hoàn toàn Malonic acid (HOOC–CH₂–COOH).`,
+          expEn: `Acting as the bis-anhydride of Malonic acid, O=C=C=C=O adds 2 equivalents of H₂O to yield Malonic acid.`
+        }
+      );
+      if (res) return res;
+    }
+
+    // Special disaccharide hydrolysis: Maltose + H2O -> 2 C6H12O6 (Glucose)
+    if (other === 'H2O' && comp.id === 'maltose') {
+      const res = makeBalancedResult(
+        [fA, fB],
+        [{ formula: 'C6H12O6', state: null }],
+        {
+          tier: 2,
+          type: 'hydrolysis',
+          condVi: 'H⁺, t°',
+          condEn: 'H⁺, Δ',
+          phenVi: `Đun nóng dung dịch Maltose với acid vô cơ loãng (hoặc enzyme maltase) thu được dung dịch chứa Glucose.`,
+          phenEn: `Warming Maltose solution with dilute acid catalyst (or maltase enzyme) hydrolyzes it completely into Glucose.`,
+          expVi: `Phản ứng thủy phân disaccharide Maltose cắt liên kết α-1,4-glycoside giữa hai gốc glucose, tạo ra 2 phân tử Glucose (C₆H₁₂O₆).`,
+          expEn: `Acid-catalyzed hydrolysis of Maltose cleaves its α-1,4-glycosidic bond into 2 molecules of Glucose (C₆H₁₂O₆).`
+        }
+      );
+      if (res) return res;
+    }
+
+    // =========================================================================
+    // RULE 11: MILD ALCOHOL OXIDATION WITH CuO (+ CuO, t°)
+    // =========================================================================
+    if (other === 'CuO') {
+      if (feat.nAlcoholOH === 1 && feat.nCOOH === 0 && feat.nPhenolOH === 0) {
+        // 11a. Primary Alcohol -> Aldehyde + Cu + H2O
+        if (feat.primaryAlcoholCount === 1) {
+          const oxAtoms = cloneAndModifyAtoms(feat.atoms, { H: -2 });
+          const oxHill = buildHillFormulaFromAtoms(oxAtoms);
+          let aldFormula = KNOWN_CUO_OXIDATION_PRODUCT[comp.id];
+          let displayAld = null;
+          if (!aldFormula) {
+            aldFormula = registerDynamicFormula(oxHill);
+            if (comp.id === 'isoamyl-alcohol') {
+              displayAld = `${oxHill} (3-Methylbutanal)`;
+            }
+          }
+
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: aldFormula, displayFormula: displayAld, state: null },
+              { formula: 'Cu', state: 'precipitate' },
+              { formula: 'H2O', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Bột CuO màu đen chuyển dần sang màu đỏ gạch của đồng kim loại (Cu) khi đun nóng với hơi ${nameVi} (${dispOrg}), tạo aldehyde ${formatFormulaUnicode(displayAld || aldFormula)}.`,
+              phenEn: `Black CuO solid turns into reddish-brown metallic copper (Cu) upon heating with primary alcohol ${nameEn} (${dispOrg}), producing aldehyde ${formatFormulaUnicode(displayAld || aldFormula)}.`,
+              expVi: `${nameVi} là alcohol bậc I (nhóm -CH₂OH): khi đun nóng với CuO, nhóm -CH₂OH bị oxi hóa nhẹ thành nhóm chức aldehyde (-CHO) trong ${formatFormulaUnicode(displayAld || aldFormula)}, đồng thời Cu(+2) bị khử thành Cu(0) và H₂O.`,
+              expEn: `${nameEn} is a primary alcohol (-CH₂OH): mild oxidation by heated CuO converts the -CH₂OH group into an aldehyde (-CHO) in ${formatFormulaUnicode(displayAld || aldFormula)} while reducing CuO to metallic Cu and H₂O.`
+            }
+          );
+          if (res) return res;
+        }
+
+        // 11b. Secondary Alcohol -> Ketone + Cu + H2O
+        if (feat.secondaryAlcoholCount === 1) {
+          const oxAtoms = cloneAndModifyAtoms(feat.atoms, { H: -2 });
+          const oxHill = buildHillFormulaFromAtoms(oxAtoms);
+          let ketFormula = KNOWN_CUO_OXIDATION_PRODUCT[comp.id];
+          let displayKet = null;
+          if (!ketFormula) {
+            ketFormula = registerDynamicFormula(oxHill);
+            if (comp.id === 'cyclopentanol') {
+              displayKet = `${oxHill} (Cyclopentanone)`;
+            } else if (comp.id === 'menthol') {
+              displayKet = `${oxHill} (Menthone)`;
+            }
+          }
+
+          const res = makeBalancedResult(
+            [fA, fB],
+            [
+              { formula: ketFormula, displayFormula: displayKet, state: null },
+              { formula: 'Cu', state: 'precipitate' },
+              { formula: 'H2O', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Bột CuO màu đen chuyển sang màu đỏ đồng (Cu) khi đun nóng với ${nameVi} (${dispOrg}), tạo ketone ${formatFormulaUnicode(displayKet || ketFormula)} và hơi nước.`,
+              phenEn: `Black CuO turns into reddish metallic Cu upon heating with secondary alcohol ${nameEn} (${dispOrg}), yielding ketone ${formatFormulaUnicode(displayKet || ketFormula)} and water.`,
+              expVi: `${nameVi} là alcohol bậc II (nhóm >CH–OH): khi đun nóng với CuO, nhóm >CH–OH bị oxi hóa nhẹ thành nhóm chức ketone (>C=O) trong ${formatFormulaUnicode(displayKet || ketFormula)}, đồng thời giải phóng Cu kim loại và H₂O.`,
+              expEn: `${nameEn} is a secondary alcohol (>CH–OH): heated CuO oxidizes the >CH–OH group smoothly into a ketone (>C=O) in ${formatFormulaUnicode(displayKet || ketFormula)} while reducing Cu(+2) to Cu(0) and H₂O.`
+            }
+          );
+          if (res) return res;
+        }
+
+        // 11c. Tertiary Alcohol -> No Reaction with CuO (t°)
+        if (feat.tertiaryAlcoholCount === 1) {
+          return makeNoReactionResult(
+            [fA, fB],
+            `Bột CuO giữ nguyên màu đen — KHÔNG xảy ra phản ứng oxi hóa khi đun nóng ${nameVi} (${dispOrg}) với CuO.`,
+            `Black CuO remains unchanged — tertiary alcohol ${nameEn} (${dispOrg}) does NOT react with heated CuO.`,
+            `${nameVi} là alcohol bậc III: nguyên tử carbon gắn nhóm -OH đã liên kết với 3 nguyên tử carbon khác nên KHÔNG còn nguyên tử H nào trên carbon này để tách ra cùng H của -OH khi gặp chất oxi hóa nhẹ CuO (dùng để phân biệt alcohol bậc III với bậc I và bậc II).`,
+            `${nameEn} is a tertiary alcohol: the carbon bearing the -OH group is bonded to three other carbons and has ZERO α-hydrogen atoms, making it resistant to mild oxidation by heated CuO.`
+          );
+        }
+      }
+
+      // Carboxylic acid + CuO -> copper(II) carboxylate + H2O
+      if (feat.nCOOH > 0) {
+        const k = feat.nCOOH;
+        let saltFormula;
+        if (k % 2 === 0) {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Cu: k / 2 });
+          saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+        } else {
+          const doubled = Object.create(null);
+          Object.keys(feat.atoms).forEach((sym) => {
+            doubled[sym] = feat.atoms[sym] * 2;
+          });
+          doubled.H -= 2 * k;
+          doubled.Cu = k;
+          saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(doubled));
+        }
+        const res = makeBalancedResult(
+          [fA, fB],
+          [
+            { formula: saltFormula, state: null },
+            { formula: 'H2O', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'exchange',
+            condVi: 't°',
+            condEn: 'Δ',
+            phenVi: `Bột CuO màu đen tan dần khi đun nóng với dung dịch ${nameVi} (${dispOrg}) tạo dung dịch muối đồng(II) màu xanh.`,
+            phenEn: `Black CuO dissolves upon warming in ${nameEn} (${dispOrg}) to form a blue copper(II) carboxylate solution.`,
+            expVi: `${nameVi} thể hiện tính chất của carboxylic acid khi hòa tan oxide base CuO tạo muối ${formatFormulaUnicode(saltFormula)} và H₂O.`,
+            expEn: `${nameEn} acts as a carboxylic acid, dissolving basic oxide CuO to yield ${formatFormulaUnicode(saltFormula)} and water.`
+          }
+        );
+        if (res) return res;
+      }
+    }
+
+    return null;
+  }
+
+  function isMonoReversibleEster(est) {
+    return est.esterType !== 'vinyl' && est.esterType !== 'phenol';
+  }
+
+  // Handle 3-reactant organic combinations:
+  // 1) Org + AgNO3 + NH3 (Tollens silver-mirror or terminal alkyne substitution)
+  // 2) Acid + Alcohol + H2SO4 (Fischer esterification with H2SO4 catalyst on arrow)
+  // 3) Org + Cu(OH)2 + NaOH/KOH (Hot alkaline copper(II) oxidation of aldehydes/reducing sugars to Cu2O↓)
+  // 4) Org + Br2 + H2O (Aqueous bromine oxidation of aldehydes/reducing sugars)
+  function inferTier2OrganicTriple(canonicalFormulas) {
+    if (!Array.isArray(canonicalFormulas) || canonicalFormulas.length !== 3) return null;
+
+    // Case A: Acid + Alcohol + H2SO4
+    if (canonicalFormulas.includes('H2SO4')) {
+      const others = canonicalFormulas.filter((f) => f !== 'H2SO4');
+      if (others.length === 2) {
+        const estRes = inferOrganicEsterification(others[0], others[1], 'H2SO4');
+        if (estRes) return estRes;
+      }
+    }
+
+    // Case B: Org + AgNO3 + NH3
+    if (canonicalFormulas.includes('AgNO3') && canonicalFormulas.includes('NH3')) {
+      const orgInput = canonicalFormulas.find((f) => f !== 'AgNO3' && f !== 'NH3');
+      const org = getBridgedOrganic(orgInput);
+      if (org) {
+        const feat = org.features;
+        const comp = org.compound;
+        const nameVi = getOrganicName(org, 'vi');
+        const nameEn = getOrganicName(org, 'en');
+        const dispOrg = formatFormulaUnicode(orgInput);
+
+        // Rule 7: Alkyne + AgNO3 + NH3
+        if (feat.nTripleCC > 0 && feat.nReducingCHO === 0 && !feat.isFormateEster) {
+          const k = feat.nTerminalAlkyneH;
+          if (k > 0) {
+            const agAtoms = cloneAndModifyAtoms(feat.atoms, { H: -k, Ag: k });
+            const agFormula = registerDynamicFormula(buildHillFormulaFromAtoms(agAtoms));
+            const res = makeBalancedResult(
+              canonicalFormulas,
+              [
+                { formula: agFormula, state: 'precipitate' },
+                { formula: 'NH4NO3', state: null }
+              ],
+              {
+                tier: 2,
+                type: 'substitution',
+                condVi: '',
+                condEn: '',
+                phenVi: `Xuất hiện ngay kết tủa màu vàng nhạt (${formatFormulaUnicode(agFormula)}↓) khi dẫn ${nameVi} (${dispOrg}) vào dung dịch AgNO₃/NH₃.`,
+                phenEn: `A pale yellow precipitate (${formatFormulaUnicode(agFormula)}↓) forms immediately when ${nameEn} (${dispOrg}) meets ammoniacal AgNO₃.`,
+                expVi: `Phản ứng nhận biết alkyne đầu mạch: ${k} nguyên tử H linh động ở đầu nối ba (≡C–H) của ${nameVi} bị thế bởi ion Ag⁺ trong hỗn hợp AgNO₃ + NH₃ tạo kết tủa vàng nhạt ${formatFormulaUnicode(agFormula)}↓ và muối NH₄NO₃.`,
+                expEn: `Terminal alkyne test: ${k} acidic ≡C–H proton(s) of ${nameEn} are substituted by Ag⁺ in AgNO₃/NH₃ to precipitate pale yellow ${formatFormulaUnicode(agFormula)}↓ and NH₄NO₃.`
+              }
+            );
+            if (res) return res;
+          } else {
+            return makeNoReactionResult(
+              canonicalFormulas,
+              `Không xuất hiện kết tủa — alkyne giữa mạch ${nameVi} (${dispOrg}) không phản ứng với dung dịch AgNO₃/NH₃.`,
+              `No precipitate forms — internal alkyne ${nameEn} (${dispOrg}) does not react with AgNO₃/NH₃.`,
+              `Liên kết ba C≡C của ${nameVi} nằm ở giữa mạch nên không còn nguyên tử H linh động gắn trên carbon nối ba (≡C–H) để thế ion Ag⁺.`,
+              `${nameEn} is an internal alkyne with no terminal ≡C–H hydrogen on its triple-bonded carbons, so Ag⁺ substitution does not occur.`
+            );
+          }
+        }
+
+        // Rule 8: Aldehyde / Reducing Sugar / Formate + AgNO3 + NH3 (+ H2O solvent)
+        const kCHO = feat.nReducingCHO > 0 ? feat.nReducingCHO : (feat.isFormateEster ? 1 : 0);
+        if (kCHO > 0) {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { O: kCHO, N: kCHO, H: 3 * kCHO });
+          const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+          const lhsWithWater = canonicalFormulas.concat(['H2O']);
+          const res = makeBalancedResult(
+            lhsWithWater,
+            [
+              { formula: saltFormula, state: null },
+              { formula: 'Ag', state: 'precipitate' },
+              { formula: 'NH4NO3', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Khi đun nóng nhẹ với dung dịch AgNO₃ trong NH₃, xuất hiện lớp bạc kim loại (Ag↓) sáng bóng tráng đều lên thành ống nghiệm (tỉ lệ 1 : ${2 * kCHO} mol Ag↓).`,
+              phenEn: `Gentle warming with ammoniacal AgNO₃ deposits a gleaming metallic silver mirror (Ag↓) on the glass wall in a 1:${2 * kCHO} molar ratio.`,
+              expVi: `Trong dung dịch AgNO₃ + NH₃ + H₂O (thuốc thử Tollens), 1 mol ${nameVi} khử Ag⁺ tạo ${2 * kCHO} mol kết tủa bạc kim loại Ag↓, muối ${formatFormulaUnicode(saltFormula)} và NH₄NO₃.`,
+              expEn: `In aqueous AgNO₃ + NH₃ (Tollens’ medium), 1 mole of ${nameEn} reduces Ag⁺ to deposit ${2 * kCHO} moles of metallic silver (Ag↓) alongside ${formatFormulaUnicode(saltFormula)} and NH₄NO₃.`
+            }
+          );
+          if (res) return res;
+        }
+
+        return makeNoReactionResult(
+          canonicalFormulas,
+          `Không xuất hiện lớp bạc kết tủa — ${nameVi} (${dispOrg}) không phản ứng tráng bạc với AgNO₃/NH₃.`,
+          `No silver mirror forms — ${nameEn} (${dispOrg}) does not react with ammoniacal AgNO₃.`,
+          feat.nKetone > 0
+            ? `Nhóm >C=O của Ketone (${nameVi}) không bị oxi hóa bởi dung dịch AgNO₃/NH₃ nên không tham gia phản ứng tráng bạc (dùng để phân biệt với Aldehyde).`
+            : comp.id === 'sucrose'
+              ? `Saccharose (Sucrose) không còn nhóm -OH hemiacetal tự do để mở vòng tạo nhóm -CHO nên không có phản ứng tráng bạc với AgNO₃/NH₃.`
+              : `Phân tử ${nameVi} không có nhóm chức aldehyde (-CHO), gốc formate (HCOO–) hay nối ba đầu mạch (≡C–H) nên không phản ứng với AgNO₃/NH₃.`,
+          feat.nKetone > 0
+            ? `Ketones (${nameEn}) resist mild oxidation by ammoniacal AgNO₃ and do not give a silver-mirror reaction.`
+            : comp.id === 'sucrose'
+              ? `Sucrose is a non-reducing disaccharide with no free hemiacetal group to open into an aldehyde, so it gives no silver mirror with AgNO₃/NH₃.`
+              : `${nameEn} lacks an aldehyde (-CHO), formate (HCOO–), or terminal alkyne (≡C–H) group and is unreactive toward AgNO₃/NH₃.`
+        );
+      }
+    }
+
+    // Case C: Org + Cu(OH)2 + NaOH/KOH (Hot alkaline Cu(OH)2 oxidation to brick-red Cu2O↓)
+    if (canonicalFormulas.includes('Cu(OH)2') && (canonicalFormulas.includes('NaOH') || canonicalFormulas.includes('KOH'))) {
+      const baseF = canonicalFormulas.includes('NaOH') ? 'NaOH' : 'KOH';
+      const M = baseF === 'NaOH' ? 'Na' : 'K';
+      const orgInput = canonicalFormulas.find((f) => f !== 'Cu(OH)2' && f !== baseF);
+      const org = getBridgedOrganic(orgInput);
+      if (org) {
+        const feat = org.features;
+        const comp = org.compound;
+        const nameVi = getOrganicName(org, 'vi');
+        const nameEn = getOrganicName(org, 'en');
+        const dispOrg = formatFormulaUnicode(orgInput);
+        const kCHO = feat.nReducingCHO;
+
+        if (kCHO > 0 && comp.id !== 'benzaldehyde') {
+          const saltAtoms = cloneAndModifyAtoms(feat.atoms, { H: -kCHO, O: kCHO, [M]: kCHO });
+          const saltFormula = registerDynamicFormula(buildHillFormulaFromAtoms(saltAtoms));
+          const res = makeBalancedResult(
+            canonicalFormulas,
+            [
+              { formula: saltFormula, state: null },
+              { formula: 'Cu2O', state: 'precipitate' },
+              { formula: 'H2O', state: null }
+            ],
+            {
+              tier: 2,
+              type: 'redox',
+              condVi: 't°',
+              condEn: 'Δ',
+              phenVi: `Khi đun nóng ${nameVi} (${dispOrg}) với Cu(OH)₂ trong môi trường kiềm ${baseF}, xuất hiện kết tủa màu đỏ gạch đặc trưng của Cu₂O↓.`,
+              phenEn: `Heating ${nameEn} (${dispOrg}) with Cu(OH)₂ in alkaline ${baseF} produces a signature brick-red precipitate of copper(I) oxide (Cu₂O↓).`,
+              expVi: `Trong môi trường kiềm đun nóng, nhóm chức aldehyde (-CHO) của ${nameVi} khử Cu(+2) trong Cu(OH)₂ xuống Cu(+1) dưới dạng kết tủa đỏ gạch Cu₂O↓ và bị oxi hóa thành muối carboxylate ${formatFormulaUnicode(saltFormula)}.`,
+              expEn: `In hot alkaline medium, the reducing aldehyde (-CHO) group of ${nameEn} reduces Cu(II) hydroxide to brick-red Cu₂O↓ while oxidizing to carboxylate salt ${formatFormulaUnicode(saltFormula)}.`
+            }
+          );
+          if (res) return res;
+        }
+
+        if (feat.nKetone > 0 || comp.id === 'sucrose' || comp.id === 'benzaldehyde') {
+          return makeNoReactionResult(
+            canonicalFormulas,
+            `Không xuất hiện kết tủa đỏ gạch Cu₂O↓ khi đun nóng ${nameVi} (${dispOrg}) với Cu(OH)₂/${baseF}.`,
+            `No brick-red Cu₂O↓ precipitate forms upon heating ${nameEn} (${dispOrg}) with alkaline Cu(OH)₂/${baseF}.`,
+            comp.id === 'benzaldehyde'
+              ? `Ngoại lệ của aldehyde thơm: Benzaldehyde dương tính với thuốc thử Tollens (tráng bạc) nhưng không khử được Cu(OH)₂/NaOH (thuốc thử Fehling) thành kết tủa đỏ gạch Cu₂O↓.`
+              : `Phân tử ${nameVi} không có nhóm chức aldehyde (-CHO) tự do nên không khử được Cu(OH)₂ trong môi trường kiềm đun nóng tạo kết tủa đỏ gạch Cu₂O↓.`,
+            comp.id === 'benzaldehyde'
+              ? `Aromatic aldehyde exception: Benzaldehyde reduces Tollens’ reagent to a silver mirror but fails to reduce alkaline Cu(OH)₂ (Fehling’s test) to brick-red Cu₂O↓.`
+              : `${nameEn} lacks a reducing aldehyde (-CHO) group and therefore cannot reduce hot alkaline Cu(OH)₂ to brick-red Cu₂O↓.`
+          );
+        }
+      }
+    }
+
+    // Case D: Org + Br2 + H2O (Aldehyde / Reducing sugar oxidation in bromine water)
+    if (canonicalFormulas.includes('Br2') && canonicalFormulas.includes('H2O')) {
+      const orgInput = canonicalFormulas.find((f) => f !== 'Br2' && f !== 'H2O');
+      const org = getBridgedOrganic(orgInput);
+      if (org && org.features.nReducingCHO > 0 && org.features.nNonAromDoubleCC === 0 && org.features.nTripleCC === 0) {
+        const k = org.features.nReducingCHO;
+        const oxAtoms = cloneAndModifyAtoms(org.features.atoms, { O: k });
+        const oxHill = buildHillFormulaFromAtoms(oxAtoms);
+        const oxFormula = KNOWN_ACID_BY_HILL[oxHill] || (oxHill === 'C6H12O7' ? 'GluconicAcid' : registerDynamicFormula(oxHill));
+        const nameVi = getOrganicName(org, 'vi');
+        const nameEn = getOrganicName(org, 'en');
+        const dispOrg = formatFormulaUnicode(orgInput);
+        const res = makeBalancedResult(
+          canonicalFormulas,
+          [
+            { formula: oxFormula, state: null },
+            { formula: 'HBr', state: null }
+          ],
+          {
+            tier: 2,
+            type: 'redox',
+            condVi: '',
+            condEn: '',
+            phenVi: `Nước bromine màu vàng nâu bị mất màu hoàn toàn khi tác dụng với ${nameVi} (${dispOrg}).`,
+            phenEn: `Orange-brown bromine water is completely decolorized upon reaction with ${nameEn} (${dispOrg}).`,
+            expVi: `Nước bromine (Br₂ + H₂O) oxi hóa nhóm chức aldehyde (-CHO) của ${nameVi} thành nhóm carboxyl (-COOH) tạo ${formatFormulaUnicode(oxFormula)} và HBr.`,
+            expEn: `Bromine water (Br₂ + H₂O) oxidizes the aldehyde (-CHO) group of ${nameEn} to carboxylic acid ${formatFormulaUnicode(oxFormula)} and HBr.`
+          }
+        );
+        if (res) return res;
+      }
+    }
+
+    return null;
+  }
+
+  // =========================================================================
   // MAIN 3-TIER PREDICTION ENTRYPOINT
   // =========================================================================
   function predictReaction(rawFormulas) {
+    bridgeOrganicDictionary();
     const canonicalFormulas = (rawFormulas || []).map((f) => normalizeInputFormula(f));
 
     // 1. Check Tier 1 Dictionary first (works for both 2 and 3 reactants, order-independent)
     const tier1 = lookupTier1(canonicalFormulas);
     if (tier1) return tier1;
 
-    // 2. If 2 reactants -> run Tier 2 rule engine
+    // 2. If 2 reactants -> run Tier 2 Organic first, then Tier 2 Inorganic rule engine
     if (canonicalFormulas.length === 2) {
+      const orgRes = inferTier2Organic(canonicalFormulas[0], canonicalFormulas[1]);
+      if (orgRes) return orgRes;
       return inferTier2Pair(canonicalFormulas[0], canonicalFormulas[1]);
     }
 
-    // 3. Tier 3: 3 reactants not in Tier 1 -> test pairs (A,B), (A,C), (B,C) through Tier 1 & Tier 2
+    // 3. Tier 3: 3 reactants not in Tier 1 -> check 3-reactant Organic rules first, then pairwise subsets
     if (canonicalFormulas.length === 3) {
+      const orgTriple = inferTier2OrganicTriple(canonicalFormulas);
+      if (orgTriple) return orgTriple;
+
       const [A, B, C] = canonicalFormulas;
       const candidatePairs = [
         { pair: [A, B], spectator: C },
@@ -3728,7 +6023,7 @@
 
       for (let i = 0; i < candidatePairs.length; i++) {
         const { pair, spectator } = candidatePairs[i];
-        const res = lookupTier1(pair) || inferTier2Pair(pair[0], pair[1]);
+        const res = lookupTier1(pair) || inferTier2Organic(pair[0], pair[1]) || inferTier2Pair(pair[0], pair[1]);
         if (res && res.reacted) {
           return {
             ...res,
@@ -5309,19 +7604,457 @@
     return centerGraph(buildStarUnit(centerSym, sats.slice(0, 6), [], -90, 8));
   }
 
+  // Build 2D heavy-atom skeletal graph directly from window.ORGANIC_COMPOUNDS elements & bonds
+  function buildBridgedOrganicGraph(entry) {
+    if (!entry || !entry.compound) return null;
+    const cacheKey = entry.token || entry.compound.id;
+    if (BRIDGED_GRAPH_CACHE.has(cacheKey)) {
+      return cloneGraph(BRIDGED_GRAPH_CACHE.get(cacheKey));
+    }
+
+    const comp = entry.compound;
+    const feat = entry.features || extractOrganicFeatures(comp);
+    const els = Array.isArray(comp.elements) ? comp.elements : [];
+    const rawBonds = Array.isArray(comp.bonds) ? comp.bonds : [];
+    const n = els.length;
+
+    if (n === 0) {
+      return { atoms: [{ sym: 'C', x: 0, y: 0 }], bonds: [], badges: [] };
+    }
+    if (n === 1) {
+      const g1 = { atoms: [{ sym: els[0], x: 0, y: 0 }], bonds: [], badges: [] };
+      BRIDGED_GRAPH_CACHE.set(cacheKey, g1);
+      return cloneGraph(g1);
+    }
+
+    const L0 = 28;
+    const posX = new Array(n).fill(0);
+    const posY = new Array(n).fill(0);
+    const placed = new Array(n).fill(false);
+    const inRing = new Array(n).fill(false);
+    const adj = feat.adj;
+
+    // Special 3D cage projections (Cubane, Prismane, Tetrahedrane, Adamantane)
+    if (comp.id === 'cubane' && n === 8) {
+      const front = [[-13, -13], [13, -13], [13, 13], [-13, 13]];
+      const back = [[-3, -22], [23, -22], [23, 4], [-3, 4]];
+      for (let i = 0; i < 4; i++) {
+        posX[i] = front[i][0];
+        posY[i] = front[i][1];
+        posX[i + 4] = back[i][0];
+        posY[i + 4] = back[i][1];
+        placed[i] = true;
+        placed[i + 4] = true;
+        inRing[i] = true;
+        inRing[i + 4] = true;
+      }
+    } else if (comp.id === 'prismane' && n === 6) {
+      const tri1 = [[0, -16], [15, 10], [-15, 10]];
+      const tri2 = [[10, -24], [25, 2], [-5, 2]];
+      for (let i = 0; i < 3; i++) {
+        posX[i] = tri1[i][0];
+        posY[i] = tri1[i][1];
+        posX[i + 3] = tri2[i][0];
+        posY[i + 3] = tri2[i][1];
+        placed[i] = true;
+        placed[i + 3] = true;
+        inRing[i] = true;
+        inRing[i + 3] = true;
+      }
+    } else if (comp.id === 'tetrahedrane' && n === 4) {
+      const coords = [[0, -22], [20, 13], [-20, 13], [0, 1]];
+      for (let i = 0; i < 4; i++) {
+        posX[i] = coords[i][0];
+        posY[i] = coords[i][1];
+        placed[i] = true;
+        inRing[i] = true;
+      }
+    }
+
+    // Regular polygon placement for rings (5/6/7/4/3-membered)
+    const ringPriority = { 6: 0, 5: 1, 7: 2, 4: 3, 3: 4 };
+    const sortedRings = (feat.rings || [])
+      .slice()
+      .sort((a, b) => (ringPriority[a.length] ?? 9) - (ringPriority[b.length] ?? 9));
+
+    const placedRings = new Set();
+
+    function placeRegularRingAtCenter(ring, cx, cy, startAng, dirSign = 1) {
+      const k = ring.length;
+      const R = L0 / (2 * Math.sin(Math.PI / k));
+      for (let i = 0; i < k; i++) {
+        const idx = ring[i];
+        inRing[idx] = true;
+        if (!placed[idx]) {
+          const ang = startAng + dirSign * ((2 * Math.PI * i) / k);
+          posX[idx] = cx + Math.cos(ang) * R;
+          posY[idx] = cy + Math.sin(ang) * R;
+          placed[idx] = true;
+        }
+      }
+    }
+
+    if (!placed.some(Boolean) && sortedRings.length > 0) {
+      const r0 = sortedRings[0];
+      placeRegularRingAtCenter(r0, 0, 0, -Math.PI / 2, 1);
+      placedRings.add(0);
+
+      // Iteratively place fused or spiro-connected rings
+      for (let pass = 0; pass < sortedRings.length; pass++) {
+        let progress = false;
+        for (let rIdx = 1; rIdx < sortedRings.length; rIdx++) {
+          if (placedRings.has(rIdx)) continue;
+          const ring = sortedRings[rIdx];
+          const k = ring.length;
+          const R = L0 / (2 * Math.sin(Math.PI / k));
+          const apothem = L0 / (2 * Math.tan(Math.PI / k));
+
+          // Check if ring shares an edge (u, v) with already-placed vertices
+          let sharedEdge = null;
+          for (let i = 0; i < k; i++) {
+            const u = ring[i];
+            const v = ring[(i + 1) % k];
+            if (placed[u] && placed[v]) {
+              sharedEdge = { i, u, v };
+              break;
+            }
+          }
+
+          if (sharedEdge) {
+            const { i: idxU, u, v } = sharedEdge;
+            const mx = (posX[u] + posX[v]) / 2;
+            const my = (posY[u] + posY[v]) / 2;
+            const dx = posX[v] - posX[u];
+            const dy = posY[v] - posY[u];
+            const eLen = Math.hypot(dx, dy) || L0;
+            let nx = -dy / eLen;
+            let ny = dx / eLen;
+
+            // Point normal away from centroid of already-placed atoms
+            let cxPlaced = 0;
+            let cyPlaced = 0;
+            let cntPlaced = 0;
+            for (let a = 0; a < n; a++) {
+              if (placed[a]) {
+                cxPlaced += posX[a];
+                cyPlaced += posY[a];
+                cntPlaced++;
+              }
+            }
+            if (cntPlaced > 0) {
+              cxPlaced /= cntPlaced;
+              cyPlaced /= cntPlaced;
+              if ((mx + nx * apothem - cxPlaced) * (mx - cxPlaced) + (my + ny * apothem - cyPlaced) * (my - cyPlaced) < 0) {
+                nx = -nx;
+                ny = -ny;
+              }
+            }
+
+            const rCx = mx + nx * apothem;
+            const rCy = my + ny * apothem;
+            const angU = Math.atan2(posY[u] - rCy, posX[u] - rCx);
+            const angV = Math.atan2(posY[v] - rCy, posX[v] - rCx);
+            let diff = angV - angU;
+            while (diff <= -Math.PI) diff += 2 * Math.PI;
+            while (diff > Math.PI) diff -= 2 * Math.PI;
+            const stepSign = diff >= 0 ? 1 : -1;
+
+            for (let step = 0; step < k; step++) {
+              const vtx = ring[(idxU + step) % k];
+              inRing[vtx] = true;
+              if (!placed[vtx]) {
+                const ang = angU + stepSign * ((2 * Math.PI * step) / k);
+                posX[vtx] = rCx + Math.cos(ang) * R;
+                posY[vtx] = rCy + Math.sin(ang) * R;
+                placed[vtx] = true;
+              }
+            }
+            placedRings.add(rIdx);
+            progress = true;
+            continue;
+          }
+
+          // Check if ring shares a single spiro vertex u with already-placed vertices
+          const sharedIdx = ring.findIndex((vtx) => placed[vtx]);
+          if (sharedIdx !== -1) {
+            const u = ring[sharedIdx];
+            let vx = 0;
+            let vy = 0;
+            (adj[u] || []).forEach((nb) => {
+              if (placed[nb.idx]) {
+                vx += posX[u] - posX[nb.idx];
+                vy += posY[u] - posY[nb.idx];
+              }
+            });
+            const vLen = Math.hypot(vx, vy) || 1;
+            const nx = vx / vLen;
+            const ny = vy / vLen;
+            const rCx = posX[u] + nx * R;
+            const rCy = posY[u] + ny * R;
+            const angU = Math.atan2(posY[u] - rCy, posX[u] - rCx);
+
+            for (let step = 0; step < k; step++) {
+              const vtx = ring[(sharedIdx + step) % k];
+              inRing[vtx] = true;
+              if (!placed[vtx]) {
+                const ang = angU + (2 * Math.PI * step) / k;
+                posX[vtx] = rCx + Math.cos(ang) * R;
+                posY[vtx] = rCy + Math.sin(ang) * R;
+                placed[vtx] = true;
+              }
+            }
+            placedRings.add(rIdx);
+            progress = true;
+          }
+        }
+        if (!progress) break;
+      }
+    }
+
+    // If acyclic (no rings placed yet), find longest backbone path and place as 120° zig-zag
+    if (!placed.some(Boolean)) {
+      function bfsFarthest(startNode) {
+        const dist = new Array(n).fill(-1);
+        const parent = new Array(n).fill(-1);
+        const q = [startNode];
+        dist[startNode] = 0;
+        let far = startNode;
+        while (q.length > 0) {
+          const u = q.shift();
+          if (dist[u] > dist[far] || (dist[u] === dist[far] && els[u] === 'C' && els[far] !== 'C')) {
+            far = u;
+          }
+          (adj[u] || []).forEach((nb) => {
+            if (dist[nb.idx] === -1) {
+              dist[nb.idx] = dist[u] + 1;
+              parent[nb.idx] = u;
+              q.push(nb.idx);
+            }
+          });
+        }
+        const path = [];
+        let cur = far;
+        while (cur !== -1) {
+          path.push(cur);
+          cur = parent[cur];
+        }
+        return { far, path: path.reverse() };
+      }
+
+      const firstStart = els.indexOf('C') !== -1 ? els.indexOf('C') : 0;
+      const p1 = bfsFarthest(firstStart);
+      const p2 = bfsFarthest(p1.far);
+      const chain = p2.path;
+      const m = chain.length;
+      const stepX = L0 * 0.86;
+      const stepY = L0 * 0.5;
+
+      for (let i = 0; i < m; i++) {
+        const idx = chain[i];
+        posX[idx] = (i - (m - 1) / 2) * stepX;
+        posY[idx] = m <= 2 ? 0 : (i % 2 === 0 ? -0.46 : 0.46) * stepY;
+        placed[idx] = true;
+      }
+    }
+
+    // Place remaining unplaced branches / bridged rings via BFS outward
+    const bfsQueue = [];
+    for (let i = 0; i < n; i++) {
+      if (placed[i]) bfsQueue.push(i);
+    }
+
+    while (bfsQueue.length > 0) {
+      const p = bfsQueue.shift();
+      const unplacedChildren = (adj[p] || []).map((nb) => nb.idx).filter((idx) => !placed[idx]);
+      if (unplacedChildren.length === 0) continue;
+
+      const placedNbs = (adj[p] || []).map((nb) => nb.idx).filter((idx) => placed[idx]);
+      let outAng = -Math.PI / 2;
+
+      if (placedNbs.length === 1) {
+        const nb = placedNbs[0];
+        const baseAng = Math.atan2(posY[p] - posY[nb], posX[p] - posX[nb]);
+        outAng = baseAng + (p % 2 === 0 ? 0.45 : -0.45);
+      } else if (placedNbs.length >= 2) {
+        let vx = 0;
+        let vy = 0;
+        placedNbs.forEach((nb) => {
+          vx += posX[p] - posX[nb];
+          vy += posY[p] - posY[nb];
+        });
+        if (Math.hypot(vx, vy) > 2) {
+          outAng = Math.atan2(vy, vx);
+        } else {
+          const dx = posX[placedNbs[1]] - posX[placedNbs[0]];
+          const dy = posY[placedNbs[1]] - posY[placedNbs[0]];
+          outAng = Math.atan2(dx, -dy);
+        }
+      }
+
+      const cnt = unplacedChildren.length;
+      unplacedChildren.forEach((childIdx, kIdx) => {
+        if (placed[childIdx]) return;
+        let ang = outAng;
+        if (cnt === 2) {
+          ang = outAng + (kIdx === 0 ? -0.92 : 0.92);
+        } else if (cnt >= 3) {
+          ang = outAng + (kIdx - (cnt - 1) / 2) * 1.15;
+        }
+        const dist = bondDist(els[p], els[childIdx], 6.5);
+        posX[childIdx] = posX[p] + Math.cos(ang) * dist;
+        posY[childIdx] = posY[p] + Math.sin(ang) * dist;
+        placed[childIdx] = true;
+        bfsQueue.push(childIdx);
+
+        // If childIdx belongs to an unplaced ring (e.g. second ring in Biphenyl, Sucrose, Maltose, Nicotine), place that ring immediately!
+        for (let rIdx = 0; rIdx < sortedRings.length; rIdx++) {
+          if (placedRings.has(rIdx)) continue;
+          const ring = sortedRings[rIdx];
+          const posInRing = ring.indexOf(childIdx);
+          if (posInRing !== -1) {
+            const k = ring.length;
+            const R = L0 / (2 * Math.sin(Math.PI / k));
+            const rCx = posX[childIdx] + Math.cos(ang) * R;
+            const rCy = posY[childIdx] + Math.sin(ang) * R;
+            const angChild = Math.atan2(posY[childIdx] - rCy, posX[childIdx] - rCx);
+            for (let step = 0; step < k; step++) {
+              const vtx = ring[(posInRing + step) % k];
+              inRing[vtx] = true;
+              if (!placed[vtx]) {
+                const vAng = angChild + (2 * Math.PI * step) / k;
+                posX[vtx] = rCx + Math.cos(vAng) * R;
+                posY[vtx] = rCy + Math.sin(vAng) * R;
+                placed[vtx] = true;
+                bfsQueue.push(vtx);
+              }
+            }
+            placedRings.add(rIdx);
+          }
+        }
+      });
+    }
+
+    // Any disconnected leftover atom fallback
+    for (let i = 0; i < n; i++) {
+      if (!placed[i]) {
+        posX[i] = i * L0;
+        posY[i] = 0;
+        placed[i] = true;
+      }
+    }
+
+    // 35-step spring + non-bonded repulsion relaxation
+    const isCage = comp.id === 'cubane' || comp.id === 'prismane' || comp.id === 'tetrahedrane';
+    const relaxSteps = isCage ? 8 : 35;
+
+    for (let step = 0; step < relaxSteps; step++) {
+      const fx = new Array(n).fill(0);
+      const fy = new Array(n).fill(0);
+      const damp = 0.28 * (1 - step / (relaxSteps + 8));
+
+      // 1. Bond length spring forces
+      rawBonds.forEach((b) => {
+        const u = b[0];
+        const v = b[1];
+        if (u < 0 || u >= n || v < 0 || v >= n || u === v) return;
+        const target = bondDist(els[u], els[v], 6.0);
+        const dx = posX[v] - posX[u];
+        const dy = posY[v] - posY[u];
+        const dist = Math.hypot(dx, dy) || 0.5;
+        const diff = ((dist - target) / dist) * 0.42;
+        fx[u] += dx * diff;
+        fy[u] += dy * diff;
+        fx[v] -= dx * diff;
+        fy[v] -= dy * diff;
+      });
+
+      // 2. Non-bonded atom repulsion to prevent overlap
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          const isBonded = feat.bondMap.has(makeBondKey(i, j));
+          if (isBonded) continue;
+          const minD = getAtomRadius(els[i]) + getAtomRadius(els[j]) + 15;
+          const dx = posX[j] - posX[i];
+          const dy = posY[j] - posY[i];
+          const dSq = dx * dx + dy * dy;
+          if (dSq < minD * minD) {
+            const dist = Math.sqrt(dSq) || 0.5;
+            const push = ((minD - dist) / dist) * 0.36;
+            fx[i] -= dx * push;
+            fy[i] -= dy * push;
+            fx[j] += dx * push;
+            fy[j] += dy * push;
+          }
+        }
+      }
+
+      for (let i = 0; i < n; i++) {
+        const ringFactor = inRing[i] ? 0.45 : 1.0;
+        const stepDx = Math.max(-4.5, Math.min(4.5, fx[i] * damp * ringFactor));
+        const stepDy = Math.max(-4.5, Math.min(4.5, fy[i] * damp * ringFactor));
+        posX[i] += stepDx;
+        posY[i] += stepDy;
+      }
+    }
+
+    const graphAtoms = els.map((sym, i) => ({
+      sym,
+      x: Number(posX[i].toFixed(1)),
+      y: Number(posY[i].toFixed(1))
+    }));
+
+    const graphBonds = rawBonds.map((b) => ({
+      a: b[0],
+      b: b[1],
+      order: b[2] || 1,
+      kind: 'covalent'
+    }));
+
+    const centered = centerGraph({ atoms: graphAtoms, bonds: graphBonds, badges: [] });
+    BRIDGED_GRAPH_CACHE.set(cacheKey, centered);
+    return cloneGraph(centered);
+  }
+
   function buildMoleculeGraph(formula) {
+    bridgeOrganicDictionary();
     const resolved = resolveChemicalFormula(formula);
-    return buildLayer1Molecule(resolved) || buildLayer2Molecule(resolved);
+    const layer1 = buildLayer1Molecule(formula) || buildLayer1Molecule(resolved);
+    if (layer1) return layer1;
+
+    if (BRIDGED_ORGANIC_MAP.has(formula)) {
+      const g = buildBridgedOrganicGraph(BRIDGED_ORGANIC_MAP.get(formula));
+      if (g) return g;
+    }
+    if (BRIDGED_ORGANIC_MAP.has(resolved)) {
+      const g = buildBridgedOrganicGraph(BRIDGED_ORGANIC_MAP.get(resolved));
+      if (g) return g;
+    }
+    if (HILL_TO_BRIDGED_MAP.has(resolved)) {
+      const g = buildBridgedOrganicGraph(HILL_TO_BRIDGED_MAP.get(resolved));
+      if (g) return g;
+    }
+
+    return buildLayer2Molecule(resolved);
   }
 
   // Render SVG formula text with clean subscript <tspan>s
   function formatSVGFormulaText(formula) {
-    if (formula === 'Fructose') return 'Fructose';
-    const escaped = escapeHTML(formula);
-    return escaped.replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
-      const subDigits = digits.replace(/\d/g, (d) => SVG_SUBSCRIPT_DIGITS[d] || d);
-      return `${pre}${subDigits}`;
-    });
+    bridgeOrganicDictionary();
+    if (formula === 'Fructose') return 'C₆H₁₂O₆ (Fructose)';
+    const toSub = (str) =>
+      escapeHTML(str).replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
+        const subDigits = digits.replace(/\d/g, (d) => SVG_SUBSCRIPT_DIGITS[d] || d);
+        return `${pre}${subDigits}`;
+      });
+    const bridged = BRIDGED_ORGANIC_MAP.get(formula);
+    if (bridged && !bridged.isTier1Existing) {
+      return `${toSub(bridged.hillFormula)} (${escapeHTML(bridged.token)})`;
+    }
+    const tagMatch = String(formula || '').match(/^([A-Za-z0-9()\[\]≡=]+)\s+\((.+)\)$/);
+    if (tagMatch) {
+      return `${toSub(tagMatch[1])} (${escapeHTML(tagMatch[2])})`;
+    }
+    return toSub(formula);
   }
 
   function collectUsedCategories(graphs) {
@@ -6357,6 +9090,7 @@
   }
 
   function init(opts = {}) {
+    bridgeOrganicDictionary();
     state.lang = typeof opts.getLang === 'function' ? opts.getLang() : 'vi';
 
     dom = {

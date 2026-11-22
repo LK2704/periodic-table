@@ -10658,6 +10658,111 @@ body {
   white-space: nowrap;
 }
 
+/* Semantic flat dark-matte category tag palette matching One Dark atom tones */
+.org-mol-tag[data-org-cat="incomplete"] {
+  background: #2c2419;
+  border-color: #7c5f32;
+  color: #e5c07b;
+}
+
+.org-mol-tag[data-org-cat="alkane"],
+.org-mol-tag[data-org-cat="cycloalkane"],
+.org-mol-tag[data-org-cat="hydrocarbon"] {
+  background: #1c222d;
+  border-color: #4b5669;
+  color: #cbd5e1;
+}
+
+.org-mol-tag[data-org-cat="alkene"],
+.org-mol-tag[data-org-cat="alkadiene"],
+.org-mol-tag[data-org-cat="alkyne"],
+.org-mol-tag[data-org-cat="cycloalkene"] {
+  background: #19262c;
+  border-color: #3d7582;
+  color: #56b6c2;
+}
+
+.org-mol-tag[data-org-cat="arene"],
+.org-mol-tag[data-org-cat="aromatic"] {
+  background: #241f31;
+  border-color: #6b5791;
+  color: #c69ff6;
+}
+
+.org-mol-tag[data-org-cat="alcohol"],
+.org-mol-tag[data-org-cat="phenol"],
+.org-mol-tag[data-org-cat="ether"],
+.org-mol-tag[data-org-cat="peroxide"] {
+  background: #2b1c20;
+  border-color: #8f464d;
+  color: #e88991;
+}
+
+.org-mol-tag[data-org-cat="aldehyde"],
+.org-mol-tag[data-org-cat="ketone"] {
+  background: #2b211a;
+  border-color: #96633b;
+  color: #e2a46b;
+}
+
+.org-mol-tag[data-org-cat="carboxylic"],
+.org-mol-tag[data-org-cat="ester"],
+.org-mol-tag[data-org-cat="anhydride"],
+.org-mol-tag[data-org-cat="carbamate"] {
+  background: #2a1d26;
+  border-color: #8a4b72;
+  color: #df8fc0;
+}
+
+.org-mol-tag[data-org-cat="carbohydrate"] {
+  background: #262318;
+  border-color: #827337;
+  color: #dcc56e;
+}
+
+.org-mol-tag[data-org-cat="amine"],
+.org-mol-tag[data-org-cat="amide"],
+.org-mol-tag[data-org-cat="aminoacid"],
+.org-mol-tag[data-org-cat="aminoalcohol"],
+.org-mol-tag[data-org-cat="oxyamine"],
+.org-mol-tag[data-org-cat="imine"],
+.org-mol-tag[data-org-cat="nitrile"] {
+  background: #1a2433;
+  border-color: #3e67a8;
+  color: #7aa2f7;
+}
+
+.org-mol-tag[data-org-cat="nitro"],
+.org-mol-tag[data-org-cat="nitroso"] {
+  background: #2d1d1c;
+  border-color: #9e483e;
+  color: #ea8679;
+}
+
+.org-mol-tag[data-org-cat="halogen"] {
+  background: #1a2923;
+  border-color: #467d5e;
+  color: #7ec699;
+}
+
+.org-mol-tag[data-org-cat="heterocycle"] {
+  background: #1a2630;
+  border-color: #3d728a;
+  color: #6ab5d9;
+}
+
+.org-mol-tag[data-org-cat="pharma"] {
+  background: #1e2829;
+  border-color: #477a78;
+  color: #73c6be;
+}
+
+.org-mol-tag[data-org-cat="custom"] {
+  background: #1e222a;
+  border-color: #4d5566;
+  color: #9da8ba;
+}
+
 .org-meta-pills {
   display: flex;
   align-items: center;
