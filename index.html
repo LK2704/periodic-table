@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Science Lab — Interactive Chemistry, Physics &amp; Biology</title>
+  <title>Science Lab — Interactive Chemistry &amp; Physics</title>
   <style>
     :root {
       --bg-app: #0e1117;
@@ -178,8 +178,11 @@
     /* Subject Cards Grid */
     .hub-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      max-width: 740px;
+      width: 100%;
+      margin: 0 auto;
     }
 
     .subject-card {
@@ -399,9 +402,9 @@
   <main class="hub-main">
     <section class="hub-hero">
       <span class="hub-eyebrow" data-i18n="eyebrow">Nền tảng Khoa học Tương tác</span>
-      <h1 class="hub-title" data-i18n="heroTitle">Khám phá Hóa học, Vật lý &amp; Sinh học</h1>
+      <h1 class="hub-title" data-i18n="heroTitle">Khám phá Hóa học &amp; Vật lý</h1>
       <p class="hub-subtitle" data-i18n="heroSub">
-        Bộ công cụ trực quan và phòng thí nghiệm mô phỏng dành cho học tập khoa học tự nhiên. Chọn một phân môn bên dưới để bắt đầu.
+        Không gian trực quan và mô phỏng tương tác giúp bạn tìm hiểu bản chất của thế giới tự nhiên. Chọn một phân môn bên dưới để bắt đầu.
       </p>
     </section>
 
@@ -423,17 +426,12 @@
           <h2 class="card-title" data-i18n="chemTitle">Hóa học</h2>
           <span class="card-path">/chemistry/</span>
           <p class="card-desc" data-i18n="chemDesc">
-            Bảng tuần hoàn 118 nguyên tố tương tác kèm mô hình nguyên tử 3D, phòng Lab liên kết hóa học, cân bằng phản ứng vô cơ &amp; hữu cơ THPT, máy đo pH và tính khối lượng mol.
+            Khám phá cấu trúc vi mô của vật chất, tìm hiểu bản chất của các nguyên tố và quan sát cách chúng tương tác, biến đổi trong tự nhiên.
           </p>
-          <div class="card-tags">
-            <span class="card-tag" data-i18n="chemTag1">Bảng tuần hoàn 3D</span>
-            <span class="card-tag" data-i18n="chemTag2">Phản ứng Vô cơ &amp; Hữu cơ</span>
-            <span class="card-tag" data-i18n="chemTag3">pH &amp; Mol</span>
-          </div>
         </div>
 
         <div class="card-footer">
-          <span data-i18n="chemAction">Mở ứng dụng Hóa học</span>
+          <span data-i18n="chemAction">Khám phá Hóa học</span>
           <span class="card-arrow" aria-hidden="true">→</span>
         </div>
       </a>
@@ -456,42 +454,8 @@
           <h2 class="card-title" data-i18n="physTitle">Vật lý</h2>
           <span class="card-path">/physics/</span>
           <p class="card-desc" data-i18n="physDesc">
-            Mô phỏng cơ học, dao động sóng, điện từ trường, quang học và vật lý hạt nhân trực quan.
+            Tìm hiểu các quy luật vận động, lực, năng lượng và những hiện tượng tự nhiên vận hành vũ trụ quanh ta.
           </p>
-          <div class="card-tags">
-            <span class="card-tag" data-i18n="physTag1">Cơ học &amp; Sóng</span>
-            <span class="card-tag" data-i18n="physTag2">Điện từ &amp; Quang học</span>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <span data-i18n="soonAction">Đang phát triển</span>
-        </div>
-      </div>
-
-      <!-- BIOLOGY (COMING SOON — sau này chỉ cần đổi <div class="subject-card is-soon"> thành <a class="subject-card is-live" href="./biology/">) -->
-      <div class="subject-card is-soon" aria-disabled="true">
-        <div class="card-top">
-          <span class="card-icon bio" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M7 3C7 8 17 8 17 12C17 16 7 16 7 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-              <path d="M17 3C17 8 7 8 7 12C7 16 17 16 17 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-              <path d="M8.5 6.5H15.5M8.5 17.5H15.5M9.5 12H14.5" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
-            </svg>
-          </span>
-          <span class="status-pill soon" data-i18n="statusSoon">Sắp ra mắt</span>
-        </div>
-
-        <div class="card-copy">
-          <h2 class="card-title" data-i18n="bioTitle">Sinh học</h2>
-          <span class="card-path">/biology/</span>
-          <p class="card-desc" data-i18n="bioDesc">
-            Cấu trúc tế bào 3D, cơ chế di truyền DNA/RNA, trao đổi chất và hệ sinh thái tương tác.
-          </p>
-          <div class="card-tags">
-            <span class="card-tag" data-i18n="bioTag1">Tế bào &amp; DNA</span>
-            <span class="card-tag" data-i18n="bioTag2">Di truyền học</span>
-          </div>
         </div>
 
         <div class="card-footer">
@@ -502,7 +466,7 @@
   </main>
 
   <footer class="hub-footer">
-    <span data-i18n="footerNote">Science Hub — Cấu trúc đa phân môn: /chemistry • /physics • /biology</span>
+    <span data-i18n="footerNote">Science Hub — Cấu trúc phân môn: /chemistry • /physics</span>
   </footer>
 
   <script>
@@ -510,49 +474,31 @@
       const I18N = {
         vi: {
           eyebrow: 'Nền tảng Khoa học Tương tác',
-          heroTitle: 'Khám phá Hóa học, Vật lý & Sinh học',
-          heroSub: 'Bộ công cụ trực quan và phòng thí nghiệm mô phỏng dành cho học tập khoa học tự nhiên. Chọn một phân môn bên dưới để bắt đầu.',
+          heroTitle: 'Khám phá Hóa học & Vật lý',
+          heroSub: 'Không gian trực quan và mô phỏng tương tác giúp bạn tìm hiểu bản chất của tự nhiên. Chọn một phân môn bên dưới để bắt đầu.',
           statusLive: 'Sẵn sàng',
           statusSoon: 'Sắp ra mắt',
           chemTitle: 'Hóa học',
-          chemDesc: 'Bảng tuần hoàn 118 nguyên tố tương tác kèm mô hình nguyên tử 3D, phòng Lab liên kết hóa học, cân bằng phản ứng vô cơ & hữu cơ THPT, máy đo pH và tính khối lượng mol.',
-          chemTag1: 'Bảng tuần hoàn 3D',
-          chemTag2: 'Phản ứng Vô cơ & Hữu cơ',
-          chemTag3: 'pH & Mol',
-          chemAction: 'Mở ứng dụng Hóa học',
+          chemDesc: 'Khám phá cấu trúc vi mô của vật chất, tìm hiểu bản chất của các nguyên tố và quan sát cách chúng tương tác, biến đổi trong tự nhiên.',
+          chemAction: 'Khám phá Hóa học',
           physTitle: 'Vật lý',
-          physDesc: 'Mô phỏng cơ học, dao động sóng, điện từ trường, quang học và vật lý hạt nhân trực quan.',
-          physTag1: 'Cơ học & Sóng',
-          physTag2: 'Điện từ & Quang học',
-          bioTitle: 'Sinh học',
-          bioDesc: 'Cấu trúc tế bào 3D, cơ chế di truyền DNA/RNA, trao đổi chất và hệ sinh thái tương tác.',
-          bioTag1: 'Tế bào & DNA',
-          bioTag2: 'Di truyền học',
+          physDesc: 'Tìm hiểu các quy luật vận động, lực, năng lượng và những hiện tượng tự nhiên vận hành vũ trụ quanh ta.',
           soonAction: 'Đang phát triển',
-          footerNote: 'Science Hub — Cấu trúc đa phân môn: /chemistry • /physics • /biology'
+          footerNote: 'Science Hub — Cấu trúc phân môn: /chemistry • /physics'
         },
         en: {
           eyebrow: 'Interactive Science Platform',
-          heroTitle: 'Explore Chemistry, Physics & Biology',
-          heroSub: 'Visual tools and interactive laboratories built for natural science learning. Select a discipline below to begin.',
+          heroTitle: 'Explore Chemistry & Physics',
+          heroSub: 'An interactive space built to explore and understand the fundamental laws of nature. Select a discipline below to begin.',
           statusLive: 'Available',
           statusSoon: 'Coming Soon',
           chemTitle: 'Chemistry',
-          chemDesc: 'Interactive 118-element periodic table with 3D atom models, Atomic Bonding & Inorganic/Organic Reaction Lab, pH meter, and molar mass calculator.',
-          chemTag1: '3D Periodic Table',
-          chemTag2: 'Inorganic & Organic Lab',
-          chemTag3: 'pH & Molar Mass',
-          chemAction: 'Open Chemistry App',
+          chemDesc: 'Explore the microscopic structure of matter, uncover the nature of elements, and observe how substances interact and transform.',
+          chemAction: 'Explore Chemistry',
           physTitle: 'Physics',
-          physDesc: 'Interactive simulations for classical mechanics, waves, electromagnetism, optics, and nuclear physics.',
-          physTag1: 'Mechanics & Waves',
-          physTag2: 'Electromagnetism & Optics',
-          bioTitle: 'Biology',
-          bioDesc: '3D cell structures, DNA/RNA genetics, metabolism pathways, and interactive ecosystem models.',
-          bioTag1: 'Cells & DNA',
-          bioTag2: 'Genetics',
+          physDesc: 'Discover the fundamental laws of motion, force, energy, and the physical phenomena that govern our universe.',
           soonAction: 'In Development',
-          footerNote: 'Science Hub — Multi-subject structure: /chemistry • /physics • /biology'
+          footerNote: 'Science Hub — Subject structure: /chemistry • /physics'
         }
       };
 
