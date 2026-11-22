@@ -345,8 +345,8 @@
       tabBondingSub: 'Phân tích Δχ, kiểu liên kết & mô phỏng electron',
       tabReactions: 'Phản ứng hóa học',
       tabReactionsSub: 'Dự đoán sản phẩm, cân bằng & minh họa phân tử',
-      tabOrganic: 'Mạch Carbon & IUPAC',
-      tabOrganicSub: 'Lắp ráp 2D & gọi tên chuẩn GDPT 2018',
+      tabOrganic: 'Lắp ráp phân tử',
+      tabOrganicSub: 'Xếp mạch thẳng, nhánh & mạch vòng 2D',
       presetsLabel: 'Cặp mẫu thú vị:',
       slotA: 'Nguyên tố A',
       slotB: 'Nguyên tố B',
@@ -437,8 +437,8 @@
       tabBondingSub: 'Analyze Δχ, bond polarity & electron animation',
       tabReactions: 'Chemical Reactions',
       tabReactionsSub: 'Predict products, balance & animate molecules',
-      tabOrganic: 'Carbon Chain & IUPAC',
-      tabOrganicSub: '2D chain builder & IUPAC naming',
+      tabOrganic: 'Molecule Builder',
+      tabOrganicSub: 'Build 2D chains, branches & rings',
       presetsLabel: 'Interesting pairs:',
       slotA: 'Element A',
       slotB: 'Element B',
@@ -1451,14 +1451,21 @@
     if (dom.panelReactions) dom.panelReactions.classList.toggle('hidden', !isRxn);
     if (dom.panelOrganic) dom.panelOrganic.classList.toggle('hidden', !isOrg);
 
+    let nextFooterHint = d.footerHint;
     if (isRxn && window.ReactionLab && typeof window.ReactionLab.getHeaderTexts === 'function') {
       const rxnText = window.ReactionLab.getHeaderTexts(state.lang);
-      if (dom.footerHint) dom.footerHint.textContent = rxnText.footerHint;
+      nextFooterHint = rxnText.footerHint;
     } else if (isOrg && window.OrganicBuilder && typeof window.OrganicBuilder.getHeaderTexts === 'function') {
       const orgText = window.OrganicBuilder.getHeaderTexts(state.lang);
-      if (dom.footerHint) dom.footerHint.textContent = orgText.footerHint;
-    } else {
-      if (dom.footerHint) dom.footerHint.textContent = d.footerHint;
+      nextFooterHint = orgText.footerHint;
+    }
+    if (dom.labFooter) {
+      dom.labFooter.classList.toggle('hidden', isOrg);
+    }
+    if (dom.footerHint) {
+      const hasHint = Boolean(nextFooterHint && nextFooterHint.trim());
+      dom.footerHint.textContent = hasHint ? nextFooterHint : '';
+      dom.footerHint.classList.toggle('hidden', !hasHint);
     }
   }
 
@@ -1604,6 +1611,7 @@
     dom = {
       modal: document.getElementById('lab-modal'),
       backdrop: document.getElementById('lab-backdrop'),
+      labFooter: document.querySelector('#lab-modal .lab-footer'),
       footerHint: document.getElementById('lab-footer-hint'),
       labBody: document.querySelector('#lab-modal .lab-body'),
       tabsBar: document.getElementById('lab-tabs'),
