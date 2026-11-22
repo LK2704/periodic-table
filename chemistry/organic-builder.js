@@ -9,6 +9,7 @@
   const MAX_CARBONS = 12;
   const MIN_ZOOM = 0.45;
   const MAX_ZOOM = 2.5;
+  const IDLE_TIDY_MS = 10000;
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   const SUBSCRIPT_DIGITS = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
@@ -1930,7 +1931,7 @@
     if (count <= 0) return [];
     if (occupiedAngles.length === 0) {
       const defaults = {
-        1: [-Math.PI / 2],
+        1: [0],
         2: [-Math.PI / 2, Math.PI / 2],
         3: [-Math.PI / 2, Math.PI / 6, (5 * Math.PI) / 6],
         4: [-Math.PI / 2, 0, Math.PI / 2, Math.PI]
@@ -2030,10 +2031,10 @@
 
   function idealBondLength(elA, elB) {
     if (elA === 'H' || elB === 'H') {
-      return elA === 'C' || elB === 'C' ? 46 : 42;
+      return elA === 'C' || elB === 'C' ? 52 : 48;
     }
-    if (elA === 'C' && elB === 'C') return 68;
-    return 62;
+    if (elA === 'C' && elB === 'C') return 84;
+    return 78;
   }
 
   // Safe unit direction between two points (guarantees non-zero push even if coincident!)
@@ -2045,7 +2046,13 @@
   }
 
   function relaxLayout(graph, positions, options = {}) {
-    const { draggedIds = new Set(), collapsedHIds = new Set(), iterations = 115, showH = true } = options;
+    const {
+      draggedIds = new Set(),
+      collapsedHIds = new Set(),
+      iterations = 115,
+      showH = true,
+      softAnchors = null
+    } = options;
     const { atomMap, adj } = buildAdjacency(graph);
     const pos = new Map();
 
@@ -2068,6 +2075,7 @@
       .filter((a) => (showH && !collapsedHIds.has(a.id)) || a.element !== 'H')
       .map((a) => a.id);
     const visibleSet = new Set(visibleIds);
+    const visibleBonds = graph.bonds.filter((b) => visibleSet.has(b.from) && visibleSet.has(b.to));
 
     const anchorPos = new Map();
     draggedIds.forEach((id) => {
@@ -2112,7 +2120,7 @@
         cx /= k;
         cy /= k;
 
-        const edgeLen = 68;
+        const edgeLen = 84;
         const R = edgeLen / (2 * Math.sin(Math.PI / k));
 
         let bestDir = 1;
@@ -2153,29 +2161,65 @@
           disp.get(id).y += (ty - p.y) * 0.28;
         }
 
-        // Push exocyclic substituents radially outward from ring centroid
+        // Push exocyclic substituents (and depth-2 children like -CH2OH) radially outward from ring centroid
         cycle.forEach((cid) => {
           const cp = pos.get(cid);
           const { ux, uy } = safeUnitVec(cp.x - cx, cp.y - cy, 1);
           const nbs = adj.get(cid) || [];
-          const exo = nbs.filter((e) => !ringAtomSet.has(e.to) && visibleSet.has(e.to));
+          const exo = nbs
+            .filter((e) => !ringAtomSet.has(e.to) && visibleSet.has(e.to))
+            .sort((a, b) => {
+              const ha = atomMap.get(a.to)?.element === 'H' ? 1 : 0;
+              const hb = atomMap.get(b.to)?.element === 'H' ? 1 : 0;
+              if (ha !== hb) return ha - hb;
+              return String(a.to).localeCompare(String(b.to));
+            });
+
           if (exo.length === 1) {
             const eid = exo[0].to;
             const ep = pos.get(eid);
             const L = idealBondLength(atomMap.get(cid).element, atomMap.get(eid).element);
-            disp.get(eid).x += (cp.x + ux * L - ep.x) * 0.14;
-            disp.get(eid).y += (cp.y + uy * L - ep.y) * 0.14;
+            disp.get(eid).x += (cp.x + ux * L - ep.x) * 0.16;
+            disp.get(eid).y += (cp.y + uy * L - ep.y) * 0.16;
           } else if (exo.length === 2) {
             const baseAng = Math.atan2(uy, ux);
+            const ep0 = pos.get(exo[0].to);
+            const ep1 = pos.get(exo[1].to);
+            const d0 = normalizeAngle(Math.atan2(ep0.y - cp.y, ep0.x - cp.x) - baseAng);
+            const d1 = normalizeAngle(Math.atan2(ep1.y - cp.y, ep1.x - cp.x) - baseAng);
+            const firstSign = d0 <= d1 ? -1 : 1;
             exo.forEach((e, idx) => {
               const eid = e.to;
               const ep = pos.get(eid);
               const L = idealBondLength(atomMap.get(cid).element, atomMap.get(eid).element);
-              const ang = baseAng + (idx === 0 ? -0.52 : 0.52);
-              disp.get(eid).x += (cp.x + Math.cos(ang) * L - ep.x) * 0.12;
-              disp.get(eid).y += (cp.y + Math.sin(ang) * L - ep.y) * 0.12;
+              const sign = idx === 0 ? firstSign : -firstSign;
+              const ang = baseAng + sign * 0.62;
+              disp.get(eid).x += (cp.x + Math.cos(ang) * L - ep.x) * 0.14;
+              disp.get(eid).y += (cp.y + Math.sin(ang) * L - ep.y) * 0.14;
             });
           }
+
+          // Depth-2 exocyclic radial clearance (keeps -CH2OH / -COOH tails outside the ring)
+          exo.forEach((e) => {
+            if (atomMap.get(e.to)?.element === 'H') return;
+            const ep = pos.get(e.to);
+            (adj.get(e.to) || []).forEach((subE) => {
+              const subId = subE.to;
+              if (subId === cid || ringAtomSet.has(subId) || !visibleSet.has(subId)) return;
+              const sp = pos.get(subId);
+              const { ux: rux, uy: ruy, dist: distC } = safeUnitVec(sp.x - cx, sp.y - cy, 3);
+              const minRingClear = R + 48;
+              if (distC < minRingClear) {
+                const boost = (minRingClear - distC) * 0.22;
+                disp.get(subId).x += rux * boost;
+                disp.get(subId).y += ruy * boost;
+              } else {
+                const { ux: outUx, uy: outUy } = safeUnitVec(ep.x - cx, ep.y - cy, 5);
+                disp.get(subId).x += outUx * 0.35;
+                disp.get(subId).y += outUy * 0.35;
+              }
+            });
+          });
         });
       });
 
@@ -2194,7 +2238,7 @@
             const { ux, uy, dist } = safeUnitVec(pb.x - pa.x, pb.y - pa.y, cIdx * 17 + i * 5 + j);
             const elA = atomMap.get(a).element;
             const elB = atomMap.get(b).element;
-            const minChord = elA === 'H' && elB === 'H' ? 50 : elA === 'H' || elB === 'H' ? 62 : 90;
+            const minChord = elA === 'H' && elB === 'H' ? 58 : elA === 'H' || elB === 'H' ? 74 : 108;
             if (dist < minChord) {
               const push = (minChord - dist) * 0.18;
               const wA = elA === 'H' && elB !== 'H' ? 0.85 : elB === 'H' && elA !== 'H' ? 0.15 : 0.5;
@@ -2224,7 +2268,7 @@
           const { ux, uy, dist } = safeUnitVec(pb.x - pa.x, pb.y - pa.y, i * 31 + j * 7);
           const elA = atomMap.get(a).element;
           const elB = atomMap.get(b).element;
-          const minDist = elA === 'H' && elB === 'H' ? 36 : elA === 'H' || elB === 'H' ? 46 : 60;
+          const minDist = elA === 'H' && elB === 'H' ? 46 : elA === 'H' || elB === 'H' ? 58 : 76;
           if (dist < minDist) {
             const push = (minDist - dist) * 0.24;
             const wA = elA === 'H' && elB !== 'H' ? 0.8 : elB === 'H' && elA !== 'H' ? 0.2 : 0.5;
@@ -2237,14 +2281,53 @@
         }
       }
 
+      // 4b. Non-bonded atom vs bond segment clearance (prevents bonds cutting across atoms)
+      for (let i = 0; i < visibleBonds.length; i++) {
+        const bd = visibleBonds[i];
+        const pa = pos.get(bd.from);
+        const pb = pos.get(bd.to);
+        const vx = pb.x - pa.x;
+        const vy = pb.y - pa.y;
+        const lenSq = vx * vx + vy * vy;
+        if (lenSq < 1) continue;
+        for (let j = 0; j < visibleIds.length; j++) {
+          const nid = visibleIds[j];
+          if (nid === bd.from || nid === bd.to) continue;
+          if (draggedIds.has(nid) && draggedIds.has(bd.from) && draggedIds.has(bd.to)) continue;
+          const pn = pos.get(nid);
+          const t = ((pn.x - pa.x) * vx + (pn.y - pa.y) * vy) / lenSq;
+          if (t < 0.14 || t > 0.86) continue;
+          const projX = pa.x + t * vx;
+          const projY = pa.y + t * vy;
+          const minClear = atomMap.get(nid).element === 'H' ? 24 : 30;
+          const { ux, uy, dist } = safeUnitVec(pn.x - projX, pn.y - projY, i * 19 + j * 13);
+          if (dist < minClear) {
+            const push = (minClear - dist) * 0.22;
+            const wNode = atomMap.get(nid).element === 'H' ? 0.85 : 0.6;
+            disp.get(nid).x += ux * push * wNode;
+            disp.get(nid).y += uy * push * wNode;
+            const wBond = (1 - wNode) * 0.5;
+            disp.get(bd.from).x -= ux * push * wBond;
+            disp.get(bd.from).y -= uy * push * wBond;
+            disp.get(bd.to).x -= ux * push * wBond;
+            disp.get(bd.to).y -= uy * push * wBond;
+          }
+        }
+      }
+
       // 5. Apply clamped displacements
       const stepCap = 12 * (1 - iter / (iterations * 1.4));
       graph.atoms.forEach((a) => {
         const d = disp.get(a.id);
         const anchor = anchorPos.get(a.id);
+        const soft = softAnchors ? softAnchors.get(a.id) : null;
         if (anchor && !ringAtomSet.has(a.id)) {
           d.x = d.x * 0.25 + (anchor.x - pos.get(a.id).x) * 0.35;
           d.y = d.y * 0.25 + (anchor.y - pos.get(a.id).y) * 0.35;
+        } else if (soft) {
+          const w = a.element === 'H' ? 0.16 : 0.32;
+          d.x = d.x * 0.6 + (soft.x - pos.get(a.id).x) * w;
+          d.y = d.y * 0.6 + (soft.y - pos.get(a.id).y) * w;
         }
         const mag = Math.hypot(d.x, d.y);
         if (mag > stepCap) {
@@ -2332,20 +2415,37 @@
     return { graph: { atoms, bonds }, heavyIds };
   }
 
-  function computeSmartInitialPositions(graph, heavyIds, compound) {
+  function computeSmartInitialPositions(graph, heavyIds, compoundOrOpts) {
+    const opts =
+      compoundOrOpts &&
+      (compoundOrOpts.preserveOrientationFrom ||
+        compoundOrOpts.collapsedHIds ||
+        typeof compoundOrOpts.showH === 'boolean' ||
+        compoundOrOpts.compound)
+        ? compoundOrOpts
+        : { compound: compoundOrOpts };
+    const compound = opts.compound || null;
+    const collapsedHIds = opts.collapsedHIds || new Set();
+    const showH = typeof opts.showH === 'boolean' ? opts.showH : state.showH;
+    const preserveFrom = opts.preserveOrientationFrom || null;
+
     const { atomMap, adj } = buildAdjacency(graph);
     const positions = new Map();
     const heavySet = new Set(heavyIds);
     const cid = compound?.id || '';
     let pinHeavy = false;
+    let backbone = [];
+    const atomRingCenter = new Map();
 
     const heavyGraph = {
       atoms: graph.atoms.filter((a) => heavySet.has(a.id)),
       bonds: graph.bonds.filter((b) => heavySet.has(b.from) && heavySet.has(b.to))
     };
 
+    const rings = findSmallRings(heavyGraph);
+
     if (cid === 'naphthalene' && heavyIds.length === 10) {
-      const edge = 68;
+      const edge = 84;
       const dx = (edge * Math.sqrt(3)) / 2;
       const dy = edge / 2;
       const coords = [
@@ -2362,6 +2462,7 @@
       ];
       coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
     } else if (cid === 'cubane' && heavyIds.length === 8) {
+      const s = 1.22;
       const coords = [
         [-42, -38],
         [42, -38],
@@ -2372,9 +2473,10 @@
         [74, 14],
         [-10, 14]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'adamantane' && heavyIds.length === 10) {
+      const s = 1.22;
       const coords = [
         [0, -86],
         [-78, 44],
@@ -2387,9 +2489,10 @@
         [-32, 16],
         [48, 12]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'spiropentane' && heavyIds.length === 5) {
+      const s = 1.22;
       const coords = [
         [0, 0],
         [-58, -34],
@@ -2397,8 +2500,9 @@
         [58, -34],
         [58, 34]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
     } else if (cid === 'azulene' && heavyIds.length === 10) {
+      const s = 1.22;
       const coords = [
         [0, -34],
         [-65, -55],
@@ -2411,8 +2515,9 @@
         [120, -61],
         [53, -76]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
     } else if (cid === 'prismane' && heavyIds.length === 6) {
+      const s = 1.22;
       const coords = [
         [-66, -4],
         [-12, -46],
@@ -2421,9 +2526,10 @@
         [74, -34],
         [72, 54]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'dewar-benzene' && heavyIds.length === 6) {
+      const s = 1.22;
       const coords = [
         [-62, -42],
         [-62, 26],
@@ -2432,18 +2538,20 @@
         [62, -42],
         [0, -26]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'tetrahedrane' && heavyIds.length === 4) {
+      const s = 1.22;
       const coords = [
         [0, -56],
         [-52, 34],
         [52, 34],
         [6, 6]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'penguinone' && heavyIds.length === 11) {
+      const s = 1.22;
       const coords = [
         [0, -64],
         [55, -32],
@@ -2457,9 +2565,10 @@
         [36, 116],
         [-114, 48]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'carbon-suboxide' && heavyIds.length === 5) {
+      const s = 1.22;
       const coords = [
         [-120, 0],
         [-60, 0],
@@ -2467,9 +2576,10 @@
         [60, 0],
         [120, 0]
       ];
-      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
     } else if (cid === 'sucrose' && heavyIds.length === 23) {
+      const s = 1.24;
       const ringLeft = [
         [-44, 0],
         [-75, 54],
@@ -2478,8 +2588,11 @@
         [-137, -54],
         [-75, -54]
       ];
-      ringLeft.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
-      positions.set(heavyIds[11], { x: 0, y: 18 });
+      ringLeft.forEach(([x, y], i) => {
+        positions.set(heavyIds[i], { x: x * s, y: y * s });
+        atomRingCenter.set(heavyIds[i], { x: -106 * s, y: 0, R: 62 * s });
+      });
+      positions.set(heavyIds[11], { x: 0, y: 18 * s });
       const ringRight = [
         [50, 0],
         [89, 53],
@@ -2487,8 +2600,12 @@
         [151, -33],
         [89, -53]
       ];
-      ringRight.forEach(([x, y], i) => positions.set(heavyIds[12 + i], { x, y }));
+      ringRight.forEach(([x, y], i) => {
+        positions.set(heavyIds[12 + i], { x: x * s, y: y * s });
+        atomRingCenter.set(heavyIds[12 + i], { x: 108 * s, y: 0, R: 54 * s });
+      });
     } else if (cid === 'maltose' && heavyIds.length === 23) {
+      const s = 1.24;
       const ringLeft = [
         [-46, 0],
         [-77, 54],
@@ -2497,8 +2614,11 @@
         [-139, -54],
         [-77, -54]
       ];
-      ringLeft.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
-      positions.set(heavyIds[11], { x: 0, y: 18 });
+      ringLeft.forEach(([x, y], i) => {
+        positions.set(heavyIds[i], { x: x * s, y: y * s });
+        atomRingCenter.set(heavyIds[i], { x: -108 * s, y: 0, R: 62 * s });
+      });
+      positions.set(heavyIds[11], { x: 0, y: 18 * s });
       const ringRight = [
         [170, 0],
         [139, 54],
@@ -2507,76 +2627,201 @@
         [77, -54],
         [139, -54]
       ];
-      ringRight.forEach(([x, y], i) => positions.set(heavyIds[12 + i], { x, y }));
-    } else {
-      const rings = findSmallRings(heavyGraph);
-      if (rings.length > 0) {
-        rings.sort((a, b) => b.length - a.length);
-        const primary = rings[0];
-        const k = primary.length;
-        const R = 68 / (2 * Math.sin(Math.PI / k));
-        for (let i = 0; i < k; i++) {
-          const ang = -Math.PI / 2 + (2 * Math.PI * i) / k;
-          positions.set(primary[i], { x: R * Math.cos(ang), y: R * Math.sin(ang) });
-        }
-      } else if (heavyIds.length === 1) {
-        positions.set(heavyIds[0], { x: 0, y: 0 });
-      } else if (heavyIds.length > 1) {
-        const bfsFarthest = (startId) => {
-          const dist = new Map([[startId, 0]]);
-          const parent = new Map([[startId, null]]);
-          const q = [startId];
-          let farId = startId;
-          while (q.length) {
-            const u = q.shift();
-            if (dist.get(u) > dist.get(farId)) farId = u;
-            (adj.get(u) || []).forEach((e) => {
-              if (!heavySet.has(e.to) || dist.has(e.to)) return;
-              dist.set(e.to, dist.get(u) + 1);
-              parent.set(e.to, u);
-              q.push(e.to);
-            });
-          }
-          return { farId, parent };
-        };
-        const pass1 = bfsFarthest(heavyIds[0]);
-        const pass2 = bfsFarthest(pass1.farId);
-        const backbone = [];
-        let cur = pass2.farId;
-        while (cur) {
-          backbone.unshift(cur);
-          cur = pass2.parent.get(cur);
-        }
+      ringRight.forEach(([x, y], i) => {
+        positions.set(heavyIds[12 + i], { x: x * s, y: y * s });
+        atomRingCenter.set(heavyIds[12 + i], { x: 108 * s, y: 0, R: 62 * s });
+      });
+    } else if (rings.length > 0) {
+      rings.sort((a, b) => b.length - a.length);
+      const primary = rings[0];
+      const k0 = primary.length;
+      const R0 = 84 / (2 * Math.sin(Math.PI / k0));
+      for (let i = 0; i < k0; i++) {
+        const ang = -Math.PI / 2 + (2 * Math.PI * i) / k0;
+        positions.set(primary[i], { x: R0 * Math.cos(ang), y: R0 * Math.sin(ang) });
+        atomRingCenter.set(primary[i], { x: 0, y: 0, R: R0 });
+      }
 
-        positions.set(backbone[0], { x: 0, y: 0 });
-        let zigDir = -1;
-        let prevOrd = 1;
-        for (let i = 1; i < backbone.length; i++) {
-          const prevId = backbone[i - 1];
-          const curId = backbone[i];
-          const pPos = positions.get(prevId);
-          const edge = (adj.get(prevId) || []).find((e) => e.to === curId);
-          const curOrd = edge ? edge.order : 1;
-          const L = idealBondLength(atomMap.get(prevId).element, atomMap.get(curId).element);
-          let dx;
-          let dy;
-          if (curOrd === 3 || prevOrd === 3) {
-            dx = L;
-            dy = 0;
-          } else {
-            dx = L * Math.cos(Math.PI / 6);
-            dy = zigDir * L * Math.sin(Math.PI / 6);
-            zigDir *= -1;
+      // Place additional fused or spiro rings deterministically
+      let fusedSafety = 0;
+      while (fusedSafety < rings.length * 2) {
+        fusedSafety++;
+        let progress = false;
+        for (let rIdx = 1; rIdx < rings.length; rIdx++) {
+          const ring = rings[rIdx];
+          const k = ring.length;
+          const placedIdx = [];
+          for (let i = 0; i < k; i++) {
+            if (positions.has(ring[i])) placedIdx.push(i);
           }
-          positions.set(curId, { x: pPos.x + dx, y: pPos.y + dy });
-          prevOrd = curOrd;
+          if (placedIdx.length === k || placedIdx.length === 0) continue;
+
+          let sharedA = -1;
+          let sharedB = -1;
+          for (let i = 0; i < k; i++) {
+            const nxt = (i + 1) % k;
+            if (positions.has(ring[i]) && positions.has(ring[nxt])) {
+              sharedA = i;
+              sharedB = nxt;
+              break;
+            }
+          }
+          if (sharedA !== -1 && placedIdx.length === 2) {
+            const pA = positions.get(ring[sharedA]);
+            const pB = positions.get(ring[sharedB]);
+            const midX = (pA.x + pB.x) / 2;
+            const midY = (pA.y + pB.y) / 2;
+            const chord = Math.hypot(pB.x - pA.x, pB.y - pA.y) || 84;
+            const apothem = chord / 2 / Math.tan(Math.PI / k);
+            const refCenter = atomRingCenter.get(ring[sharedA]) || { x: 0, y: 0 };
+            const { ux, uy } = safeUnitVec(midX - refCenter.x, midY - refCenter.y, rIdx + 1);
+            const cx = midX + ux * apothem;
+            const cy = midY + uy * apothem;
+            const R = chord / 2 / Math.sin(Math.PI / k);
+            const angA = Math.atan2(pA.y - cy, pA.x - cx);
+            const angB = Math.atan2(pB.y - cy, pB.x - cx);
+            const delta = normalizeAngle(angB - angA);
+            const dir = delta >= 0 ? 1 : -1;
+            const step = (2 * Math.PI) / k;
+            for (let stepIdx = 0; stepIdx < k; stepIdx++) {
+              const idx = (sharedA + stepIdx) % k;
+              const ang = angA + dir * step * stepIdx;
+              if (!positions.has(ring[idx])) {
+                positions.set(ring[idx], { x: cx + R * Math.cos(ang), y: cy + R * Math.sin(ang) });
+              }
+              if (!atomRingCenter.has(ring[idx])) {
+                atomRingCenter.set(ring[idx], { x: cx, y: cy, R });
+              }
+            }
+            progress = true;
+          } else if (placedIdx.length === 1) {
+            const pIdx = placedIdx[0];
+            const pPos = positions.get(ring[pIdx]);
+            const refCenter = atomRingCenter.get(ring[pIdx]) || { x: 0, y: 0 };
+            const { ux, uy } = safeUnitVec(pPos.x - refCenter.x, pPos.y - refCenter.y, rIdx + 7);
+            const R = 84 / (2 * Math.sin(Math.PI / k));
+            const cx = pPos.x + ux * R;
+            const cy = pPos.y + uy * R;
+            const angStart = Math.atan2(pPos.y - cy, pPos.x - cx);
+            for (let stepIdx = 0; stepIdx < k; stepIdx++) {
+              const idx = (pIdx + stepIdx) % k;
+              const ang = angStart + (2 * Math.PI * stepIdx) / k;
+              if (!positions.has(ring[idx])) {
+                positions.set(ring[idx], { x: cx + R * Math.cos(ang), y: cy + R * Math.sin(ang) });
+              }
+              if (!atomRingCenter.has(ring[idx])) {
+                atomRingCenter.set(ring[idx], { x: cx, y: cy, R });
+              }
+            }
+            progress = true;
+          }
         }
+        if (!progress) break;
+      }
+    } else if (heavyIds.length === 1) {
+      positions.set(heavyIds[0], { x: 0, y: 0 });
+      backbone = [heavyIds[0]];
+    } else if (heavyIds.length > 1) {
+      const bfsFarthest = (startId) => {
+        const dist = new Map([[startId, 0]]);
+        const cScore = new Map([[startId, atomMap.get(startId)?.element === 'C' ? 1 : 0]]);
+        const parent = new Map([[startId, null]]);
+        const q = [startId];
+        let farId = startId;
+        while (q.length) {
+          const u = q.shift();
+          const du = dist.get(u);
+          const df = dist.get(farId);
+          if (du > df || (du === df && (cScore.get(u) || 0) > (cScore.get(farId) || 0))) {
+            farId = u;
+          }
+          const nbs = (adj.get(u) || [])
+            .filter((e) => heavySet.has(e.to))
+            .sort((a, b) => {
+              const ca = atomMap.get(a.to)?.element === 'C' ? 0 : 1;
+              const cb = atomMap.get(b.to)?.element === 'C' ? 0 : 1;
+              return ca - cb;
+            });
+          nbs.forEach((e) => {
+            if (dist.has(e.to)) return;
+            dist.set(e.to, du + 1);
+            cScore.set(e.to, (cScore.get(u) || 0) + (atomMap.get(e.to)?.element === 'C' ? 1 : 0));
+            parent.set(e.to, u);
+            q.push(e.to);
+          });
+        }
+        return { farId, parent };
+      };
+      const pass1 = bfsFarthest(heavyIds[0]);
+      const pass2 = bfsFarthest(pass1.farId);
+      let cur = pass2.farId;
+      while (cur) {
+        backbone.unshift(cur);
+        cur = pass2.parent.get(cur);
+      }
+
+      if (preserveFrom && backbone.length >= 2) {
+        const pStart = preserveFrom.get(backbone[0]);
+        const pEnd = preserveFrom.get(backbone[backbone.length - 1]);
+        if (pStart && pEnd && pEnd.x < pStart.x - 8) {
+          backbone.reverse();
+        }
+      }
+
+      positions.set(backbone[0], { x: 0, y: 0 });
+      let zigDir = -1;
+      let prevOrd = 1;
+      let prevAngle = 0;
+      for (let i = 1; i < backbone.length; i++) {
+        const prevId = backbone[i - 1];
+        const curId = backbone[i];
+        const pPos = positions.get(prevId);
+        const edge = (adj.get(prevId) || []).find((e) => e.to === curId);
+        const curOrd = edge ? edge.order : 1;
+        const L = idealBondLength(atomMap.get(prevId).element, atomMap.get(curId).element);
+        const nextTriple =
+          i === 1 &&
+          backbone.length > 2 &&
+          ((adj.get(curId) || []).find((e) => e.to === backbone[2])?.order === 3);
+
+        let angle;
+        if (curOrd === 3 || prevOrd === 3 || nextTriple) {
+          angle = i === 1 ? 0 : prevAngle;
+        } else {
+          angle = zigDir * (Math.PI / 6);
+          zigDir *= -1;
+        }
+        positions.set(curId, {
+          x: pPos.x + L * Math.cos(angle),
+          y: pPos.y + L * Math.sin(angle)
+        });
+        prevOrd = curOrd;
+        prevAngle = angle;
       }
     }
 
-    // BFS outward to seed any remaining heavy branches away from already-placed neighbors
+    const ringAtomSet = new Set();
+    rings.forEach((r) => r.forEach((id) => ringAtomSet.add(id)));
+
+    const getBranchSize = (rootId, blockedParentId) => {
+      const seen = new Set([rootId, blockedParentId]);
+      const q = [rootId];
+      let count = 0;
+      while (q.length) {
+        const u = q.shift();
+        count++;
+        (adj.get(u) || []).forEach((e) => {
+          if (!heavySet.has(e.to) || seen.has(e.to) || positions.has(e.to)) return;
+          seen.add(e.to);
+          q.push(e.to);
+        });
+      }
+      return count;
+    };
+
+    // BFS outward to seed any remaining heavy branches away from rings & backbones
     let safety = 0;
-    while (positions.size < heavyIds.length && safety < 24) {
+    while (positions.size < heavyIds.length && safety < 28) {
       safety++;
       const byParent = new Map();
       heavyIds.forEach((hid) => {
@@ -2591,14 +2836,93 @@
       byParent.forEach((children, pid) => {
         const pPos = positions.get(pid);
         const pEl = atomMap.get(pid).element;
+        const rc = atomRingCenter.get(pid) || null;
         const occupied = [];
+        const placedNeighbors = [];
         (adj.get(pid) || []).forEach((e) => {
           if (positions.has(e.to)) {
             const np = positions.get(e.to);
             occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
+            placedNeighbors.push({ id: e.to, pos: np });
           }
         });
-        const angles = pickOpenAngles(occupied, children.length);
+
+        let angles = null;
+
+        if (rc && ringAtomSet.has(pid)) {
+          const outAng = Math.atan2(pPos.y - rc.y, pPos.x - rc.x);
+          if (children.length === 1 && placedNeighbors.length === 2) {
+            angles = [outAng];
+          } else if (children.length === 2) {
+            // Order larger substituent (-CH2OH) toward the less-crowded neighboring ring vertex (e.g. O5 in pyranose)
+            const sized = children
+              .map((ch) => ({ id: ch, size: getBranchSize(ch, pid) }))
+              .sort((a, b) => b.size - a.size);
+            const ringNbs = placedNeighbors.filter((n) => ringAtomSet.has(n.id));
+            let signBig = -1;
+            if (ringNbs.length === 2) {
+              const exoCount = (nid) =>
+                (adj.get(nid) || []).filter((e) => heavySet.has(e.to) && !ringAtomSet.has(e.to)).length +
+                ((adj.get(nid) || []).some((e) => atomMap.get(e.to)?.element === 'H') ? 0.5 : 0);
+              const load0 = exoCount(ringNbs[0].id);
+              const load1 = exoCount(ringNbs[1].id);
+              const preferredNb = load0 <= load1 ? ringNbs[0] : ringNbs[1];
+              const nbDelta = normalizeAngle(
+                Math.atan2(preferredNb.pos.y - pPos.y, preferredNb.pos.x - pPos.x) - outAng
+              );
+              signBig = nbDelta >= 0 ? 1 : -1;
+            }
+            const angMap = new Map([
+              [sized[0].id, outAng + signBig * 0.56],
+              [sized[1].id, outAng - signBig * 0.56]
+            ]);
+            angles = children.map((ch) => angMap.get(ch));
+          }
+        } else if (rc && !ringAtomSet.has(pid) && children.length === 1 && placedNeighbors.length === 1) {
+          // Depth >= 2 exocyclic substituent (e.g. OH of -CH2OH): choose 120-deg zigzag arm pointing farthest from ring center
+          const gp = placedNeighbors[0].pos;
+          const inAng = Math.atan2(pPos.y - gp.y, pPos.x - gp.x);
+          const cands = [normalizeAngle(inAng - Math.PI / 3), normalizeAngle(inAng + Math.PI / 3)];
+          const L = idealBondLength(pEl, atomMap.get(children[0]).element);
+          let bestAng = cands[0];
+          let bestScore = -Infinity;
+          cands.forEach((ang) => {
+            const tx = pPos.x + L * Math.cos(ang);
+            const ty = pPos.y + L * Math.sin(ang);
+            const distFromRing = Math.hypot(tx - rc.x, ty - rc.y);
+            let minPeerDist = Infinity;
+            positions.forEach((op, oid) => {
+              if (oid === pid) return;
+              const d = Math.hypot(tx - op.x, ty - op.y);
+              if (d < minPeerDist) minPeerDist = d;
+            });
+            const score = distFromRing + Math.min(minPeerDist, 140) * 1.4;
+            if (score > bestScore) {
+              bestScore = score;
+              bestAng = ang;
+            }
+          });
+          angles = [bestAng];
+        } else if (!rc && placedNeighbors.length === 2 && (children.length === 1 || children.length === 2)) {
+          // Backbone exterior vertex: point substituents outward from the apex of the zigzag V
+          const v0x = placedNeighbors[0].pos.x - pPos.x;
+          const v0y = placedNeighbors[0].pos.y - pPos.y;
+          const d0 = Math.hypot(v0x, v0y) || 1;
+          const v1x = placedNeighbors[1].pos.x - pPos.x;
+          const v1y = placedNeighbors[1].pos.y - pPos.y;
+          const d1 = Math.hypot(v1x, v1y) || 1;
+          const sumX = v0x / d0 + v1x / d1;
+          const sumY = v0y / d0 + v1y / d1;
+          if (Math.hypot(sumX, sumY) > 0.1) {
+            const extAng = Math.atan2(-sumY, -sumX);
+            angles = children.length === 1 ? [extAng] : [extAng - 0.55, extAng + 0.55];
+          }
+        }
+
+        if (!angles) {
+          angles = pickOpenAngles(occupied, children.length);
+        }
+
         children.forEach((childId, idx) => {
           const ang = angles[idx] ?? 0;
           const L = idealBondLength(pEl, atomMap.get(childId).element);
@@ -2606,32 +2930,47 @@
             x: pPos.x + L * Math.cos(ang),
             y: pPos.y + L * Math.sin(ang)
           });
+          if (rc && !atomRingCenter.has(childId)) {
+            atomRingCenter.set(childId, rc);
+          }
         });
       });
     }
 
     // Disconnected fallback if any isolated heavy atom remained unplaced
     heavyIds.forEach((hid, idx) => {
-      if (!positions.has(hid)) positions.set(hid, { x: idx * 50, y: 0 });
+      if (!positions.has(hid)) positions.set(hid, { x: idx * 60, y: 0 });
     });
 
     // Seed explicit H atoms symmetrically outward from each heavy atom
     heavyIds.forEach((pid) => {
-      const hChildren = (adj.get(pid) || [])
+      const hAll = (adj.get(pid) || [])
         .map((e) => e.to)
         .filter((tid) => atomMap.get(tid)?.element === 'H' && !positions.has(tid));
-      if (hChildren.length === 0) return;
+      if (hAll.length === 0) return;
       const pPos = positions.get(pid);
       const pEl = atomMap.get(pid).element;
+
+      const visibleHs = [];
+      hAll.forEach((hid) => {
+        if (!showH || collapsedHIds.has(hid)) {
+          positions.set(hid, { x: pPos.x, y: pPos.y });
+        } else {
+          visibleHs.push(hid);
+        }
+      });
+      if (visibleHs.length === 0) return;
+
       const occupied = [];
       (adj.get(pid) || []).forEach((e) => {
+        if (atomMap.get(e.to)?.element === 'H' && (!showH || collapsedHIds.has(e.to))) return;
         if (positions.has(e.to)) {
           const np = positions.get(e.to);
           occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
         }
       });
-      const angles = pickOpenAngles(occupied, hChildren.length);
-      hChildren.forEach((hid, idx) => {
+      const angles = pickOpenAngles(occupied, visibleHs.length);
+      visibleHs.forEach((hid, idx) => {
         const ang = angles[idx] ?? 0;
         const L = idealBondLength(pEl, 'H');
         positions.set(hid, {
@@ -2641,15 +2980,24 @@
       });
     });
 
+    const softAnchors = new Map();
+    if (!pinHeavy && rings.length === 0 && backbone.length >= 2) {
+      backbone.forEach((id) => {
+        const bp = positions.get(id);
+        if (bp) softAnchors.set(id, { x: bp.x, y: bp.y });
+      });
+    }
+
     const settled = relaxLayout(graph, positions, {
       draggedIds: pinHeavy ? new Set(heavyIds) : new Set(),
-      collapsedHIds: new Set(),
-      iterations: pinHeavy ? 45 : 190,
-      showH: state.showH
+      collapsedHIds,
+      iterations: pinHeavy ? 45 : 155,
+      showH,
+      softAnchors: softAnchors.size > 0 ? softAnchors : null
     });
 
     const visIds = graph.atoms
-      .filter((a) => state.showH || a.element !== 'H')
+      .filter((a) => (showH && !collapsedHIds.has(a.id)) || a.element !== 'H')
       .map((a) => a.id);
     if (visIds.length > 0) {
       let cx = 0;
@@ -2668,6 +3016,18 @@
     }
 
     return { positions: settled, pinHeavy };
+  }
+
+  function canonicalizeMoleculeLayout(graph) {
+    if (!graph) return new Map();
+    const heavyIds = graph.atoms.filter((a) => a.element !== 'H').map((a) => a.id);
+    if (heavyIds.length === 0) return new Map();
+    const { positions } = computeSmartInitialPositions(graph, heavyIds, {
+      preserveOrientationFrom: state.positions,
+      collapsedHIds: state.collapsedHIds,
+      showH: state.showH
+    });
+    return positions;
   }
 
   function computeTargetViewBox(pos, valenceSlots, atomMap, showH, zoom, panX, panY, collapsedHIds = new Set()) {
@@ -3154,6 +3514,7 @@
               y: pPos.y + len * Math.sin(child.hintAngle)
             });
             occupied.push(child.hintAngle);
+            delete child.hintAngle;
           } else {
             autoChildren.push(child);
           }
@@ -3182,8 +3543,10 @@
       newAtomParents = new Map(),
       skipRelax = false,
       instant = false,
-      keepViewBox = false
+      keepViewBox = false,
+      animDuration = scene.animDuration
     } = options;
+    const transitionMs = Number(animDuration) > 0 ? Number(animDuration) : scene.animDuration;
 
     const d = dict();
     const { atomMap, adj } = buildAdjacency(graph);
@@ -3493,7 +3856,7 @@
 
     scene.animStart = performance.now();
     function tick(now) {
-      const t = Math.max(0, Math.min(1, (now - scene.animStart) / scene.animDuration));
+      const t = Math.max(0, Math.min(1, (now - scene.animStart) / transitionMs));
       renderFrameAt(t);
       if (t < 1) {
         scene.rafId = requestAnimationFrame(tick);
@@ -3587,7 +3950,9 @@
     toastMsg: '',
     toastKind: 'warn',
     toastTimer: null,
-    isMutating: false
+    isMutating: false,
+    needsAutoTidy: false,
+    idleTidyTimer: null
   };
 
   let callbacks = {
@@ -3661,6 +4026,73 @@
   function exitConnectMode() {
     state.connectMode = false;
     state.connectFirstId = null;
+  }
+
+  function clearAutoTidyTimer() {
+    if (state.idleTidyTimer) {
+      clearTimeout(state.idleTidyTimer);
+      state.idleTidyTimer = null;
+    }
+  }
+
+  function isPanelActiveInUI() {
+    return Boolean(
+      dom.panel &&
+        !dom.panel.classList.contains('hidden') &&
+        dom.svgHost &&
+        dom.svgHost.offsetParent !== null &&
+        !document.hidden
+    );
+  }
+
+  function triggerAutoTidy() {
+    state.idleTidyTimer = null;
+    if (!state.needsAutoTidy || !state.graph || state.graph.atoms.length <= 1) return;
+    if (
+      state.isMutating ||
+      scene.drag ||
+      scene.pan ||
+      scene.toolbarHDrag ||
+      state.connectMode ||
+      searchState.open ||
+      !isPanelActiveInUI()
+    ) {
+      resetAutoTidyTimer();
+      return;
+    }
+
+    const canonicalPos = canonicalizeMoleculeLayout(state.graph);
+    let maxDelta = 0;
+    canonicalPos.forEach((p, id) => {
+      const cur = state.positions.get(id);
+      if (!cur) {
+        maxDelta = Infinity;
+        return;
+      }
+      const dist = Math.hypot(p.x - cur.x, p.y - cur.y);
+      if (dist > maxDelta) maxDelta = dist;
+    });
+
+    state.draggedIds.clear();
+    state.needsAutoTidy = false;
+
+    if (maxDelta >= 1.5 || Math.abs(state.panX) > 1 || Math.abs(state.panY) > 1) {
+      state.positions = canonicalPos;
+      state.panX = 0;
+      state.panY = 0;
+      renderAll({ skipRelax: true, animDuration: 360 });
+    }
+  }
+
+  function resetAutoTidyTimer() {
+    clearAutoTidyTimer();
+    if (!state.needsAutoTidy) return;
+    state.idleTidyTimer = setTimeout(triggerAutoTidy, IDLE_TIDY_MS);
+  }
+
+  function markDirtyForAutoTidy() {
+    state.needsAutoTidy = true;
+    resetAutoTidyTimer();
   }
 
   function setZoom(nextZoom, instant) {
@@ -3801,6 +4233,7 @@
     state.selectedId = targetId;
     state.selectedBondKey = null;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll();
     triggerMergePop(targetId);
     return true;
@@ -3832,6 +4265,7 @@
     state.selectedId = targetId;
     state.selectedBondKey = null;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll();
     triggerMergePop(targetId);
     return true;
@@ -3857,6 +4291,7 @@
     state.selectedId = atomId;
     state.selectedBondKey = null;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ newAtomParents });
   }
 
@@ -3884,12 +4319,59 @@
     }
     pushUndo();
     const newId = genAtomId('c');
-    state.graph.atoms.push({ id: newId, element: 'C' });
+    const atomObj = { id: newId, element: 'C' };
+
+    // Prioritize horizontal zigzag extension when on an open/linear chain end
+    const heavyEdges = (adj.get(sel.id) || []).filter((e) => atomMap.get(e.to)?.element !== 'H');
+    const pPos = state.positions.get(sel.id);
+    let hintAngle = null;
+    if (heavyEdges.length === 0) {
+      hintAngle = -Math.PI / 6;
+    } else if (heavyEdges.length === 1 && pPos) {
+      const prevEdge = heavyEdges[0];
+      const prevPos = state.positions.get(prevEdge.to);
+      if (prevPos) {
+        const dx = pPos.x - prevPos.x;
+        const dy = pPos.y - prevPos.y;
+        const dirX = dx >= -6 ? 1 : -1;
+        if (prevEdge.order === 3) {
+          hintAngle = Math.atan2(dy, dx);
+        } else if (dy < -6) {
+          hintAngle = dirX > 0 ? Math.PI / 6 : (5 * Math.PI) / 6;
+        } else {
+          hintAngle = dirX > 0 ? -Math.PI / 6 : (-5 * Math.PI) / 6;
+        }
+      } else {
+        hintAngle = -Math.PI / 6;
+      }
+    }
+
+    const newAtomParents = new Map([[newId, sel.id]]);
+    if (typeof hintAngle === 'number') {
+      atomObj.hintAngle = hintAngle;
+      // Clear any visible H on sel blocking the forward horizontal path so it repositions cleanly
+      (adj.get(sel.id) || []).forEach((e) => {
+        if (atomMap.get(e.to)?.element !== 'H') return;
+        if (!state.showH || state.collapsedHIds.has(e.to)) return;
+        const hp = state.positions.get(e.to);
+        if (!hp || !pPos) return;
+        const hAng = Math.atan2(hp.y - pPos.y, hp.x - pPos.x);
+        if (Math.abs(normalizeAngle(hAng - hintAngle)) < 0.72) {
+          state.positions.delete(e.to);
+          scene.currentPos.delete(e.to);
+          state.draggedIds.delete(e.to);
+          newAtomParents.set(e.to, sel.id);
+        }
+      });
+    }
+
+    state.graph.atoms.push(atomObj);
     state.graph.bonds.push({ from: sel.id, to: newId, order: 1 });
     state.selectedId = newId;
     state.selectedBondKey = null;
     showToast('');
-    renderAll({ newAtomParents: new Map([[newId, sel.id]]) });
+    markDirtyForAutoTidy();
+    renderAll({ newAtomParents });
   }
 
   function addBridgeOxygen() {
@@ -3916,6 +4398,7 @@
     state.selectedId = oId;
     state.selectedBondKey = null;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ newAtomParents: new Map([[oId, sel.id]]) });
   }
 
@@ -3946,6 +4429,7 @@
     state.selectedBondKey = null;
     if (!state.showH) state.showH = true;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ newAtomParents: new Map([[hId, target.id]]) });
   }
 
@@ -3974,6 +4458,7 @@
     });
     if (!state.showH) state.showH = true;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ newAtomParents: newParents });
   }
 
@@ -4028,6 +4513,7 @@
         }
         state.selectedBondKey = null;
         showToast('');
+        markDirtyForAutoTidy();
         renderAll({ newAtomParents: newParents });
         return;
       }
@@ -4061,6 +4547,7 @@
       state.selectedId = cNew;
       state.selectedBondKey = null;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll({
         newAtomParents: new Map([
           [cNew, sel.id],
@@ -4094,6 +4581,7 @@
       state.graph.bonds.push({ from: sel.id, to: oId, order: 2 });
       state.selectedBondKey = null;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll({ newAtomParents: new Map([[oId, sel.id]]) });
       return;
     }
@@ -4112,6 +4600,7 @@
       state.collapsedHIds.add(hId);
       state.selectedBondKey = null;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll({
         newAtomParents: new Map([
           [oId, sel.id],
@@ -4141,6 +4630,7 @@
       state.collapsedHIds.add(h2);
       state.selectedBondKey = null;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll({
         newAtomParents: new Map([
           [nId, sel.id],
@@ -4163,6 +4653,7 @@
     state.graph.bonds.push({ from: sel.id, to: xId, order: 1 });
     state.selectedBondKey = null;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ newAtomParents: new Map([[xId, sel.id]]) });
   }
 
@@ -4233,6 +4724,7 @@
       state.draggedIds.clear();
       state.isMutating = false;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll();
     };
 
@@ -4300,6 +4792,7 @@
         if (target) target.order = targetOrder;
         state.isMutating = false;
         showToast(infoMsg || '', infoMsg ? 'info' : 'warn');
+        markDirtyForAutoTidy();
         renderAll({ skipRelax: true, keepViewBox: true });
       };
 
@@ -4359,6 +4852,7 @@
       state.selectedBondKey = null;
       state.selectedId = bond.from;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll();
       return;
     }
@@ -4383,6 +4877,7 @@
         state.selectedId = parent;
         state.isMutating = false;
         showToast('');
+        markDirtyForAutoTidy();
         renderAll();
       });
       return;
@@ -4418,6 +4913,7 @@
       state.selectedId = fallbackSel;
       state.isMutating = false;
       showToast('');
+      markDirtyForAutoTidy();
       renderAll();
     });
   }
@@ -4436,6 +4932,7 @@
     if (typeof prev.panX === 'number') state.panX = prev.panX;
     if (typeof prev.panY === 'number') state.panY = prev.panY;
     showToast('');
+    markDirtyForAutoTidy();
     renderAll({ skipRelax: true });
   }
 
@@ -4452,6 +4949,8 @@
     state.zoom = 1;
     state.panX = 0;
     state.panY = 0;
+    state.needsAutoTidy = false;
+    clearAutoTidyTimer();
     showToast('');
     renderAll({ skipRelax: true });
   }
@@ -4539,17 +5038,40 @@
     if (state.graph) pushUndo();
 
     const { graph, heavyIds } = buildGraphFromCompound(compound, genAtomId);
-    const { positions } = computeSmartInitialPositions(graph, heavyIds, compound);
+    const { atomMap, adj } = buildAdjacency(graph);
+    const rings = findSmallRings(graph);
+    const nextCollapsed = new Set();
+
+    // Condense -OH / -NH2 hydrogens on cyclic or multifunctional molecules (>= 5 heavy atoms)
+    // so crowded sugars/polyols (e.g. fructose pyranose) look crisp without overlapping H balls.
+    if (rings.length > 0 || heavyIds.length >= 5) {
+      graph.atoms.forEach((a) => {
+        if (a.element !== 'H') return;
+        const parentEdge = (adj.get(a.id) || [])[0];
+        const parentEl = parentEdge ? atomMap.get(parentEdge.to)?.element : null;
+        if (parentEl === 'O' || parentEl === 'N') {
+          nextCollapsed.add(a.id);
+        }
+      });
+    }
+
+    const { positions } = computeSmartInitialPositions(graph, heavyIds, {
+      compound,
+      collapsedHIds: nextCollapsed,
+      showH: state.showH
+    });
 
     state.graph = graph;
     state.positions = positions;
     state.draggedIds.clear();
-    state.collapsedHIds.clear();
+    state.collapsedHIds = nextCollapsed;
     state.selectedId = heavyIds[0] || null;
     state.selectedBondKey = null;
     state.zoom = 1;
     state.panX = 0;
     state.panY = 0;
+    state.needsAutoTidy = false;
+    clearAutoTidyTimer();
 
     showToast('');
     closeSearch();
@@ -4946,6 +5468,7 @@
       }
 
       if (drag.moved) {
+        markDirtyForAutoTidy();
         renderAll({ skipRelax: true });
         return;
       }
@@ -5155,6 +5678,8 @@
     state.panX = 0;
     state.panY = 0;
     state.history = [];
+    state.needsAutoTidy = false;
+    clearAutoTidyTimer();
 
     if (dom.toolbar) {
       dom.toolbar.addEventListener('click', (e) => {
@@ -5267,6 +5792,7 @@
     if (dom.btnToggleH) {
       dom.btnToggleH.addEventListener('click', () => {
         state.showH = !state.showH;
+        markDirtyForAutoTidy();
         if (state.showH && state.collapsedHIds.size > 0) {
           const { atomMap, adj } = buildAdjacency(state.graph);
           const newAtomParents = new Map();
@@ -5351,6 +5877,11 @@
       } else {
         stopAmbientLoop();
       }
+      if (isPanelActiveInUI()) {
+        if (state.needsAutoTidy) resetAutoTidyTimer();
+      } else {
+        clearAutoTidyTimer();
+      }
     };
     if (typeof MutationObserver !== 'undefined') {
       scene.visibilityObserver = new MutationObserver(handleVis);
@@ -5363,6 +5894,17 @@
     if (!scene.visibilityBound) {
       scene.visibilityBound = true;
       document.addEventListener('visibilitychange', handleVis);
+    }
+
+    if (!panel.dataset.orgIdleBound) {
+      panel.dataset.orgIdleBound = '1';
+      const onPanelActivity = () => {
+        if (state.needsAutoTidy) resetAutoTidyTimer();
+      };
+      panel.addEventListener('pointerdown', onPanelActivity, { passive: true });
+      panel.addEventListener('pointermove', onPanelActivity, { passive: true });
+      panel.addEventListener('wheel', onPanelActivity, { passive: true });
+      panel.addEventListener('keydown', onPanelActivity, { passive: true });
     }
 
     applyLanguage();

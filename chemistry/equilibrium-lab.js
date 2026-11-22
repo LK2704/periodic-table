@@ -10,6 +10,8 @@
       tabElectrochemSub: 'Pin Galvanic, đảo cực điện phân & Faraday',
       tabEquilibrium: 'Cân bằng hóa học',
       tabEquilibriumSub: 'Nguyên lý Le Chatelier, Van ’t Hoff & đồ thị C(t)',
+      tabTitration: 'Chuẩn độ Acid–Base',
+      tabTitrationSub: 'Burette, đường cong pH(V) & thực hành ẩn C₀',
       close: 'Đóng'
     },
     en: {
@@ -17,6 +19,8 @@
       tabElectrochemSub: 'Galvanic cells, electrolysis & Faraday’s Law',
       tabEquilibrium: 'Equilibrium',
       tabEquilibriumSub: 'Le Chatelier’s principle, Van ’t Hoff & C(t) plot',
+      tabTitration: 'Titration',
+      tabTitrationSub: 'Burette, pH(V) curve & unknown C₀ practice',
       close: 'Close'
     }
   };
@@ -43,6 +47,7 @@
     const tab = vState.activeTab;
     const isElectro = tab === 'electrochem';
     const isEq = tab === 'equilibrium';
+    const isTit = tab === 'titration';
 
     if (vDom.tabElectrochem) {
       vDom.tabElectrochem.classList.toggle('active', isElectro);
@@ -52,15 +57,22 @@
       vDom.tabEquilibrium.classList.toggle('active', isEq);
       vDom.tabEquilibrium.setAttribute('aria-selected', isEq ? 'true' : 'false');
     }
+    if (vDom.tabTitration) {
+      vDom.tabTitration.classList.toggle('active', isTit);
+      vDom.tabTitration.setAttribute('aria-selected', isTit ? 'true' : 'false');
+    }
 
     if (vDom.panelElectrochem) vDom.panelElectrochem.classList.toggle('hidden', !isElectro);
     if (vDom.panelEquilibrium) vDom.panelEquilibrium.classList.toggle('hidden', !isEq);
+    if (vDom.panelTitration) vDom.panelTitration.classList.toggle('hidden', !isTit);
 
     let nextFooterHint = '';
     if (isElectro && window.ElectrochemLab && typeof window.ElectrochemLab.getHeaderTexts === 'function') {
       nextFooterHint = window.ElectrochemLab.getHeaderTexts(vState.lang).footerHint || '';
     } else if (isEq && window.EquilibriumLab && typeof window.EquilibriumLab.getHeaderTexts === 'function') {
       nextFooterHint = window.EquilibriumLab.getHeaderTexts(vState.lang).footerHint || '';
+    } else if (isTit && window.TitrationLab && typeof window.TitrationLab.getHeaderTexts === 'function') {
+      nextFooterHint = window.TitrationLab.getHeaderTexts(vState.lang).footerHint || '';
     }
 
     if (vDom.footerHint) {
@@ -83,7 +95,7 @@
   }
 
   function setTab(tab) {
-    const nextTab = tab === 'equilibrium' ? 'equilibrium' : 'electrochem';
+    const nextTab = tab === 'equilibrium' || tab === 'titration' ? tab : 'electrochem';
     vState.activeTab = nextTab;
     syncTabChrome();
     if (vDom.body) {
@@ -94,7 +106,7 @@
   function open(initialTab) {
     if (!vDom.modal) return;
     vState.lang = vCallbacks.getLang() || 'vi';
-    if (initialTab === 'electrochem' || initialTab === 'equilibrium') {
+    if (initialTab === 'electrochem' || initialTab === 'equilibrium' || initialTab === 'titration') {
       vState.activeTab = initialTab;
     }
     vState.isOpen = true;
@@ -104,6 +116,9 @@
     }
     if (window.EquilibriumLab && typeof window.EquilibriumLab.setLang === 'function') {
       window.EquilibriumLab.setLang(vState.lang);
+    }
+    if (window.TitrationLab && typeof window.TitrationLab.setLang === 'function') {
+      window.TitrationLab.setLang(vState.lang);
     }
     vDom.modal.classList.remove('hidden');
     vCallbacks.onOpen();
@@ -129,6 +144,9 @@
     if (window.EquilibriumLab && typeof window.EquilibriumLab.setLang === 'function') {
       window.EquilibriumLab.setLang(lang);
     }
+    if (window.TitrationLab && typeof window.TitrationLab.setLang === 'function') {
+      window.TitrationLab.setLang(lang);
+    }
     applyVirtualLabLanguage();
   }
 
@@ -149,8 +167,10 @@
       tabsBar: document.getElementById('vlab-tabs'),
       tabElectrochem: document.getElementById('vlab-tab-electrochem'),
       tabEquilibrium: document.getElementById('vlab-tab-equilibrium'),
+      tabTitration: document.getElementById('vlab-tab-titration'),
       panelElectrochem: document.getElementById('lab-panel-electrochem'),
       panelEquilibrium: document.getElementById('vlab-panel-equilibrium'),
+      panelTitration: document.getElementById('vlab-panel-titration'),
       body: document.querySelector('#vlab-modal .lab-body'),
       footerHint: document.getElementById('vlab-footer-hint'),
       btnClose: document.getElementById('btn-close-vlab'),
@@ -179,6 +199,9 @@
     }
     if (window.EquilibriumLab && typeof window.EquilibriumLab.init === 'function') {
       window.EquilibriumLab.init({ getLang: vCallbacks.getLang });
+    }
+    if (window.TitrationLab && typeof window.TitrationLab.init === 'function') {
+      window.TitrationLab.init({ getLang: vCallbacks.getLang });
     }
 
     applyVirtualLabLanguage();
@@ -213,7 +236,7 @@
       deltaN: -1, // (1 - 2)
       tMin: 260,
       tMax: 420,
-      tStep: 10,
+      tStep: 2,
       tRef: 330,
       kRef: 4.0,
       colorSpeciesId: 'NO2',
@@ -235,7 +258,7 @@
       deltaN: 0, // (2 - 2)
       tMin: 400,
       tMax: 800,
-      tStep: 20,
+      tStep: 5,
       tRef: 600,
       kRef: 16.0,
       colorSpeciesId: 'I2',
@@ -258,7 +281,7 @@
       deltaN: -2, // (2 - 4)
       tMin: 500,
       tMax: 900,
-      tStep: 10,
+      tStep: 5,
       tRef: 650,
       kRef: 4.0,
       colorSpeciesId: null,
@@ -281,7 +304,7 @@
       deltaN: 1, // (2 - 1)
       tMin: 420,
       tMax: 620,
-      tStep: 10,
+      tStep: 2,
       tRef: 500,
       kRef: 0.5,
       colorSpeciesId: 'Cl2',
@@ -379,7 +402,8 @@
     shiftDir: 'none', // 'forward' | 'reverse' | 'none'
     currentC: [],
     segments: [], // [{ tStart, tEnd, cPrevEnd, cStart, cEnd, rateK, isCatalyzed, tagVi, tagEn }]
-    lastAction: { kind: 'initial' }
+    lastAction: { kind: 'initial' },
+    activeDrag: null
   };
 
   let callbacks = {
@@ -493,6 +517,7 @@
 
   function resetSystem(systemId) {
     const sys = findSystem(systemId || state.systemId);
+    state.activeDrag = null;
     state.systemId = sys.id;
     state.tempK = sys.tRef;
     state.volumeL = 1.0;
@@ -517,11 +542,9 @@
     ];
   }
 
-  function pushSegment(cPrevEnd, cStart, cEnd, tagVi, tagEn) {
-    const last = state.segments[state.segments.length - 1];
-    const tStart = last ? last.tEnd : 0;
+  function makeSegment(tStart, cPrevEnd, cStart, cEnd, tagVi, tagEn) {
     const rateK = state.catalystOn ? BASE_RATE_K * CATALYST_MULT : BASE_RATE_K;
-    state.segments.push({
+    return {
       tStart,
       tEnd: tStart + 1,
       cPrevEnd: cPrevEnd.slice(),
@@ -531,74 +554,118 @@
       isCatalyzed: state.catalystOn,
       tagVi,
       tagEn
-    });
+    };
+  }
+
+  function pushSegment(cPrevEnd, cStart, cEnd, tagVi, tagEn) {
+    const last = state.segments[state.segments.length - 1];
+    const tStart = last ? last.tEnd : 0;
+    state.segments.push(makeSegment(tStart, cPrevEnd, cStart, cEnd, tagVi, tagEn));
     if (state.segments.length > MAX_SEGMENTS) {
       state.segments = state.segments.slice(state.segments.length - MAX_SEGMENTS);
     }
   }
 
-  function applyTemperatureChange(newTempK) {
+  function applyLiveSliderUpdate(dragType, rawValue) {
     const sys = findSystem(state.systemId);
-    const prevT = state.tempK;
-    const clampedT = Math.max(sys.tMin, Math.min(sys.tMax, Number(newTempK)));
-    if (Math.abs(clampedT - prevT) < 1e-6) return;
 
-    const cPrev = state.currentC.slice();
-    const prevKc = state.kc;
-    const nextKc = calcKc(sys, clampedT);
-    const qcInst = calcQc(sys, cPrev);
-    const sol = solveEquilibrium(sys, cPrev, nextKc);
+    // If a different drag baseline was open, clear it cleanly first
+    if (state.activeDrag && state.activeDrag.type !== dragType) {
+      state.activeDrag = null;
+    }
 
-    state.tempK = clampedT;
-    state.kc = nextKc;
-    state.qcInst = qcInst;
-    state.shiftDir = sol.shift;
-    state.currentC = sol.cEq.slice();
-    state.lastAction = {
-      kind: clampedT > prevT ? 'temp-up' : 'temp-down',
-      prevT,
-      newT: clampedT,
-      prevKc,
-      newKc: nextKc,
-      qcInst
-    };
+    if (!state.activeDrag) {
+      state.activeDrag = {
+        type: dragType,
+        baseTempK: state.tempK,
+        baseVolL: state.volumeL,
+        baseC: state.currentC.slice(),
+        baseKc: state.kc,
+        baseQcInst: state.qcInst,
+        baseShiftDir: state.shiftDir,
+        baseLastAction: state.lastAction,
+        baseSegments: state.segments.slice()
+      };
+    }
 
-    const tag = clampedT > prevT ? `T↑ ${clampedT}K` : `T↓ ${clampedT}K`;
-    pushSegment(cPrev, cPrev, sol.cEq, tag, tag);
-    render();
-  }
+    const base = state.activeDrag;
+    const baseLast = base.baseSegments[base.baseSegments.length - 1];
+    const nextTStart = baseLast ? baseLast.tEnd : 0;
 
-  function applyVolumeChange(newVolL) {
-    const sys = findSystem(state.systemId);
-    const prevV = state.volumeL;
-    const clampedV = Math.max(0.5, Math.min(2.0, Number(newVolL)));
-    if (Math.abs(clampedV - prevV) < 1e-6) return;
+    if (dragType === 'temp') {
+      const clampedT = Math.max(sys.tMin, Math.min(sys.tMax, Number(rawValue)));
+      if (Math.abs(clampedT - base.baseTempK) < 1e-6) {
+        state.tempK = base.baseTempK;
+        state.kc = base.baseKc;
+        state.qcInst = base.baseQcInst;
+        state.shiftDir = base.baseShiftDir;
+        state.currentC = base.baseC.slice();
+        state.lastAction = base.baseLastAction;
+        state.segments = base.baseSegments.slice();
+      } else {
+        const nextKc = calcKc(sys, clampedT);
+        const qcInst = calcQc(sys, base.baseC);
+        const sol = solveEquilibrium(sys, base.baseC, nextKc);
+        const tag = clampedT > base.baseTempK ? `T↑ ${clampedT}K` : `T↓ ${clampedT}K`;
+        const dragSeg = makeSegment(nextTStart, base.baseC, base.baseC, sol.cEq, tag, tag);
+        const nextSegs = base.baseSegments.concat(dragSeg);
 
-    const cPrev = state.currentC.slice();
-    const scale = prevV / clampedV;
-    const cInst = cPrev.map((c) => Math.max(1e-5, c * scale));
-    const qcInst = calcQc(sys, cInst);
-    // IMPORTANT: K_C depends ONLY on temperature T — stays 100% invariant on volume/pressure changes
-    const sol = solveEquilibrium(sys, cInst, state.kc);
+        state.tempK = clampedT;
+        state.kc = nextKc;
+        state.qcInst = qcInst;
+        state.shiftDir = sol.shift;
+        state.currentC = sol.cEq.slice();
+        state.lastAction = {
+          kind: clampedT > base.baseTempK ? 'temp-up' : 'temp-down',
+          prevT: base.baseTempK,
+          newT: clampedT,
+          prevKc: base.baseKc,
+          newKc: nextKc,
+          qcInst
+        };
+        state.segments = nextSegs.length > MAX_SEGMENTS ? nextSegs.slice(nextSegs.length - MAX_SEGMENTS) : nextSegs;
+      }
+    } else if (dragType === 'vol') {
+      const clampedV = Math.max(0.5, Math.min(2.0, Number(rawValue)));
+      if (Math.abs(clampedV - base.baseVolL) < 1e-6) {
+        state.volumeL = base.baseVolL;
+        state.kc = base.baseKc;
+        state.qcInst = base.baseQcInst;
+        state.shiftDir = base.baseShiftDir;
+        state.currentC = base.baseC.slice();
+        state.lastAction = base.baseLastAction;
+        state.segments = base.baseSegments.slice();
+      } else {
+        const scale = base.baseVolL / clampedV;
+        const cInst = base.baseC.map((c) => Math.max(1e-5, c * scale));
+        const qcInst = calcQc(sys, cInst);
+        // IMPORTANT: K_C depends ONLY on temperature T — stays 100% invariant on volume/pressure changes
+        const sol = solveEquilibrium(sys, cInst, base.baseKc);
+        const tag = clampedV < base.baseVolL ? `V↓ (${(1 / clampedV).toFixed(1)}P)` : `V↑ (${(1 / clampedV).toFixed(1)}P)`;
+        const dragSeg = makeSegment(nextTStart, base.baseC, cInst, sol.cEq, tag, tag);
+        const nextSegs = base.baseSegments.concat(dragSeg);
 
-    state.volumeL = clampedV;
-    state.qcInst = qcInst;
-    state.shiftDir = sol.shift;
-    state.currentC = sol.cEq.slice();
-    state.lastAction = {
-      kind: clampedV < prevV ? 'vol-down' : 'vol-up',
-      prevV,
-      newV: clampedV,
-      qcInst,
-      kc: state.kc
-    };
+        state.volumeL = clampedV;
+        state.kc = base.baseKc;
+        state.qcInst = qcInst;
+        state.shiftDir = sol.shift;
+        state.currentC = sol.cEq.slice();
+        state.lastAction = {
+          kind: clampedV < base.baseVolL ? 'vol-down' : 'vol-up',
+          prevV: base.baseVolL,
+          newV: clampedV,
+          qcInst,
+          kc: base.baseKc
+        };
+        state.segments = nextSegs.length > MAX_SEGMENTS ? nextSegs.slice(nextSegs.length - MAX_SEGMENTS) : nextSegs;
+      }
+    }
 
-    const tagVi = clampedV < prevV ? `V↓ (${(1 / clampedV).toFixed(1)}P)` : `V↑ (${(1 / clampedV).toFixed(1)}P)`;
-    pushSegment(cPrev, cInst, sol.cEq, tagVi, tagVi);
-    render();
+    updateLiveVisuals();
   }
 
   function applySpeciesPerturbation(speciesIdx, isAdd) {
+    state.activeDrag = null;
     const sys = findSystem(state.systemId);
     const sp = sys.species[speciesIdx];
     if (!sp) return;
@@ -638,6 +705,7 @@
   }
 
   function toggleCatalyst() {
+    state.activeDrag = null;
     state.catalystOn = !state.catalystOn;
     // Update the most recent relaxation segment rate so the user immediately sees the ~2.5x steeper slope
     // while K_C and equilibrium concentrations remain 100% unchanged.
@@ -688,9 +756,7 @@
     return 'rgba(148, 163, 184, 0.14)';
   }
 
-  // Left SVG: Dynamic Piston Cylinder with scaled Volume V, gas color, and vibrating molecules
-  function buildPistonSVG(sys) {
-    const d = dict();
+  function computePistonMetrics(sys) {
     const chamberBottom = 214;
     const chamberMinY = 58; // Top wall at V = 2.00 L
     const maxGasH = chamberBottom - chamberMinY; // 156 px at V = 2.00 L
@@ -703,51 +769,81 @@
     const tNorm = (state.tempK - sys.tMin) / Math.max(1, sys.tMax - sys.tMin);
     const vibDur = (1.6 - tNorm * 0.85).toFixed(2);
 
-    // Total 32 gas particles distributed proportionally across species concentrations
+    // Exactly 32 gas particles distributed proportionally across species concentrations
+    const TOTAL_DOTS = 32;
     const totalConc = Math.max(0.01, state.currentC.reduce((a, b) => a + b, 0));
-    const speciesParticles = [];
+    const counts = [];
     let countSum = 0;
-    sys.species.forEach((sp, i) => {
-      const nCount =
+    for (let i = 0; i < sys.species.length; i++) {
+      const reserveRest = (sys.species.length - 1 - i) * 2;
+      const maxAvail = TOTAL_DOTS - countSum - reserveRest;
+      const rawCount =
         i === sys.species.length - 1
-          ? Math.max(2, 32 - countSum)
-          : Math.max(2, Math.round((state.currentC[i] / totalConc) * 32));
-      countSum += nCount;
-      for (let k = 0; k < nCount; k++) {
-        speciesParticles.push(sp.color);
-      }
-    });
+          ? TOTAL_DOTS - countSum
+          : Math.min(maxAvail, Math.max(2, Math.round((state.currentC[i] / totalConc) * TOTAL_DOTS)));
+      counts.push(rawCount);
+      countSum += rawCount;
+    }
 
-    // Deterministic pseudo-random coordinates inside chamber clipped area
-    let dotsSVG = '';
     const xLeft = 66;
     const xSpan = 168;
     const ySpan = Math.max(22, gasH - 14);
-    speciesParticles.forEach((col, idx) => {
-      const rx = ((idx * 53 + 17) % 100) / 100;
-      const ry = ((idx * 79 + 31) % 100) / 100;
-      const cx = (xLeft + rx * xSpan).toFixed(1);
-      const cy = (pistonBottomY + 7 + ry * ySpan).toFixed(1);
-      const delay = (((idx * 29) % 15) * 0.11).toFixed(2);
-      const dx = (idx % 2 === 0 ? 2.6 : -2.6).toFixed(1);
-      const dy = (idx % 3 === 0 ? -2.4 : 2.2).toFixed(1);
-      dotsSVG += `<circle cx="${cx}" cy="${cy}" r="3.4" fill="${col}" fill-opacity="0.92" class="eq-mol-particle" style="--eq-dur:${vibDur}s;--eq-delay:${delay}s;--eq-dx:${dx}px;--eq-dy:${dy}px;" />`;
+    const particles = [];
+    let idx = 0;
+    sys.species.forEach((sp, i) => {
+      for (let k = 0; k < counts[i]; k++) {
+        const rx = ((idx * 53 + 17) % 100) / 100;
+        const ry = ((idx * 79 + 31) % 100) / 100;
+        particles.push({
+          idx,
+          color: sp.color,
+          cx: (xLeft + rx * xSpan).toFixed(1),
+          cy: (pistonBottomY + 7 + ry * ySpan).toFixed(1)
+        });
+        idx++;
+      }
     });
 
     const relPressure = (1.0 / state.volumeL) * (state.tempK / sys.tRef);
+    const captionText = `V = ${state.volumeL.toFixed(2)} L  •  P ≈ ${relPressure.toFixed(2)}×P₀  •  T = ${state.tempK} K`;
+
+    return {
+      chamberBottom,
+      maxGasH,
+      gasH,
+      pistonBottomY,
+      pistonTopY,
+      gasFill,
+      vibDur,
+      particles,
+      captionText
+    };
+  }
+
+  // Left SVG: Dynamic Piston Cylinder with scaled Volume V, gas color, and vibrating molecules
+  function buildPistonSVG(sys) {
+    const m = computePistonMetrics(sys);
+    const dotsSVG = m.particles
+      .map((p) => {
+        const delay = (((p.idx * 29) % 15) * 0.11).toFixed(2);
+        const dx = (p.idx % 2 === 0 ? 2.6 : -2.6).toFixed(1);
+        const dy = (p.idx % 3 === 0 ? -2.4 : 2.2).toFixed(1);
+        return `<circle cx="${p.cx}" cy="${p.cy}" r="3.4" fill="${p.color}" fill-opacity="0.92" data-mol-idx="${p.idx}" class="eq-mol-particle" style="--eq-dur:${m.vibDur}s;--eq-delay:${delay}s;--eq-dx:${dx}px;--eq-dy:${dy}px;" />`;
+      })
+      .join('');
 
     return `
       <svg class="eq-piston-svg" viewBox="0 0 300 248" role="img" aria-label="${sys.equation}">
         <defs>
           <clipPath id="eq-chamber-clip">
-            <rect x="56" y="42" width="188" height="${chamberBottom - 42}" rx="3" />
+            <rect x="56" y="42" width="188" height="${m.chamberBottom - 42}" rx="3" />
           </clipPath>
         </defs>
 
         <!-- Cylinder graduation scale marks (0.5 L, 1.0 L, 1.5 L, 2.0 L) -->
         ${[0.5, 1.0, 1.5, 2.0]
           .map((vMark) => {
-            const yTick = (chamberBottom - (vMark / 2.0) * maxGasH).toFixed(1);
+            const yTick = (m.chamberBottom - (vMark / 2.0) * m.maxGasH).toFixed(1);
             return `
               <line x1="42" y1="${yTick}" x2="52" y2="${yTick}" stroke="#64748b" stroke-width="1.2" />
               <text x="38" y="${Number(yTick) + 3}" text-anchor="end" class="eq-svg-axis-txt">${vMark.toFixed(1)}L</text>
@@ -756,8 +852,8 @@
           .join('')}
 
         <!-- Gas Chamber Interior Color -->
-        <rect x="56" y="${pistonBottomY.toFixed(1)}" width="188" height="${gasH.toFixed(1)}"
-              fill="${gasFill}" clip-path="url(#eq-chamber-clip)" />
+        <rect id="eq-svg-gas-rect" x="56" y="${m.pistonBottomY.toFixed(1)}" width="188" height="${m.gasH.toFixed(1)}"
+              fill="${m.gasFill}" clip-path="url(#eq-chamber-clip)" />
 
         <!-- Vibrating Molecule Dots inside Gas Chamber -->
         <g clip-path="url(#eq-chamber-clip)">
@@ -765,23 +861,63 @@
         </g>
 
         <!-- Moving Piston Rod & Head -->
-        <rect x="143" y="6" width="14" height="${Math.max(4, pistonTopY - 6).toFixed(1)}" rx="2"
+        <rect id="eq-svg-piston-rod" x="143" y="6" width="14" height="${Math.max(4, m.pistonTopY - 6).toFixed(1)}" rx="2"
               fill="#475569" stroke="#94a3b8" stroke-width="1.2" />
-        <rect x="58" y="${pistonTopY.toFixed(1)}" width="184" height="14" rx="2.5"
+        <rect id="eq-svg-piston-head" x="58" y="${m.pistonTopY.toFixed(1)}" width="184" height="14" rx="2.5"
               fill="#64748b" stroke="#cbd5e1" stroke-width="1.5" />
-        <line x1="66" y1="${(pistonTopY + 5).toFixed(1)}" x2="234" y2="${(pistonTopY + 5).toFixed(1)}"
+        <line id="eq-svg-piston-line" x1="66" y1="${(m.pistonTopY + 5).toFixed(1)}" x2="234" y2="${(m.pistonTopY + 5).toFixed(1)}"
               stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3" />
 
         <!-- Outer Glass Cylinder Walls -->
-        <path d="M 52 38 L 56 38 L 56 ${chamberBottom} Q 56 220 62 220 L 238 220 Q 244 220 244 ${chamberBottom} L 244 38 L 248 38"
+        <path d="M 52 38 L 56 38 L 56 ${m.chamberBottom} Q 56 220 62 220 L 238 220 Q 244 220 244 ${m.chamberBottom} L 244 38 L 248 38"
               fill="none" stroke="#cbd5e1" stroke-width="2.2" stroke-linecap="round" />
 
         <!-- Live V, P & T Footer inside SVG -->
-        <text x="150" y="238" text-anchor="middle" class="eq-svg-caption">
-          V = ${state.volumeL.toFixed(2)} L  •  P ≈ ${relPressure.toFixed(2)}×P₀  •  T = ${state.tempK} K
+        <text id="eq-svg-piston-caption" x="150" y="238" text-anchor="middle" class="eq-svg-caption">
+          ${m.captionText}
         </text>
       </svg>
     `;
+  }
+
+  // Update piston SVG attributes in place so CSS molecular motion keeps running smoothly during slider drags
+  function updatePistonSVGInPlace(sys, syncSpeed) {
+    const pistonHost = hostEl && hostEl.querySelector('#eq-piston-svg-host');
+    if (!pistonHost) return;
+
+    const gasRect = pistonHost.querySelector('#eq-svg-gas-rect');
+    const pistonRod = pistonHost.querySelector('#eq-svg-piston-rod');
+    const pistonHead = pistonHost.querySelector('#eq-svg-piston-head');
+    const pistonLine = pistonHost.querySelector('#eq-svg-piston-line');
+    const captionEl = pistonHost.querySelector('#eq-svg-piston-caption');
+    const circles = pistonHost.querySelectorAll('.eq-mol-particle');
+
+    const m = computePistonMetrics(sys);
+    if (!gasRect || !pistonRod || !pistonHead || !pistonLine || !captionEl || circles.length !== m.particles.length) {
+      pistonHost.innerHTML = buildPistonSVG(sys);
+      return;
+    }
+
+    gasRect.setAttribute('y', m.pistonBottomY.toFixed(1));
+    gasRect.setAttribute('height', m.gasH.toFixed(1));
+    gasRect.setAttribute('fill', m.gasFill);
+
+    pistonRod.setAttribute('height', Math.max(4, m.pistonTopY - 6).toFixed(1));
+    pistonHead.setAttribute('y', m.pistonTopY.toFixed(1));
+    pistonLine.setAttribute('y1', (m.pistonTopY + 5).toFixed(1));
+    pistonLine.setAttribute('y2', (m.pistonTopY + 5).toFixed(1));
+    captionEl.textContent = m.captionText;
+
+    for (let i = 0; i < m.particles.length; i++) {
+      const p = m.particles[i];
+      const circle = circles[i];
+      circle.setAttribute('cx', p.cx);
+      circle.setAttribute('cy', p.cy);
+      circle.setAttribute('fill', p.color);
+      if (syncSpeed) {
+        circle.style.setProperty('--eq-dur', `${m.vibDur}s`);
+      }
+    }
   }
 
   // Right SVG: Continuous Multi-Segment Concentration vs. Time C(t) Plot
@@ -993,17 +1129,8 @@
     return '';
   }
 
-  function render() {
-    if (!hostEl) return;
+  function buildTelemetryHTML(sys) {
     const d = dict();
-    const isEn = state.lang === 'en';
-    const sys = findSystem(state.systemId);
-
-    const sysChipsHTML = EQUILIBRIUM_SYSTEMS.map((item) => {
-      const active = item.id === sys.id ? 'active' : '';
-      return `<button type="button" class="lab-preset-chip ${active}" data-eq-sys="${item.id}">${item.chipLabel}</button>`;
-    }).join('');
-
     let shiftBadgeClass = 'is-none';
     let shiftBadgeText = d.shiftNone;
     if (state.shiftDir === 'forward') {
@@ -1021,11 +1148,18 @@
         ? 'Q_C < K_C'
         : 'Q_C > K_C';
 
-    const tempC = (state.tempK - 273.15).toFixed(0);
-    const relP = ((1.0 / state.volumeL) * (state.tempK / sys.tRef)).toFixed(2);
-    const thermoBadge = sys.deltaH < 0 ? `${d.exoTag} • ΔrH° = ${sys.deltaH} kJ` : `${d.endoTag} • ΔrH° = +${sys.deltaH} kJ`;
+    return `
+      <span class="eq-shift-badge ${shiftBadgeClass}">${shiftBadgeText}</span>
+      <div class="eq-kq-row">
+        <span class="eq-kq-chip">K_C(${state.tempK}K) = <strong>${formatSciNumber(state.kc)}</strong></span>
+        <span class="eq-kq-chip">Q_C = <strong>${formatSciNumber(state.qcInst)}</strong></span>
+        <span class="eq-kq-chip is-cmp">${qCompareSym}</span>
+      </div>
+    `;
+  }
 
-    const concPillsHTML = sys.species
+  function buildConcPillsHTML(sys) {
+    return sys.species
       .map((sp, idx) => {
         const val = state.currentC[idx];
         return `
@@ -1037,6 +1171,67 @@
         `;
       })
       .join('');
+  }
+
+  // Targeted real-time update during slider dragging (preserves <input type="range"> & particle CSS animation)
+  function updateLiveVisuals(syncSpeed = false) {
+    if (!hostEl) return;
+    const d = dict();
+    const sys = findSystem(state.systemId);
+
+    const telemetryHost = hostEl.querySelector('#eq-telemetry-host');
+    if (telemetryHost) telemetryHost.innerHTML = buildTelemetryHTML(sys);
+
+    updatePistonSVGInPlace(sys, syncSpeed);
+
+    const concHost = hostEl.querySelector('#eq-conc-pills-host');
+    if (concHost) concHost.innerHTML = buildConcPillsHTML(sys);
+
+    const graphHost = hostEl.querySelector('#eq-graph-svg-host');
+    if (graphHost) {
+      graphHost.innerHTML =
+        buildGraphSVG(sys) +
+        (state.catalystOn ? `<div class="eq-cat-graph-note">${d.uncatalyzedLegend}</div>` : '');
+    }
+
+    const lblTemp = hostEl.querySelector('#eq-lbl-temp');
+    if (lblTemp) {
+      lblTemp.textContent = `${state.tempK} K (${(state.tempK - 273.15).toFixed(0)} °C)`;
+    }
+
+    const lblVol = hostEl.querySelector('#eq-lbl-vol');
+    if (lblVol) {
+      const relP = ((1.0 / state.volumeL) * (state.tempK / sys.tRef)).toFixed(2);
+      lblVol.textContent = `V = ${state.volumeL.toFixed(2)} L (P ≈ ${relP}×)`;
+    }
+
+    hostEl.querySelectorAll('[data-eq-sp-role]').forEach((node) => {
+      const idx = parseInt(node.dataset.eqSpRole, 10);
+      const sp = sys.species[idx];
+      if (sp) {
+        const roleTag = sp.role === 'reactant' ? d.reactantTag : d.productTag;
+        node.textContent = `${roleTag} • ${state.currentC[idx].toFixed(2)}M`;
+      }
+    });
+
+    const explainBody = hostEl.querySelector('#eq-explain-body');
+    if (explainBody) explainBody.textContent = buildExplanationText(sys);
+  }
+
+  function render() {
+    if (!hostEl) return;
+    const d = dict();
+    const isEn = state.lang === 'en';
+    const sys = findSystem(state.systemId);
+
+    const sysChipsHTML = EQUILIBRIUM_SYSTEMS.map((item) => {
+      const active = item.id === sys.id ? 'active' : '';
+      return `<button type="button" class="lab-preset-chip ${active}" data-eq-sys="${item.id}">${item.chipLabel}</button>`;
+    }).join('');
+
+    const tempC = (state.tempK - 273.15).toFixed(0);
+    const relP = ((1.0 / state.volumeL) * (state.tempK / sys.tRef)).toFixed(2);
+    const thermoBadge = sys.deltaH < 0 ? `${d.exoTag} • ΔrH° = ${sys.deltaH} kJ` : `${d.endoTag} • ΔrH° = +${sys.deltaH} kJ`;
 
     const legendHTML = sys.species
       .map(
@@ -1057,7 +1252,7 @@
             <div class="eq-sp-ctrl-info">
               <i class="eq-sp-dot" style="background:${sp.color}"></i>
               <strong>${sp.label}</strong>
-              <span class="eq-sp-role">${roleTag} • ${state.currentC[idx].toFixed(2)}M</span>
+              <span class="eq-sp-role" data-eq-sp-role="${idx}">${roleTag} • ${state.currentC[idx].toFixed(2)}M</span>
             </div>
             <div class="eq-sp-ctrl-btns">
               <button type="button" class="eq-mini-btn is-add" data-eq-add="${idx}">${d.addBtn}</button>
@@ -1085,13 +1280,8 @@
             <span class="eq-hint-pill">${isEn ? sys.visualHintEn : sys.visualHintVi}</span>
           </div>
         </div>
-        <div class="eq-metrics-right">
-          <span class="eq-shift-badge ${shiftBadgeClass}">${shiftBadgeText}</span>
-          <div class="eq-kq-row">
-            <span class="eq-kq-chip">K_C(${state.tempK}K) = <strong>${formatSciNumber(state.kc)}</strong></span>
-            <span class="eq-kq-chip">Q_C = <strong>${formatSciNumber(state.qcInst)}</strong></span>
-            <span class="eq-kq-chip is-cmp">${qCompareSym}</span>
-          </div>
+        <div class="eq-metrics-right" id="eq-telemetry-host">
+          ${buildTelemetryHTML(sys)}
         </div>
       </div>
 
@@ -1101,10 +1291,10 @@
           <div class="eq-card-top">
             <span class="echem-eyebrow">${d.pistonPanelTitle}</span>
           </div>
-          ${buildPistonSVG(sys)}
+          <div id="eq-piston-svg-host">${buildPistonSVG(sys)}</div>
           <div class="eq-conc-strip">
             <span class="eq-conc-lbl">${d.concListLabel}</span>
-            <div class="eq-conc-pills">${concPillsHTML}</div>
+            <div class="eq-conc-pills" id="eq-conc-pills-host">${buildConcPillsHTML(sys)}</div>
           </div>
         </div>
 
@@ -1113,12 +1303,14 @@
             <span class="echem-eyebrow">${d.graphPanelTitle}</span>
             <div class="eq-legend-row">${legendHTML}</div>
           </div>
-          ${buildGraphSVG(sys)}
-          ${
-            state.catalystOn
-              ? `<div class="eq-cat-graph-note">${d.uncatalyzedLegend}</div>`
-              : ''
-          }
+          <div id="eq-graph-svg-host">
+            ${buildGraphSVG(sys)}
+            ${
+              state.catalystOn
+                ? `<div class="eq-cat-graph-note">${d.uncatalyzedLegend}</div>`
+                : ''
+            }
+          </div>
         </div>
       </div>
 
@@ -1136,7 +1328,7 @@
             <strong id="eq-lbl-vol">V = ${state.volumeL.toFixed(2)} L (P ≈ ${relP}×)</strong>
           </div>
           <input type="range" id="eq-slider-vol" class="echem-range"
-                 min="0.5" max="2.0" step="0.1" value="${state.volumeL}" />
+                 min="0.5" max="2.0" step="0.02" value="${state.volumeL}" />
           <div class="eq-ctrl-hint">${d.ctrlVolHint}</div>
         </div>
 
@@ -1159,7 +1351,7 @@
       <!-- Automatic Le Chatelier Explanation Box -->
       <div class="eq-explain-card">
         <span class="echem-eyebrow is-gold">${d.explainEyebrow}</span>
-        <p class="eq-explain-body">${buildExplanationText(sys)}</p>
+        <p class="eq-explain-body" id="eq-explain-body">${buildExplanationText(sys)}</p>
       </div>
     `;
   }
@@ -1203,27 +1395,25 @@
       }
     });
 
-    // Live label preview on slider drag without flooding C(t) graph
+    // Real-time continuous updates as the user drags T or V/P sliders
     hostEl.addEventListener('input', (e) => {
       if (e.target.id === 'eq-slider-temp') {
-        const tVal = Number(e.target.value);
-        const lbl = hostEl.querySelector('#eq-lbl-temp');
-        if (lbl) lbl.textContent = `${tVal} K (${(tVal - 273.15).toFixed(0)} °C)`;
+        applyLiveSliderUpdate('temp', Number(e.target.value));
       } else if (e.target.id === 'eq-slider-vol') {
-        const vVal = Number(e.target.value);
-        const sys = findSystem(state.systemId);
-        const pVal = ((1.0 / vVal) * (state.tempK / sys.tRef)).toFixed(2);
-        const lbl = hostEl.querySelector('#eq-lbl-vol');
-        if (lbl) lbl.textContent = `V = ${vVal.toFixed(2)} L (P ≈ ${pVal}×)`;
+        applyLiveSliderUpdate('vol', Number(e.target.value));
       }
     });
 
-    // Commit thermodynamic step cleanly on release / click / keyboard commit
+    // Commit and close active drag session when slider drag ends (or keyboard/click step completes)
     hostEl.addEventListener('change', (e) => {
       if (e.target.id === 'eq-slider-temp') {
-        applyTemperatureChange(Number(e.target.value));
+        applyLiveSliderUpdate('temp', Number(e.target.value));
+        state.activeDrag = null;
+        updateLiveVisuals(true);
       } else if (e.target.id === 'eq-slider-vol') {
-        applyVolumeChange(Number(e.target.value));
+        applyLiveSliderUpdate('vol', Number(e.target.value));
+        state.activeDrag = null;
+        updateLiveVisuals(false);
       }
     });
   }

@@ -1104,6 +1104,21 @@
             <span class="lab-tab-sub" data-i18n-vlab="tabEquilibriumSub">Nguyên lý Le Chatelier, Van ’t Hoff &amp; đồ thị C(t)</span>
           </span>
         </button>
+        <button
+          type="button"
+          class="lab-tab-btn"
+          id="vlab-tab-titration"
+          data-vlab-tab="titration"
+          role="tab"
+          aria-selected="false"
+          aria-controls="vlab-panel-titration"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">🧪</span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-vlab="tabTitration">Chuẩn độ Acid–Base</span>
+            <span class="lab-tab-sub" data-i18n-vlab="tabTitrationSub">Burette, đường cong pH(V) &amp; thực hành ẩn C₀</span>
+          </span>
+        </button>
         <button type="button" class="detail-close-btn lab-split-close" id="btn-close-vlab" aria-label="Đóng">✕</button>
       </div>
 
@@ -1113,6 +1128,9 @@
 
         <!-- TAB 2: CHEMICAL EQUILIBRIUM LAB (Le Chatelier) -->
         <div class="lab-tab-panel hidden" id="vlab-panel-equilibrium" role="tabpanel" aria-labelledby="vlab-tab-equilibrium"></div>
+
+        <!-- TAB 3: ACID-BASE TITRATION LAB -->
+        <div class="lab-tab-panel hidden" id="vlab-panel-titration" role="tabpanel" aria-labelledby="vlab-tab-titration"></div>
       </div>
 
       <div class="detail-footer lab-footer">
@@ -1620,6 +1638,7 @@
   <script src="organic-builder.js?v=20261122-2"></script>
   <script src="electrochem-lab.js"></script>
   <script src="equilibrium-lab.js"></script>
+  <script src="titration-lab.js"></script>
   <script src="tools.js"></script>
   <script src="element-details.js"></script>
   <script src="atom3d.js"></script>
