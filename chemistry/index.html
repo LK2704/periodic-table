@@ -954,6 +954,36 @@
 
             <!-- Interactive SVG Canvas -->
             <div class="org-stage">
+              <div class="org-search-overlay" id="org-search-overlay">
+                <button type="button" class="org-search-trigger" id="org-search-trigger" aria-expanded="false" aria-controls="org-search-box">
+                  <svg class="org-search-ico" width="13" height="13" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.8" />
+                    <line x1="13.5" y1="13.5" x2="17.8" y2="17.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                  </svg>
+                  <span data-i18n-org="searchBtn">Tìm chất hữu cơ</span>
+                </button>
+                <div class="org-search-box hidden" id="org-search-box">
+                  <div class="org-search-input-row">
+                    <svg class="org-search-ico" width="13" height="13" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.8" />
+                      <line x1="13.5" y1="13.5" x2="17.8" y2="17.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                    <input
+                      type="text"
+                      class="org-search-input"
+                      id="org-search-input"
+                      autocomplete="off"
+                      spellcheck="false"
+                      placeholder="Nhập tên hoặc công thức (C6H12O6, aspirin...)"
+                      aria-autocomplete="list"
+                      aria-controls="org-search-dropdown"
+                      aria-expanded="false"
+                    />
+                    <button type="button" class="org-search-clear" id="org-search-clear" aria-label="Đóng tìm kiếm">✕</button>
+                  </div>
+                  <div class="org-search-dropdown" id="org-search-dropdown" role="listbox"></div>
+                </div>
+              </div>
               <div class="org-zoom-controls" role="group" aria-label="Thu phóng mô hình">
                 <button type="button" class="org-zoom-btn" id="org-btn-zoom-out" title="Thu nhỏ" aria-label="Thu nhỏ">−</button>
                 <button type="button" class="org-zoom-readout mono" id="org-btn-zoom-reset" title="Đặt lại thu phóng (100%)">100%</button>

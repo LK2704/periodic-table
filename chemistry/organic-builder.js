@@ -72,6 +72,11 @@
       zoomInTitle: 'Phóng to',
       zoomOutTitle: 'Thu nhỏ',
       zoomResetTitle: 'Đặt lại thu phóng (100%)',
+      searchBtn: 'Tìm chất hữu cơ',
+      searchPlaceholder: 'Nhập tên hoặc công thức (C6H12O6, aspirin...)',
+      searchFeatured: 'Chất phổ biến gợi ý',
+      searchEmpty: 'Không tìm thấy hợp chất phù hợp',
+      searchClose: 'Đóng tìm kiếm',
       carbonCount: (n) => `${n}/${MAX_CARBONS}`,
       stageHint:
         'Kéo thả nguyên tử để chỉnh dáng • Cuộn để thu phóng • Shift + Click nguyên tử khác để nối vòng • Bấm liên kết để đổi bậc',
@@ -92,15 +97,26 @@
             : 'Loại mạch: Mạch hở (không nhánh)',
       groupsPrefix: 'Nhóm chức: ',
       noFuncGroups: 'Không có nhóm chức (Hydrocarbon no)',
+      heteroNoFuncGroups: 'Hợp chất hữu cơ chứa dị tố',
       funcGroupNames: {
         carboxyl: '-COOH (Carboxylic acid)',
+        carbamate: '-O-CO-N- (Carbamate)',
         ester: '-COO- (Ester)',
+        amide: '-CONH₂ / -CO-N- (Amide)',
+        nitrile: '-C≡N (Nitrile)',
+        imine: 'C=N (Imine)',
+        nitro: '-NO₂ (Nitro)',
+        nitroso: '-O-N=O / -N=O (Nitrite / Nitroso)',
         aldehyde: '-CHO (Aldehyde)',
         ketone: '>C=O (Ketone)',
         phenol: '-OH gắn vòng thơm (Phenol)',
         alcohol: '-OH (Alcohol)',
+        peroxide: '-O-O- / -O-OH (Peroxide)',
+        oxyamine: '-O-NH₂ / -O-N- (Alkoxyamine / Hydroxylamine)',
         ether: '-O- (Ether)',
+        hydrazine: '-NH-NH₂ / -N-N- (Hydrazine)',
         amine: '-NH₂ / Amine',
+        hypohalite: '-O-X (Hypohalite)',
         halogen: '-X (Halogen derivative)',
         arene: 'Vòng thơm (Arene)',
         alkene: 'Liên kết đôi C=C (Alkene)',
@@ -143,11 +159,19 @@
         ketone: 'Ketone',
         carboxylic: 'Carboxylic acid',
         ester: 'Ester',
+        carbamate: 'Carbamate',
         anhydride: 'Acid anhydride',
         carbohydrate: 'Carbohydrate',
         aminoacid: 'Amino acid',
+        aminoalcohol: 'Amino alcohol (Tạp chức)',
         amine: 'Amine',
         amide: 'Amide',
+        peroxide: 'Peroxide',
+        oxyamine: 'Alkoxyamine / Hydroxylamine',
+        nitrile: 'Nitrile',
+        imine: 'Imine',
+        nitro: 'Hợp chất Nitro',
+        nitroso: 'Nitrite / Nitroso',
         halogen: 'Halogen derivative',
         pharma: 'Dược chất hữu cơ',
         custom: 'Hợp chất hữu cơ'
@@ -158,7 +182,7 @@
           : `${formula} · ${famLabel} ${topoLabel}`,
       toasts: {
         selectHeavy: 'Hãy chọn một nguyên tử còn hóa trị trống (C, O hoặc N) trước.',
-        selectCarbon: 'Hãy chọn một nguyên tử Carbon (C) để gắn nhóm chức này.',
+        selectCarbon: 'Hãy chọn một nguyên tử Carbon (C) để gắn liên kết đôi =O.',
         maxCarbons: `Tối đa ${MAX_CARBONS} nguyên tử Carbon trong một phân tử.`,
         valenceFull: (need, hasH) =>
           hasH
@@ -191,6 +215,11 @@
       zoomInTitle: 'Zoom in',
       zoomOutTitle: 'Zoom out',
       zoomResetTitle: 'Reset zoom (100%)',
+      searchBtn: 'Search compound',
+      searchPlaceholder: 'Name or formula (C6H12O6, aspirin...)',
+      searchFeatured: 'Popular compounds',
+      searchEmpty: 'No matching compounds found',
+      searchClose: 'Close search',
       carbonCount: (n) => `${n}/${MAX_CARBONS}`,
       stageHint:
         'Drag atoms freely • Scroll to zoom • Shift + Click another atom to close a ring • Click bonds to cycle order',
@@ -211,15 +240,26 @@
             : 'Chain: Open-chain (linear)',
       groupsPrefix: 'Functional groups: ',
       noFuncGroups: 'None (Saturated hydrocarbon)',
+      heteroNoFuncGroups: 'Heteroatom organic compound',
       funcGroupNames: {
         carboxyl: '-COOH (Carboxylic acid)',
+        carbamate: '-O-CO-N- (Carbamate)',
         ester: '-COO- (Ester)',
+        amide: '-CONH₂ / -CO-N- (Amide)',
+        nitrile: '-C≡N (Nitrile)',
+        imine: 'C=N (Imine)',
+        nitro: '-NO₂ (Nitro)',
+        nitroso: '-O-N=O / -N=O (Nitrite / Nitroso)',
         aldehyde: '-CHO (Aldehyde)',
         ketone: '>C=O (Ketone)',
         phenol: '-OH on aromatic ring (Phenol)',
         alcohol: '-OH (Alcohol)',
+        peroxide: '-O-O- / -O-OH (Peroxide)',
+        oxyamine: '-O-NH₂ / -O-N- (Alkoxyamine / Hydroxylamine)',
         ether: '-O- (Ether)',
+        hydrazine: '-NH-NH₂ / -N-N- (Hydrazine)',
         amine: '-NH₂ / Amine',
+        hypohalite: '-O-X (Hypohalite)',
         halogen: '-X (Halogen derivative)',
         arene: 'Aromatic ring (Arene)',
         alkene: 'C=C double bond (Alkene)',
@@ -262,11 +302,19 @@
         ketone: 'Ketone',
         carboxylic: 'Carboxylic acid',
         ester: 'Ester',
+        carbamate: 'Carbamate',
         anhydride: 'Acid anhydride',
         carbohydrate: 'Carbohydrate',
         aminoacid: 'Amino acid',
+        aminoalcohol: 'Amino alcohol',
         amine: 'Amine',
         amide: 'Amide',
+        peroxide: 'Peroxide',
+        oxyamine: 'Alkoxyamine / Hydroxylamine',
+        nitrile: 'Nitrile',
+        imine: 'Imine',
+        nitro: 'Nitro compound',
+        nitroso: 'Nitrite / Nitroso',
         halogen: 'Halogen derivative',
         pharma: 'Pharmaceutical',
         custom: 'Organic compound'
@@ -275,7 +323,7 @@
         `${formula} · ${topoLabel} ${famLabel}`,
       toasts: {
         selectHeavy: 'Select an atom with open valence (C, O, or N) first.',
-        selectCarbon: 'Select a Carbon (C) atom to attach this functional group.',
+        selectCarbon: 'Select a Carbon (C) atom to attach a =O double bond.',
         maxCarbons: `Maximum ${MAX_CARBONS} Carbon atoms per molecule.`,
         valenceFull: (need, hasH) =>
           hasH
@@ -623,6 +671,328 @@
   let KNOWN_MOLECULES = buildKnownMolecules(global.ORGANIC_COMPOUNDS);
 
   // =========================================================================
+  // SMART SEARCH INDEX & RANKING ENGINE
+  // =========================================================================
+
+  const FEATURED_COMPOUND_IDS = [
+    'glucose-ring',
+    'benzene',
+    'ethanol',
+    'acetic-acid',
+    'aspirin',
+    'dopamine',
+    'vitamin-c',
+    'naphthalene'
+  ];
+
+  function normalizeSearchText(str) {
+    let s = String(str ?? '');
+    for (let i = 0; i < 10; i++) {
+      s = s.split(SUBSCRIPT_DIGITS[i]).join(String(i));
+    }
+    return s
+      .replace(/[đĐ]/g, 'd')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function escapeSearchRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function computeHeavyEntryFormula(item) {
+    const els = item.elements || [];
+    const bds = item.bonds || [];
+    const deg = new Array(els.length).fill(0);
+    for (let i = 0; i < bds.length; i++) {
+      const o = Number(bds[i][2] || 1);
+      deg[bds[i][0]] += o;
+      deg[bds[i][1]] += o;
+    }
+    const counts = { C: 0, H: 0, Br: 0, Cl: 0, F: 0, I: 0, N: 0, O: 0 };
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      if (counts[el] !== undefined) counts[el]++;
+      const miss = Math.max(0, (ELEMENT_VALENCE[el] || 4) - deg[i]);
+      counts.H += miss;
+    }
+    const order = ['C', 'H', 'Br', 'Cl', 'F', 'I', 'N', 'O'];
+    const formulaAscii = order
+      .filter((el) => counts[el] > 0)
+      .map((el) => el + (counts[el] > 1 ? String(counts[el]) : ''))
+      .join('');
+    return {
+      counts,
+      formulaUnicode: formatCountsFormula(counts),
+      formulaAscii,
+      formulaLower: formulaAscii.toLowerCase()
+    };
+  }
+
+  function tryStructuralFormulaToHill(rawNormalized) {
+    const compact = rawNormalized.replace(/[\s\-·•]+/g, '');
+    if (!compact || !/^[a-z0-9()]+$/.test(compact)) return null;
+    const knownDigitless = compact === 'hcho' || compact === 'hcooh';
+    if (!/\d/.test(compact) && !knownDigitless) return null;
+
+    let pos = 0;
+    function parseSeq() {
+      const m = {};
+      while (pos < compact.length) {
+        const ch = compact[pos];
+        if (ch === ')') {
+          pos++;
+          return m;
+        }
+        if (ch === '(') {
+          pos++;
+          const inner = parseSeq();
+          const dm = compact.slice(pos).match(/^\d+/);
+          const mult = dm ? (pos += dm[0].length, parseInt(dm[0], 10)) : 1;
+          Object.keys(inner).forEach((k) => {
+            m[k] = (m[k] || 0) + inner[k] * mult;
+          });
+          continue;
+        }
+        let el = null;
+        if (compact.startsWith('cl', pos)) {
+          el = 'Cl';
+          pos += 2;
+        } else if (compact.startsWith('br', pos)) {
+          el = 'Br';
+          pos += 2;
+        } else if ('chonfi'.includes(ch)) {
+          el = ch.toUpperCase();
+          pos += 1;
+        } else {
+          return null;
+        }
+        const dm = compact.slice(pos).match(/^\d+/);
+        const cnt = dm ? (pos += dm[0].length, parseInt(dm[0], 10)) : 1;
+        m[el] = (m[el] || 0) + cnt;
+      }
+      return m;
+    }
+
+    const total = parseSeq();
+    if (!total || pos !== compact.length) return null;
+    const order = ['C', 'H', 'Br', 'Cl', 'F', 'I', 'N', 'O'];
+    const out = order
+      .filter((el) => (total[el] || 0) > 0)
+      .map((el) => el.toLowerCase() + (total[el] > 1 ? String(total[el]) : ''))
+      .join('');
+    return out || null;
+  }
+
+  function matchesFormulaBoundaryPrefix(formulaLower, qCompact) {
+    if (!qCompact || !formulaLower.startsWith(qCompact)) return false;
+    if (formulaLower.length === qCompact.length) return true;
+    const lastQ = qCompact[qCompact.length - 1];
+    const nextF = formulaLower[qCompact.length];
+    if (lastQ >= '0' && lastQ <= '9') {
+      return nextF < '0' || nextF > '9';
+    }
+    return qCompact.length >= 2 || nextF !== 'l';
+  }
+
+  const SEARCH_CATEGORY_TAGS = {
+    carbohydrate: 'duong sugar ngot',
+    alcohol: 'ruou con',
+    ketone: 'ketone dung moi'
+  };
+
+  const SEARCH_COMPOUND_TAGS = {
+    'glucose-ring': 'duong nho mat ong blood sugar',
+    'glucose-open': 'duong nho duong',
+    'glucose-furanose': 'duong nho mat ong',
+    'fructose-furanose': 'duong trai cay duong mia mat ong fruit sugar',
+    'fructose-pyranose': 'duong trai cay fruit sugar',
+    'fructose-open': 'duong trai cay duong mat ong fruit sugar',
+    'sorbitol': 'duong an kieng tao ngot sugar sweetener',
+    'ribose-ring': 'duong rna atp sugar',
+    'ribose-open': 'duong rna sugar',
+    'deoxyribose-ring': 'duong dna sugar',
+    ethanol: 'ruou etylic con uong sat khuan alcohol',
+    isopropanol: 'con sat khuan rua linh kien rubbing alcohol',
+    'acetic-acid': 'giam an chua vinegar',
+    'citric-acid': 'chanh chua vitamin',
+    'lactic-acid': 'sua chua moi co yogurt',
+    'vitamin-c': 'cam chanh vitamin c antioxidant',
+    aspirin: 'thuoc giam dau ha sot painkiller',
+    paracetamol: 'thuoc ha sot giam dau acetaminophen',
+    dopamine: 'than kinh hanh phuc neurotransmitter',
+    naphthalene: 'bang phien long nao mothball',
+    menthol: 'bac ha dau gio peppermint mint',
+    limonene: 'cam chanh tinh dau citrus',
+    vanillin: 'vani huong lieu vanilla',
+    'glutamic-acid': 'bot ngot mi chinh msg',
+    'isoamyl-acetate': 'dau chuoi mui chuoi banana oil',
+    urea: 'phan dam urê phan bon fertilizer',
+    isooctane: 'xang chi so octan gasoline fuel',
+    methoxyamine: 'ch5no alkoxyamine hydroxylamine',
+    aminomethanol: 'ch5no amino alcohol',
+    'n-methylhydroxylamine': 'ch5no hydroxylamine',
+    ethanolamine: 'c2h7no amino alcohol mea',
+    methanediol: 'ch4o2 formaldehyde hydrate gem diol',
+    'methyl-hydroperoxide': 'ch4o2 peroxide',
+    'methyl-carbamate': 'c2h5no2 carbamate',
+    bromoethane: 'ethyl bromide c2h5br',
+    '2,4,6-tribromophenol': 'ket tua trang phenol brom',
+    'methyl-salicylate': 'dau nong salonpas wintergreen',
+    'ethyl-butyrate': 'mui dua pineapple ester',
+    'phenyl-acetate': 'ester phenol',
+    'glycolic-acid': 'aha tay te bao chet',
+    nitromethane: 'ch3no2 nitro nhien lieu dua xe',
+    'carbamic-acid': 'ch3no2 carbamic',
+    'methyl-nitrite': 'ch3no2 nitrite',
+    'formohydroxamic-acid': 'ch3no2 hydroxamic',
+    'o-formylhydroxylamine': 'ch3no2 hydroxylamine',
+    nitrobenzene: 'c6h5no2 dau hanh nhan nitro',
+    tnt: 'thuoc no trinitrotoluene c7h5n3o6',
+    'picric-acid': 'ket tua vang trinitrophenol c6h3n3o7',
+    nitroglycerin: 'thuoc no gian mach tim c3h5n3o9',
+    acrylonitrile: 'to nitron olon pan c3h3n',
+    caprolactam: 'to capron nylon 6 c6h11no',
+    caffeine: 'ca phe tra tinh tao coffee tea',
+    nicotine: 'thuoc la tobacco alkaloid',
+    eugenol: 'dinh huong tinh dau clove oil',
+    cinnamaldehyde: 'que tinh dau que cinnamon',
+    '2,4,6-tribromoaniline': 'ket tua trang aniline brom',
+    'gluconic-acid': 'glucose brom c6h12o7'
+  };
+
+  let SEARCH_INDEX_REF = null;
+  let SEARCH_INDEX_CACHE = [];
+
+  function ensureSearchIndex() {
+    if (KNOWN_MOLECULES.length === 0 && Array.isArray(global.ORGANIC_COMPOUNDS)) {
+      KNOWN_MOLECULES = buildKnownMolecules(global.ORGANIC_COMPOUNDS);
+    }
+    if (SEARCH_INDEX_REF === KNOWN_MOLECULES && SEARCH_INDEX_CACHE.length === KNOWN_MOLECULES.length) {
+      return SEARCH_INDEX_CACHE;
+    }
+    SEARCH_INDEX_REF = KNOWN_MOLECULES;
+    SEARCH_INDEX_CACHE = KNOWN_MOLECULES.map((item, idx) => {
+      const f = computeHeavyEntryFormula(item);
+      const tagStr = `${SEARCH_CATEGORY_TAGS[item.catKey] || ''} ${SEARCH_COMPOUND_TAGS[item.id] || ''}`;
+      return {
+        id: item.id,
+        item,
+        idx,
+        formulaUnicode: f.formulaUnicode,
+        formulaAscii: f.formulaAscii,
+        formulaLower: f.formulaLower,
+        cCount: f.counts.C || 0,
+        heavyCount: (item.elements || []).length,
+        nameViNorm: normalizeSearchText(item.name || ''),
+        nameEnNorm: normalizeSearchText(item.nameEn || item.name || ''),
+        catViNorm: normalizeSearchText(item.category || ''),
+        catEnNorm: normalizeSearchText(item.categoryEn || item.category || ''),
+        tagsNorm: normalizeSearchText(tagStr),
+        lifeViNorm: normalizeSearchText(item.realLife || ''),
+        lifeEnNorm: normalizeSearchText(item.realLifeEn || ''),
+        noteNorm: normalizeSearchText(`${item.note || ''} ${item.noteEn || ''}`),
+        idNorm: normalizeSearchText(String(item.id || '').replace(/-/g, ' '))
+      };
+    });
+    return SEARCH_INDEX_CACHE;
+  }
+
+  function formatSearchHit(rec, score) {
+    const it = rec.item;
+    return {
+      id: rec.id,
+      name: it.name,
+      nameEn: it.nameEn || it.name,
+      category: it.category,
+      categoryEn: it.categoryEn || it.category,
+      catKey: it.catKey,
+      formula: rec.formulaUnicode,
+      formulaAscii: rec.formulaAscii,
+      score
+    };
+  }
+
+  function searchCompounds(rawQuery, lang, limit = 30) {
+    const index = ensureSearchIndex();
+    const activeEn = lang === 'en';
+    const q = normalizeSearchText(rawQuery);
+    if (!q) {
+      const out = [];
+      FEATURED_COMPOUND_IDS.forEach((fid) => {
+        const rec = index.find((r) => r.id === fid);
+        if (rec) out.push(formatSearchHit(rec, 1));
+      });
+      return out.slice(0, limit);
+    }
+
+    const qCompact = q.replace(/[\s\-\(\)\[\],·•]+/g, '');
+    const hillFromStruct = tryStructuralFormulaToHill(q);
+    const wordRe = new RegExp(`(?:^|[\\s(\\/\\-])${escapeSearchRegex(q)}`);
+    const looksLikeFormulaToken = /^(?:c|h|o|n|cl|br|f|i)+\d+[a-z0-9]*$/.test(qCompact);
+    const matches = [];
+
+    for (let i = 0; i < index.length; i++) {
+      const rec = index[i];
+      const primaryName = activeEn ? rec.nameEnNorm : rec.nameViNorm;
+      const altName = activeEn ? rec.nameViNorm : rec.nameEnNorm;
+      const primaryLife = activeEn ? rec.lifeEnNorm : rec.lifeViNorm;
+      let score = 0;
+
+      if (qCompact && rec.formulaLower === qCompact) {
+        score = 1000;
+      } else if (hillFromStruct && rec.formulaLower === hillFromStruct) {
+        score = 920;
+      } else if (qCompact && matchesFormulaBoundaryPrefix(rec.formulaLower, qCompact)) {
+        score = 850;
+      } else if (primaryName.startsWith(q)) {
+        score = 720;
+      } else if (altName.startsWith(q)) {
+        score = 700;
+      } else if (
+        wordRe.test(primaryName) ||
+        wordRe.test(altName) ||
+        wordRe.test(rec.idNorm)
+      ) {
+        score = 580;
+      } else if (rec.tagsNorm && wordRe.test(rec.tagsNorm)) {
+        score = 520;
+      } else if (
+        rec.nameViNorm.includes(q) ||
+        rec.nameEnNorm.includes(q) ||
+        rec.idNorm.includes(q) ||
+        rec.catViNorm.includes(q) ||
+        rec.catEnNorm.includes(q) ||
+        (!looksLikeFormulaToken && qCompact.length >= 2 && rec.formulaLower.includes(qCompact))
+      ) {
+        score = 450;
+      } else if (
+        rec.lifeViNorm.includes(q) ||
+        rec.lifeEnNorm.includes(q) ||
+        rec.noteNorm.includes(q)
+      ) {
+        score = wordRe.test(primaryLife) ? 345 : 320;
+      }
+
+      if (score > 0) {
+        matches.push({ rec, score });
+      }
+    }
+
+    matches.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (a.rec.heavyCount !== b.rec.heavyCount) return a.rec.heavyCount - b.rec.heavyCount;
+      if (a.rec.cCount !== b.rec.cCount) return a.rec.cCount - b.rec.cCount;
+      return a.rec.idx - b.rec.idx;
+    });
+
+    return matches.slice(0, limit).map((m) => formatSearchHit(m.rec, m.score));
+  }
+
+  // =========================================================================
   // MOLECULE IDENTIFICATION & CLASSIFICATION ENGINE (Exported for Unit Tests)
   // =========================================================================
 
@@ -655,59 +1025,129 @@
     });
 
     let hasCarboxyl = false;
+    let hasCarbamate = false;
     let hasEster = false;
+    let hasAmide = false;
+    let hasNitrile = false;
+    let hasImine = false;
+    let hasNitro = false;
+    let hasNitroso = false;
     let hasAldehyde = false;
     let hasKetone = false;
     let hasPhenol = false;
     let hasAlcohol = false;
+    let hasPeroxide = false;
+    let hasOxyamine = false;
     let hasEther = false;
+    let hasHydrazine = false;
     let hasAmine = false;
+    let hasHypohalite = false;
     let hasHalogen = false;
     let hasCCDouble = false;
     let hasCCTriple = false;
+    let hasHeteroAtom = false;
+
+    const isHalogenEl = (el) => el === 'Cl' || el === 'Br' || el === 'F' || el === 'I';
 
     (graph.bonds || []).forEach((b) => {
       const u = b.from ?? b.a ?? b.source;
       const v = b.to ?? b.b ?? b.target;
       const elU = atomMap.get(u)?.element;
       const elV = atomMap.get(v)?.element;
+      const ord = Number(b.order || 1);
       if (elU === 'C' && elV === 'C') {
-        if (b.order === 3) hasCCTriple = true;
-        else if (b.order === 2 && (!aromAtomIds.has(u) || !aromAtomIds.has(v))) hasCCDouble = true;
+        if (ord === 3) hasCCTriple = true;
+        else if (ord === 2 && (!aromAtomIds.has(u) || !aromAtomIds.has(v))) hasCCDouble = true;
+      } else if ((elU === 'C' && elV === 'N') || (elU === 'N' && elV === 'C')) {
+        if (ord === 3) hasNitrile = true;
+        else if (ord === 2 && (!aromAtomIds.has(u) || !aromAtomIds.has(v))) hasImine = true;
+      } else if (elU === 'O' && elV === 'O') {
+        hasPeroxide = true;
+      } else if (elU === 'N' && elV === 'N') {
+        hasHydrazine = true;
+      } else if ((elU === 'O' && isHalogenEl(elV)) || (isHalogenEl(elU) && elV === 'O')) {
+        hasHypohalite = true;
       }
     });
 
     atomMap.forEach((atom, id) => {
-      if (atom.element === 'Cl' || atom.element === 'Br' || atom.element === 'F' || atom.element === 'I') {
+      if (isHalogenEl(atom.element)) {
+        hasHeteroAtom = true;
         hasHalogen = true;
       } else if (atom.element === 'N') {
-        hasAmine = true;
-      } else if (atom.element === 'O') {
+        hasHeteroAtom = true;
         const heavyNbs = (adj.get(id) || []).filter((e) => atomMap.get(e.to)?.element !== 'H');
-        if (heavyNbs.length === 2 && heavyNbs.every((e) => e.order === 1)) {
+        const hasMultiBond = heavyNbs.some((e) => e.order >= 2);
+        const dblOCount = heavyNbs.filter((e) => e.order === 2 && atomMap.get(e.to)?.element === 'O').length;
+        const singleONb = heavyNbs.some((e) => e.order === 1 && atomMap.get(e.to)?.element === 'O');
+        const hasONNeighbor = heavyNbs.some((e) => {
+          const nbEl = atomMap.get(e.to)?.element;
+          return nbEl === 'O' || nbEl === 'N';
+        });
+        const attachedToCarbonyl = heavyNbs.some((e) => {
+          if (e.order !== 1 || atomMap.get(e.to)?.element !== 'C') return false;
+          return (adj.get(e.to) || []).some((e2) => e2.order === 2 && atomMap.get(e2.to)?.element === 'O');
+        });
+        if (dblOCount >= 2) hasNitro = true;
+        else if (dblOCount === 1) hasNitroso = true;
+        else if (singleONb) hasOxyamine = true;
+        if (!aromAtomIds.has(id) && !hasMultiBond && !hasONNeighbor && !attachedToCarbonyl) {
+          hasAmine = true;
+        }
+      } else if (atom.element === 'O') {
+        hasHeteroAtom = true;
+        const heavyNbs = (adj.get(id) || []).filter((e) => atomMap.get(e.to)?.element !== 'H');
+        if (
+          heavyNbs.length === 2 &&
+          heavyNbs.every((e) => e.order === 1 && atomMap.get(e.to)?.element === 'C')
+        ) {
+          const isCarbamateO = heavyNbs.some((e) => {
+            const cNbs = adj.get(e.to) || [];
+            const hasCblO = cNbs.some((e2) => e2.order === 2 && atomMap.get(e2.to)?.element === 'O');
+            const hasCN = cNbs.some((e2) => e2.order === 1 && atomMap.get(e2.to)?.element === 'N');
+            return hasCblO && hasCN;
+          });
           const isEsterO = heavyNbs.some((e) =>
             (adj.get(e.to) || []).some((e2) => e2.order === 2 && atomMap.get(e2.to)?.element === 'O')
           );
-          if (isEsterO) hasEster = true;
+          if (isCarbamateO) hasCarbamate = true;
+          else if (isEsterO) hasEster = true;
           else hasEther = true;
         }
       } else if (atom.element === 'C') {
         const nbs = adj.get(id) || [];
         const dblO = nbs.some((e) => e.order === 2 && atomMap.get(e.to)?.element === 'O');
         const singleOList = nbs.filter((e) => e.order === 1 && atomMap.get(e.to)?.element === 'O');
+        const singleNList = nbs.filter((e) => e.order === 1 && atomMap.get(e.to)?.element === 'N');
         const hasOH = singleOList.some((e) => {
           const oHeavy = (adj.get(e.to) || []).filter((oe) => atomMap.get(oe.to)?.element !== 'H');
           return oHeavy.length === 1;
         });
-        const hasORBridge = singleOList.some((e) => {
+        const hasCORBridge = singleOList.some((e) => {
+          const oHeavy = (adj.get(e.to) || []).filter((oe) => atomMap.get(oe.to)?.element !== 'H');
+          return oHeavy.length === 2 && oHeavy.every((oe) => oe.order === 1 && atomMap.get(oe.to)?.element === 'C');
+        });
+        const hasAnyORBridge = singleOList.some((e) => {
           const oHeavy = (adj.get(e.to) || []).filter((oe) => atomMap.get(oe.to)?.element !== 'H');
           return oHeavy.length === 2;
         });
+        const hasSingleN = singleNList.length > 0;
         const heavySum = getHeavyBondSum(atomMap, adj, id);
-        if (dblO && hasOH) hasCarboxyl = true;
-        else if (dblO && hasORBridge) hasEster = true;
-        else if (dblO) {
-          if (4 - heavySum >= 1) hasAldehyde = true;
+        if (dblO && hasOH && hasSingleN) {
+          hasCarboxyl = true;
+          hasAmide = true;
+        } else if (dblO && hasCORBridge && hasSingleN) {
+          hasCarbamate = true;
+        } else if (dblO && hasOH) {
+          hasCarboxyl = true;
+          if (hasCORBridge) hasEster = true;
+        } else if (dblO && hasCORBridge) {
+          hasEster = true;
+        } else if (dblO && hasSingleN) {
+          hasAmide = true;
+        } else if (dblO) {
+          if (hasAnyORBridge) hasEster = true;
+          else if (4 - heavySum >= 1) hasAldehyde = true;
           else hasKetone = true;
         } else if (hasOH) {
           if (aromAtomIds.has(id)) hasPhenol = true;
@@ -718,13 +1158,23 @@
 
     const functionalGroups = [];
     if (hasCarboxyl) functionalGroups.push('carboxyl');
+    if (hasCarbamate) functionalGroups.push('carbamate');
     if (hasEster) functionalGroups.push('ester');
+    if (hasAmide) functionalGroups.push('amide');
+    if (hasNitrile) functionalGroups.push('nitrile');
+    if (hasImine) functionalGroups.push('imine');
+    if (hasNitro) functionalGroups.push('nitro');
+    if (hasNitroso) functionalGroups.push('nitroso');
     if (hasAldehyde) functionalGroups.push('aldehyde');
     if (hasKetone) functionalGroups.push('ketone');
     if (hasPhenol) functionalGroups.push('phenol');
     if (hasAlcohol) functionalGroups.push('alcohol');
+    if (hasPeroxide) functionalGroups.push('peroxide');
+    if (hasOxyamine) functionalGroups.push('oxyamine');
     if (hasEther) functionalGroups.push('ether');
+    if (hasHydrazine) functionalGroups.push('hydrazine');
     if (hasAmine) functionalGroups.push('amine');
+    if (hasHypohalite) functionalGroups.push('hypohalite');
     if (hasHalogen) functionalGroups.push('halogen');
     if (normHeavy.hasAromatic) functionalGroups.push('arene');
     if (hasCCDouble) functionalGroups.push('alkene');
@@ -733,20 +1183,31 @@
     let catKey = 'alkane';
     if (hasCarboxyl && hasAmine) catKey = 'aminoacid';
     else if (hasCarboxyl) catKey = 'carboxylic';
+    else if (hasCarbamate) catKey = 'carbamate';
     else if (hasEster) catKey = 'ester';
+    else if (hasAmide) catKey = 'amide';
+    else if (hasNitrile) catKey = 'nitrile';
+    else if (hasNitro) catKey = 'nitro';
+    else if (hasNitroso) catKey = 'nitroso';
     else if (hasAldehyde) catKey = 'aldehyde';
     else if (hasKetone) catKey = 'ketone';
     else if (hasPhenol) catKey = 'phenol';
+    else if (hasAlcohol && hasAmine) catKey = 'aminoalcohol';
     else if (hasAlcohol) catKey = 'alcohol';
+    else if (hasPeroxide) catKey = 'peroxide';
+    else if (hasOxyamine) catKey = 'oxyamine';
     else if (hasEther) catKey = 'ether';
+    else if (hasHydrazine) catKey = 'amine';
+    else if (hasImine) catKey = 'imine';
     else if (hasAmine) catKey = 'amine';
-    else if (hasHalogen) catKey = 'halogen';
-    else if (normHeavy.hasAromatic) catKey = 'arene';
+    else if (hasHalogen || hasHypohalite) catKey = 'halogen';
+    else if (normHeavy.hasAromatic) catKey = hasHeteroAtom ? 'heterocycle' : 'arene';
     else if (hasCCTriple) catKey = 'alkyne';
     else if (hasCCDouble) catKey = isCyclic ? 'cycloalkene' : 'alkene';
-    else if (isCyclic) catKey = 'cycloalkane';
+    else if (isCyclic) catKey = hasHeteroAtom ? 'heterocycle' : 'cycloalkane';
+    else if (hasHeteroAtom) catKey = 'custom';
 
-    return { topologyKey, catKey, isCyclic, ringCount, functionalGroups };
+    return { topologyKey, catKey, isCyclic, ringCount, functionalGroups, hasHeteroAtom };
   }
 
   function formatCountsFormula(counts) {
@@ -797,10 +1258,8 @@
     const actualMolarMass = computeCountsMass(actualCounts);
 
     const normHeavy = buildNormalizedHeavyGraph(graph);
-    const { topologyKey, catKey, isCyclic, ringCount, functionalGroups } = classifyCustomMolecule(
-      graph,
-      normHeavy
-    );
+    const { topologyKey, catKey, isCyclic, ringCount, functionalGroups, hasHeteroAtom } =
+      classifyCustomMolecule(graph, normHeavy);
 
     let matchedMol = null;
     for (let i = 0; i < KNOWN_MOLECULES.length; i++) {
@@ -836,6 +1295,7 @@
         isCyclic,
         ringCount,
         functionalGroups,
+        hasHeteroAtom,
         molecularFormula,
         molarMass,
         actualFormula,
@@ -863,6 +1323,7 @@
       isCyclic,
       ringCount,
       functionalGroups,
+      hasHeteroAtom,
       molecularFormula,
       molarMass,
       actualFormula,
@@ -1222,6 +1683,286 @@
     }
 
     return pos;
+  }
+
+  // =========================================================================
+  // AUTO-DRAW GRAPH BUILDER & ANTI-TANGLE 2D LAYOUT SEEDER
+  // =========================================================================
+
+  function buildGraphFromCompound(compound, idGen) {
+    const counts = { C: 0, H: 0, O: 0, N: 0, X: 0 };
+    const nextId =
+      typeof idGen === 'function'
+        ? idGen
+        : (prefix) => {
+            counts[prefix] = (counts[prefix] || 0) + 1;
+            return `${prefix}${counts[prefix]}`;
+          };
+
+    const els = compound.elements || [];
+    const bds = compound.bonds || [];
+    const atoms = [];
+    const bonds = [];
+    const heavyIds = [];
+    const deg = new Array(els.length).fill(0);
+
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const prefix = el === 'C' ? 'c' : el === 'O' ? 'o' : el === 'N' ? 'n' : 'x';
+      const id = nextId(prefix);
+      heavyIds.push(id);
+      atoms.push({ id, element: el });
+    }
+
+    for (let i = 0; i < bds.length; i++) {
+      const [u, v, ord] = bds[i];
+      const order = Number(ord || 1);
+      if (heavyIds[u] && heavyIds[v]) {
+        bonds.push({ from: heavyIds[u], to: heavyIds[v], order });
+        deg[u] += order;
+        deg[v] += order;
+      }
+    }
+
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      const miss = Math.max(0, (ELEMENT_VALENCE[el] || 4) - deg[i]);
+      for (let k = 0; k < miss; k++) {
+        const hid = nextId('h');
+        atoms.push({ id: hid, element: 'H' });
+        bonds.push({ from: heavyIds[i], to: hid, order: 1 });
+      }
+    }
+
+    return { graph: { atoms, bonds }, heavyIds };
+  }
+
+  function computeSmartInitialPositions(graph, heavyIds, compound) {
+    const { atomMap, adj } = buildAdjacency(graph);
+    const positions = new Map();
+    const heavySet = new Set(heavyIds);
+    const cid = compound?.id || '';
+    let pinHeavy = false;
+
+    const heavyGraph = {
+      atoms: graph.atoms.filter((a) => heavySet.has(a.id)),
+      bonds: graph.bonds.filter((b) => heavySet.has(b.from) && heavySet.has(b.to))
+    };
+
+    if (cid === 'naphthalene' && heavyIds.length === 10) {
+      const edge = 68;
+      const dx = (edge * Math.sqrt(3)) / 2;
+      const dy = edge / 2;
+      const coords = [
+        [-2 * dx, dy],
+        [-2 * dx, -dy],
+        [-dx, -2 * dy],
+        [0, -dy],
+        [0, dy],
+        [-dx, 2 * dy],
+        [dx, -2 * dy],
+        [2 * dx, -dy],
+        [2 * dx, dy],
+        [dx, 2 * dy]
+      ];
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+    } else if (cid === 'cubane' && heavyIds.length === 8) {
+      const coords = [
+        [-42, -38],
+        [42, -38],
+        [42, 46],
+        [-42, 46],
+        [-10, -70],
+        [74, -70],
+        [74, 14],
+        [-10, 14]
+      ];
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      pinHeavy = true;
+    } else if (cid === 'adamantane' && heavyIds.length === 10) {
+      const coords = [
+        [0, -86],
+        [-78, 44],
+        [78, 44],
+        [14, -8],
+        [-72, -32],
+        [72, -32],
+        [-18, -42],
+        [0, 84],
+        [-32, 16],
+        [48, 12]
+      ];
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+      pinHeavy = true;
+    } else if (cid === 'spiropentane' && heavyIds.length === 5) {
+      const coords = [
+        [0, 0],
+        [-58, -34],
+        [-58, 34],
+        [58, -34],
+        [58, 34]
+      ];
+      coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x, y }));
+    } else {
+      const rings = findSmallRings(heavyGraph);
+      if (rings.length > 0) {
+        rings.sort((a, b) => b.length - a.length);
+        const primary = rings[0];
+        const k = primary.length;
+        const R = 68 / (2 * Math.sin(Math.PI / k));
+        for (let i = 0; i < k; i++) {
+          const ang = -Math.PI / 2 + (2 * Math.PI * i) / k;
+          positions.set(primary[i], { x: R * Math.cos(ang), y: R * Math.sin(ang) });
+        }
+      } else if (heavyIds.length === 1) {
+        positions.set(heavyIds[0], { x: 0, y: 0 });
+      } else if (heavyIds.length > 1) {
+        const bfsFarthest = (startId) => {
+          const dist = new Map([[startId, 0]]);
+          const parent = new Map([[startId, null]]);
+          const q = [startId];
+          let farId = startId;
+          while (q.length) {
+            const u = q.shift();
+            if (dist.get(u) > dist.get(farId)) farId = u;
+            (adj.get(u) || []).forEach((e) => {
+              if (!heavySet.has(e.to) || dist.has(e.to)) return;
+              dist.set(e.to, dist.get(u) + 1);
+              parent.set(e.to, u);
+              q.push(e.to);
+            });
+          }
+          return { farId, parent };
+        };
+        const pass1 = bfsFarthest(heavyIds[0]);
+        const pass2 = bfsFarthest(pass1.farId);
+        const backbone = [];
+        let cur = pass2.farId;
+        while (cur) {
+          backbone.unshift(cur);
+          cur = pass2.parent.get(cur);
+        }
+
+        positions.set(backbone[0], { x: 0, y: 0 });
+        let zigDir = -1;
+        let prevOrd = 1;
+        for (let i = 1; i < backbone.length; i++) {
+          const prevId = backbone[i - 1];
+          const curId = backbone[i];
+          const pPos = positions.get(prevId);
+          const edge = (adj.get(prevId) || []).find((e) => e.to === curId);
+          const curOrd = edge ? edge.order : 1;
+          const L = idealBondLength(atomMap.get(prevId).element, atomMap.get(curId).element);
+          let dx;
+          let dy;
+          if (curOrd === 3 || prevOrd === 3) {
+            dx = L;
+            dy = 0;
+          } else {
+            dx = L * Math.cos(Math.PI / 6);
+            dy = zigDir * L * Math.sin(Math.PI / 6);
+            zigDir *= -1;
+          }
+          positions.set(curId, { x: pPos.x + dx, y: pPos.y + dy });
+          prevOrd = curOrd;
+        }
+      }
+    }
+
+    // BFS outward to seed any remaining heavy branches away from already-placed neighbors
+    let safety = 0;
+    while (positions.size < heavyIds.length && safety < 24) {
+      safety++;
+      const byParent = new Map();
+      heavyIds.forEach((hid) => {
+        if (positions.has(hid)) return;
+        const placedNb = (adj.get(hid) || []).find((e) => positions.has(e.to));
+        if (!placedNb) return;
+        if (!byParent.has(placedNb.to)) byParent.set(placedNb.to, []);
+        byParent.get(placedNb.to).push(hid);
+      });
+      if (byParent.size === 0) break;
+
+      byParent.forEach((children, pid) => {
+        const pPos = positions.get(pid);
+        const pEl = atomMap.get(pid).element;
+        const occupied = [];
+        (adj.get(pid) || []).forEach((e) => {
+          if (positions.has(e.to)) {
+            const np = positions.get(e.to);
+            occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
+          }
+        });
+        const angles = pickOpenAngles(occupied, children.length);
+        children.forEach((childId, idx) => {
+          const ang = angles[idx] ?? 0;
+          const L = idealBondLength(pEl, atomMap.get(childId).element);
+          positions.set(childId, {
+            x: pPos.x + L * Math.cos(ang),
+            y: pPos.y + L * Math.sin(ang)
+          });
+        });
+      });
+    }
+
+    // Disconnected fallback if any isolated heavy atom remained unplaced
+    heavyIds.forEach((hid, idx) => {
+      if (!positions.has(hid)) positions.set(hid, { x: idx * 50, y: 0 });
+    });
+
+    // Seed explicit H atoms symmetrically outward from each heavy atom
+    heavyIds.forEach((pid) => {
+      const hChildren = (adj.get(pid) || [])
+        .map((e) => e.to)
+        .filter((tid) => atomMap.get(tid)?.element === 'H' && !positions.has(tid));
+      if (hChildren.length === 0) return;
+      const pPos = positions.get(pid);
+      const pEl = atomMap.get(pid).element;
+      const occupied = [];
+      (adj.get(pid) || []).forEach((e) => {
+        if (positions.has(e.to)) {
+          const np = positions.get(e.to);
+          occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
+        }
+      });
+      const angles = pickOpenAngles(occupied, hChildren.length);
+      hChildren.forEach((hid, idx) => {
+        const ang = angles[idx] ?? 0;
+        const L = idealBondLength(pEl, 'H');
+        positions.set(hid, {
+          x: pPos.x + L * Math.cos(ang),
+          y: pPos.y + L * Math.sin(ang)
+        });
+      });
+    });
+
+    const settled = relaxLayout(graph, positions, {
+      draggedIds: pinHeavy ? new Set(heavyIds) : new Set(),
+      collapsedHIds: new Set(),
+      iterations: pinHeavy ? 45 : 190,
+      showH: state.showH
+    });
+
+    const visIds = graph.atoms
+      .filter((a) => state.showH || a.element !== 'H')
+      .map((a) => a.id);
+    if (visIds.length > 0) {
+      let cx = 0;
+      let cy = 0;
+      visIds.forEach((id) => {
+        const p = settled.get(id);
+        cx += p.x;
+        cy += p.y;
+      });
+      cx /= visIds.length;
+      cy /= visIds.length;
+      settled.forEach((p) => {
+        p.x -= cx;
+        p.y -= cy;
+      });
+    }
+
+    return { positions: settled, pinHeavy };
   }
 
   function computeTargetViewBox(pos, valenceSlots, atomMap, showH, zoom, panX, panY, collapsedHIds = new Set()) {
@@ -1827,7 +2568,8 @@
       const isConnectFirst = state.connectMode && atom.id === state.connectFirstId;
       const st = ATOM_STYLE[atom.element] || ATOM_STYLE.C;
       const usedVal = getBondSum(adj, atom.id);
-      const maxVal = ELEMENT_VALENCE[atom.element] || 4;
+      const baseMaxVal = ELEMENT_VALENCE[atom.element] || 4;
+      const maxVal = atom.element === 'N' && usedVal > baseMaxVal ? usedVal : baseMaxVal;
       const disp = formatAtomDisplay(atom, adj, atomMap, 0);
       const tip = d.atomTooltip(disp.label, usedVal, maxVal, disp.collapsedCount);
 
@@ -2176,7 +2918,10 @@
       draggedIds: new Set(state.draggedIds),
       collapsedHIds: new Set(state.collapsedHIds),
       selectedId: state.selectedId,
-      selectedBondKey: state.selectedBondKey
+      selectedBondKey: state.selectedBondKey,
+      zoom: state.zoom,
+      panX: state.panX,
+      panY: state.panY
     });
     if (state.history.length > 40) state.history.shift();
   }
@@ -2449,8 +3194,8 @@
     const t = dict().toasts;
     const { atomMap, adj } = buildAdjacency(state.graph);
     const sel = atomMap.get(state.selectedId);
-    if (!sel || sel.element !== 'C') {
-      showToast(t.selectCarbon, 'warn');
+    if (!sel || (sel.element !== 'C' && sel.element !== 'O' && sel.element !== 'N')) {
+      showToast(t.selectHeavy, 'warn');
       if (sel) triggerShakeError(sel.id);
       return;
     }
@@ -2534,8 +3279,8 @@
     const t = dict().toasts;
     const { atomMap, adj } = buildAdjacency(state.graph);
     const sel = atomMap.get(state.selectedId);
-    if (!sel || sel.element !== 'C') {
-      showToast(t.selectCarbon, 'warn');
+    if (!sel || (sel.element !== 'C' && sel.element !== 'O' && sel.element !== 'N')) {
+      showToast(t.selectHeavy, 'warn');
       if (sel) triggerShakeError(sel.id);
       return;
     }
@@ -2552,7 +3297,7 @@
     const cNbs = nbs.filter((e) => atomMap.get(e.to)?.element === 'C');
 
     if (kind === 'COOH') {
-      if (dblOs.length >= 1 && singleOHs.length >= 1) {
+      if (sel.element === 'C' && dblOs.length >= 1 && singleOHs.length >= 1) {
         showToast(t.alreadyCarboxyl, 'info');
         triggerShakeError(sel.id);
         return;
@@ -2560,7 +3305,7 @@
       const needDbl = dblOs.length === 0 ? 2 : 0;
       const needOH = singleOHs.length === 0 ? 1 : 0;
       const isTerm = cNbs.length <= 1 && cNbs.every((e) => e.order === 1);
-      if (isTerm && freeVal >= needDbl + needOH) {
+      if (sel.element === 'C' && isTerm && freeVal >= needDbl + needOH) {
         pushUndo();
         const newParents = new Map();
         if (needDbl > 0) {
@@ -2624,6 +3369,11 @@
     }
 
     if (kind === '=O') {
+      if (sel.element !== 'C') {
+        showToast(t.selectCarbon, 'warn');
+        triggerShakeError(sel.id);
+        return;
+      }
       if (dblOs.length >= 1) {
         showToast(t.doubleOExists, 'warn');
         triggerShakeError(sel.id);
@@ -2645,11 +3395,6 @@
     }
 
     if (kind === 'OH') {
-      if (singleOHs.length >= 1) {
-        showToast(t.geminalOh, 'warn');
-        triggerShakeError(sel.id);
-        return;
-      }
       if (freeVal < 1) {
         showToast(t.valenceFull(1, hasH), 'warn');
         triggerShakeError(sel.id);
@@ -2660,9 +3405,15 @@
       const hId = genAtomId('h');
       state.graph.atoms.push({ id: oId, element: 'O' }, { id: hId, element: 'H' });
       state.graph.bonds.push({ from: sel.id, to: oId, order: 1 }, { from: oId, to: hId, order: 1 });
+      state.collapsedHIds.add(hId);
       state.selectedBondKey = null;
       showToast('');
-      renderAll({ newAtomParents: new Map([[oId, sel.id], [hId, oId]]) });
+      renderAll({
+        newAtomParents: new Map([
+          [oId, sel.id],
+          [hId, oId]
+        ])
+      });
       return;
     }
 
@@ -2682,10 +3433,17 @@
         { from: nId, to: h1, order: 1 },
         { from: nId, to: h2, order: 1 }
       );
+      state.collapsedHIds.add(h1);
+      state.collapsedHIds.add(h2);
       state.selectedBondKey = null;
       showToast('');
-      // Correct parent chain: N attaches to C, and BOTH H attach cleanly to N (fanning 120° away from C!)
-      renderAll({ newAtomParents: new Map([[nId, sel.id], [h1, nId], [h2, nId]]) });
+      renderAll({
+        newAtomParents: new Map([
+          [nId, sel.id],
+          [h1, nId],
+          [h2, nId]
+        ])
+      });
       return;
     }
 
@@ -2960,6 +3718,9 @@
     state.collapsedHIds = new Set(prev.collapsedHIds || []);
     state.selectedId = prev.selectedId;
     state.selectedBondKey = prev.selectedBondKey;
+    if (typeof prev.zoom === 'number') state.zoom = prev.zoom;
+    if (typeof prev.panX === 'number') state.panX = prev.panX;
+    if (typeof prev.panY === 'number') state.panY = prev.panY;
     showToast('');
     renderAll({ skipRelax: true });
   }
@@ -2979,6 +3740,108 @@
     state.panY = 0;
     showToast('');
     renderAll({ skipRelax: true });
+  }
+
+  const searchState = {
+    open: false,
+    activeIdx: 0,
+    results: []
+  };
+
+  function closeSearch(returnFocus = false) {
+    if (!dom.searchBox || !dom.searchTrigger) return;
+    searchState.open = false;
+    dom.searchBox.classList.add('hidden');
+    dom.searchTrigger.classList.remove('hidden');
+    dom.searchTrigger.setAttribute('aria-expanded', 'false');
+    if (dom.searchInput) dom.searchInput.setAttribute('aria-expanded', 'false');
+    if (returnFocus) dom.searchTrigger.focus();
+  }
+
+  function renderSearchDropdown() {
+    if (!dom.searchDropdown || !dom.searchInput) return;
+    const d = dict();
+    const q = dom.searchInput.value || '';
+    const isEmptyQuery = !q.trim();
+    const results = searchCompounds(q, state.lang, isEmptyQuery ? 8 : 30);
+    searchState.results = results;
+    if (searchState.activeIdx >= results.length) searchState.activeIdx = 0;
+    if (searchState.activeIdx < 0 && results.length > 0) searchState.activeIdx = 0;
+
+    if (results.length === 0) {
+      dom.searchDropdown.innerHTML = `<div class="org-search-empty">${escapeHTMLText(d.searchEmpty)}</div>`;
+      return;
+    }
+
+    const headerHtml = isEmptyQuery
+      ? `<div class="org-search-section-lbl">${escapeHTMLText(d.searchFeatured)}</div>`
+      : '';
+    const isEn = state.lang === 'en';
+    const itemsHtml = results
+      .map((item, idx) => {
+        const displayName = isEn ? item.nameEn : item.name;
+        const displayCat = isEn ? item.categoryEn : item.category;
+        const formulaHtml = toSubscriptHTML(item.formula || '');
+        const activeCls = idx === searchState.activeIdx ? ' is-active' : '';
+        return `<button type="button" class="org-search-item${activeCls}" role="option" aria-selected="${idx === searchState.activeIdx ? 'true' : 'false'}" data-compound-id="${escapeHTMLText(item.id)}" data-idx="${idx}"><span class="org-search-item-main"><span class="org-search-item-name">${escapeHTMLText(displayName)}</span><span class="org-search-item-cat">${escapeHTMLText(displayCat)}</span></span><span class="org-search-item-formula mono">${formulaHtml}</span></button>`;
+      })
+      .join('');
+    dom.searchDropdown.innerHTML = headerHtml + itemsHtml;
+
+    const activeEl = dom.searchDropdown.querySelector('.org-search-item.is-active');
+    if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+      activeEl.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function escapeHTMLText(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function openSearch() {
+    if (!dom.searchBox || !dom.searchTrigger || !dom.searchInput) return;
+    searchState.open = true;
+    searchState.activeIdx = 0;
+    dom.searchTrigger.classList.add('hidden');
+    dom.searchBox.classList.remove('hidden');
+    dom.searchTrigger.setAttribute('aria-expanded', 'true');
+    dom.searchInput.setAttribute('aria-expanded', 'true');
+    renderSearchDropdown();
+    dom.searchInput.focus();
+    dom.searchInput.select();
+  }
+
+  function loadCompoundById(compoundId) {
+    if (state.isMutating) return false;
+    ensureSearchIndex();
+    const compound = KNOWN_MOLECULES.find((c) => c.id === compoundId);
+    if (!compound) return false;
+
+    exitConnectMode();
+    if (state.graph) pushUndo();
+
+    const { graph, heavyIds } = buildGraphFromCompound(compound, genAtomId);
+    const { positions } = computeSmartInitialPositions(graph, heavyIds, compound);
+
+    state.graph = graph;
+    state.positions = positions;
+    state.draggedIds.clear();
+    state.collapsedHIds.clear();
+    state.selectedId = heavyIds[0] || null;
+    state.selectedBondKey = null;
+    state.zoom = 1;
+    state.panX = 0;
+    state.panY = 0;
+
+    showToast('');
+    closeSearch();
+    if (dom.searchInput) dom.searchInput.value = '';
+    if (dom.panel) renderAll({ skipRelax: true });
+    return true;
   }
 
   // =========================================================================
@@ -3034,10 +3897,10 @@
     if (dom.attachBtns) {
       dom.attachBtns.forEach((btn) => {
         const act = btn.dataset.orgAction;
-        if (act === 'add-c' || act === 'add-h') {
-          btn.disabled = !isHeavyMulti;
-        } else {
+        if (act === 'add-o') {
           btn.disabled = !isC;
+        } else {
+          btn.disabled = !isHeavyMulti;
         }
       });
     }
@@ -3071,6 +3934,7 @@
 
     // Strictly gate compound name & full Profile Card reveal on complete valence!
     if (dom.resultCard) {
+      dom.resultCard.classList.remove('hidden');
       dom.resultCard.classList.toggle('is-incomplete', incomplete);
       dom.resultCard.classList.toggle('is-matched', !incomplete && result.matched);
     }
@@ -3082,7 +3946,10 @@
         dom.molTag.dataset.orgCat = 'incomplete';
       }
       if (dom.valFormula) dom.valFormula.innerHTML = toSubscriptHTML(result.actualFormula || '—');
-      if (dom.valMass) dom.valMass.textContent = `${result.actualMolarMass.toFixed(3)} g/mol`;
+      if (dom.valMass) {
+        const massVal = Number.isFinite(result.actualMolarMass) ? result.actualMolarMass : 0;
+        dom.valMass.textContent = `${massVal.toFixed(3)} g/mol`;
+      }
       if (dom.pillStateWrap) dom.pillStateWrap.classList.add('hidden');
       if (dom.pillSolubilityWrap) dom.pillSolubilityWrap.classList.add('hidden');
       if (dom.molDesc) {
@@ -3094,13 +3961,16 @@
       return;
     }
 
-    if (dom.molName) dom.molName.textContent = result.commonName;
+    if (dom.molName) dom.molName.textContent = result.commonName || result.molecularFormula || '—';
     if (dom.molTag) {
-      dom.molTag.textContent = result.categoryLabel;
-      dom.molTag.dataset.orgCat = result.categoryKey;
+      dom.molTag.textContent = result.categoryLabel || d.categories.custom;
+      dom.molTag.dataset.orgCat = result.categoryKey || 'custom';
     }
     if (dom.valFormula) dom.valFormula.innerHTML = toSubscriptHTML(result.molecularFormula || '—');
-    if (dom.valMass) dom.valMass.textContent = `${result.molarMass.toFixed(3)} g/mol`;
+    if (dom.valMass) {
+      const massVal = Number.isFinite(result.molarMass) ? result.molarMass : 0;
+      dom.valMass.textContent = `${massVal.toFixed(3)} g/mol`;
+    }
 
     if (result.matched) {
       if (dom.pillStateWrap && dom.valState) {
@@ -3135,7 +4005,7 @@
       if (dom.pillStateWrap) dom.pillStateWrap.classList.add('hidden');
       if (dom.pillSolubilityWrap) dom.pillSolubilityWrap.classList.add('hidden');
       if (dom.molDesc) {
-        dom.molDesc.textContent = result.description;
+        dom.molDesc.textContent = result.description || d.customNote;
         dom.molDesc.classList.remove('hidden');
       }
       if (dom.customMeta) {
@@ -3148,7 +4018,12 @@
             .map((k) => d.funcGroupNames[k])
             .filter(Boolean);
           dom.customGroups.textContent =
-            d.groupsPrefix + (gNames.length > 0 ? gNames.join(', ') : d.noFuncGroups);
+            d.groupsPrefix +
+            (gNames.length > 0
+              ? gNames.join(', ')
+              : result.hasHeteroAtom
+                ? d.heteroNoFuncGroups
+                : d.noFuncGroups);
         }
       }
       if (dom.profileBody) dom.profileBody.classList.add('hidden');
@@ -3162,6 +4037,15 @@
       const key = node.dataset.i18nOrg;
       if (typeof d[key] === 'string') node.textContent = d[key];
     });
+    if (dom.searchInput && d.searchPlaceholder) {
+      dom.searchInput.placeholder = d.searchPlaceholder;
+    }
+    if (dom.searchClear && d.searchClose) {
+      dom.searchClear.setAttribute('aria-label', d.searchClose);
+    }
+    if (searchState.open) {
+      renderSearchDropdown();
+    }
     renderAll({ skipRelax: true, instant: true });
   }
 
@@ -3512,6 +4396,12 @@
       btnZoomIn: document.getElementById('org-btn-zoom-in'),
       btnZoomOut: document.getElementById('org-btn-zoom-out'),
       btnZoomReset: document.getElementById('org-btn-zoom-reset'),
+      searchOverlay: document.getElementById('org-search-overlay'),
+      searchTrigger: document.getElementById('org-search-trigger'),
+      searchBox: document.getElementById('org-search-box'),
+      searchInput: document.getElementById('org-search-input'),
+      searchClear: document.getElementById('org-search-clear'),
+      searchDropdown: document.getElementById('org-search-dropdown'),
       toast: document.getElementById('org-toast'),
       svgHost: document.getElementById('org-svg-host'),
       stageHint: document.getElementById('org-stage-hint'),
@@ -3591,6 +4481,74 @@
     if (dom.btnZoomIn) dom.btnZoomIn.addEventListener('click', () => setZoom(state.zoom + 0.2));
     if (dom.btnZoomOut) dom.btnZoomOut.addEventListener('click', () => setZoom(state.zoom - 0.2));
     if (dom.btnZoomReset) dom.btnZoomReset.addEventListener('click', resetView);
+
+    if (dom.searchTrigger) {
+      dom.searchTrigger.addEventListener('click', () => openSearch());
+    }
+    if (dom.searchClear) {
+      dom.searchClear.addEventListener('click', () => {
+        if (dom.searchInput && dom.searchInput.value) {
+          dom.searchInput.value = '';
+          searchState.activeIdx = 0;
+          renderSearchDropdown();
+          dom.searchInput.focus();
+        } else {
+          closeSearch(true);
+        }
+      });
+    }
+    if (dom.searchInput) {
+      dom.searchInput.addEventListener('input', () => {
+        searchState.activeIdx = 0;
+        renderSearchDropdown();
+      });
+      dom.searchInput.addEventListener('keydown', (e) => {
+        const res = searchState.results;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (res.length > 0) {
+            searchState.activeIdx = (searchState.activeIdx + 1) % res.length;
+            renderSearchDropdown();
+          }
+          return;
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (res.length > 0) {
+            searchState.activeIdx = (searchState.activeIdx - 1 + res.length) % res.length;
+            renderSearchDropdown();
+          }
+          return;
+        }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const chosen = res[searchState.activeIdx] || res[0];
+          if (chosen) loadCompoundById(chosen.id);
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          closeSearch(true);
+        }
+      });
+    }
+    if (dom.searchDropdown) {
+      dom.searchDropdown.addEventListener('click', (e) => {
+        const itemBtn = e.target.closest('[data-compound-id]');
+        if (!itemBtn) return;
+        loadCompoundById(itemBtn.dataset.compoundId);
+      });
+    }
+    if (!scene.searchOutsideBound) {
+      scene.searchOutsideBound = true;
+      document.addEventListener('pointerdown', (e) => {
+        if (!searchState.open || !dom.searchOverlay) return;
+        if (!dom.searchOverlay.contains(e.target)) {
+          closeSearch(false);
+        }
+      });
+    }
 
     if (dom.btnToggleH) {
       dom.btnToggleH.addEventListener('click', () => {
@@ -3705,6 +4663,9 @@
     analyzeAndNameMolecule: identifyMolecule,
     buildNormalizedHeavyGraph,
     areHeavyGraphsIsomorphic,
+    searchCompounds,
+    buildGraphFromCompound,
+    loadCompoundById,
     KNOWN_MOLECULES
   };
 

@@ -4132,6 +4132,2422 @@
       ],
       note: 'Thuộc họ diamondoid với công thức C₁₀H₁₆ (cùng công thức với Limonene); cả 10 nguyên tử Carbon xếp đúng như một mảnh mạng kim cương.',
       noteEn: 'Prototype diamondoid cage (C₁₀H₁₆); shares its formula with Limonene while locking all 10 carbons into a miniature diamond unit cell.'
+    },
+
+    // =========================================================================
+    // 11. HETEROATOM, POLYFUNCTIONAL, HALOGEN & CURRICULUM GAP PACK (+28)
+    // =========================================================================
+    {
+      id: 'methoxyamine',
+      catKey: 'amine',
+      elements: ['C','O','N'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Methoxyamine (O-Methylhydroxylamine)',
+      nameEn: 'Methoxyamine (O-Methylhydroxylamine)',
+      category: 'Alkoxyamine / Hydroxylamine',
+      categoryEn: 'Alkoxyamine / Hydroxylamine',
+      state: 'Lỏng không màu (dễ bay hơi, mùi ammonia nhẹ)',
+      stateEn: 'Colorless volatile liquid (faint ammoniacal odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Thuốc thử hóa sinh chuyên dụng dùng để gắn nhãn và biến tính có chọn lọc gốc Aldehyde hoặc Ketone thành dẫn xuất Oxime bền vững trong phân tích carbohydrate và tổng hợp dược phẩm.',
+      realLifeEn: 'Specialized biochemical reagent used to trap aldehydes and ketones selectively as stable O-methyl oximes in carbohydrate analysis and drug synthesis.',
+      reactions: [
+        'Tác dụng với acid HCl tạo muối tinh thể Methoxyammonium chloride (CH₃ONH₃Cl) tan tốt trong nước.',
+        'Ngưng tụ nhanh với Aldehyde và Ketone tạo dẫn xuất O-methyl oxime (R₂C=N–OCH₃).',
+        'Có tính base yếu hơn Methylamine rõ rệt do nguyên tử Oxygen kế bên hút electron mạnh.'
+      ],
+      reactionsEn: [
+        'Reacts with HCl to form water-soluble crystalline Methoxyammonium chloride salt.',
+        'Condenses rapidly with aldehydes and ketones to yield stable O-methyl oximes.',
+        'Markedly weaker base than Methylamine owing to the inductive pull of the adjacent Oxygen atom.'
+      ],
+      note: 'Công thức CH₅NO (cầu dị tố C–O–N); đồng phân cấu tạo với Aminomethanol và N-Methylhydroxylamine.',
+      noteEn: 'Formula CH₅NO with a C–O–N linkage; constitutional isomer of Aminomethanol and N-Methylhydroxylamine.'
+    },
+    {
+      id: 'aminomethanol',
+      catKey: 'alcohol',
+      elements: ['O','C','N'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Aminomethanol',
+      nameEn: 'Aminomethanol',
+      category: 'Amino alcohol (Tạp chức)',
+      categoryEn: 'Amino alcohol',
+      state: 'Chất trung gian không bền trong dung dịch nước',
+      stateEn: 'Transient intermediate in aqueous solution',
+      solubility: 'Tan tốt trong nước (cân bằng hóa học)',
+      solubilityEn: 'Water-soluble equilibrium species',
+      realLife: 'Hợp chất trung gian cực kỳ quan trọng sinh ra tức thì khi Formaldehyde (HCHO) phản ứng với Ammonia (NH₃), mở đầu chuỗi phản ứng hình thành chất sát khuẩn tiết niệu Methenamine (Urotropin) và nhựa amino.',
+      realLifeEn: 'Crucial short-lived hemiaminal intermediate formed when Formaldehyde meets Ammonia en route to Methenamine (Urotropin) and amino resins.',
+      reactions: [
+        'Tồn tại ở cân bằng động khi trộn Formaldehyde và Ammonia: HCHO + NH₃ ⇌ HO–CH₂–NH₂.',
+        'Dễ tách phân tử H₂O để chuyển thành imine CH₂=NH rồi tam hợp thành vòng bền hoặc tạo Urotropin.',
+        'Mang đồng thời nhóm -OH (alcohol) và nhóm -NH₂ (amine) gắn trên cùng một nguyên tử Carbon.'
+      ],
+      reactionsEn: [
+        'Forms reversibly in aqueous solution from Formaldehyde and Ammonia.',
+        'Readily dehydrates to methanimine (CH₂=NH) or condenses onward into hexamethylenetetramine.',
+        'Hemiaminal bearing both -OH and -NH₂ on the same CH₂ carbon.'
+      ],
+      note: 'Là hemiaminal đơn giản nhất (CH₅NO), thường kém bền nên nhanh chóng tách nước trong thực tế.',
+      noteEn: 'Simplest hemiaminal (CH₅NO); isomeric with Methoxyamine and N-Methylhydroxylamine.'
+    },
+    {
+      id: 'n-methylhydroxylamine',
+      catKey: 'amine',
+      elements: ['C','N','O'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'N-Methylhydroxylamine',
+      nameEn: 'N-Methylhydroxylamine',
+      category: 'Hydroxylamine',
+      categoryEn: 'Hydroxylamine',
+      state: 'Rắn tinh thể không màu (nóng chảy ở 42 °C, hút ẩm)',
+      stateEn: 'Colorless hygroscopic crystals (mp 42 °C)',
+      solubility: 'Tan rất tốt trong nước và Ethanol',
+      solubilityEn: 'Very soluble in water and Ethanol',
+      realLife: 'Chất khử chọn lọc và tác nhân tổng hợp nhóm nitrone trong hóa dược để chế tạo các phân tử có hoạt tính sinh học và chất bẫy gốc tự do bảo vệ tế bào.',
+      realLifeEn: 'Selective reducing reagent and nitrone-forming building block in medicinal chemistry and free-radical spin-trapping studies.',
+      reactions: [
+        'Tác dụng với acid vô cơ (như HCl) tạo muối N-methylhydroxylammonium tan trong nước.',
+        'Ngưng tụ với Aldehyde tạo dẫn xuất Nitrone có khả năng cộng đóng vòng 1,3-lưỡng cực.',
+        'Thể hiện tính khử khá mạnh nhờ liên kết đơn N–O giàu electron.'
+      ],
+      reactionsEn: [
+        'Forms crystalline N-methylhydroxylammonium chloride salts upon treatment with HCl.',
+        'Condenses cleanly with aldehydes to generate reactive nitrones.',
+        'Acts as a mild reducing agent owing to its electron-rich N–OH moiety.'
+      ],
+      note: 'Là một trong ba đồng phân mạch hở chính của CH₅NO (khung C–N–O, khác với C–O–N của Methoxyamine).',
+      noteEn: 'One of three key CH₅NO constitutional isomers, featuring a C–N–O backbone instead of C–O–N.'
+    },
+    {
+      id: 'ethanolamine',
+      catKey: 'amine',
+      elements: ['O','C','C','N'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1]],
+      name: 'Ethanolamine (MEA)',
+      nameEn: 'Ethanolamine (MEA)',
+      category: 'Amino alcohol (Tạp chức)',
+      categoryEn: 'Amino alcohol',
+      state: 'Lỏng sánh không màu (mùi ammonia nhẹ, hút ẩm)',
+      stateEn: 'Colorless viscous hygroscopic liquid (mild ammonia odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Dung môi công nghiệp chủ lực để hấp thụ và làm sạch khí chua CO₂, H₂S trong khí thiên nhiên và khói thải nhà máy; đồng thời là thành phần đầu cực của phospholipid cấu tạo màng tế bào sống và chất nhũ hóa dầu gội.',
+      realLifeEn: 'Workhorse industrial amine scrubber capturing acidic CO₂ and H₂S from natural gas and power-plant flue streams, and biological headgroup of membrane phospholipids.',
+      reactions: [
+        'Dung dịch có tính base rõ (làm xanh giấy quỳ tím) và hấp thụ thuận nghịch khí CO₂ tạo muối carbamate khi lạnh, nhả lại CO₂ tinh khiết khi đun nóng.',
+        'Nhóm -OH phản ứng với acid béo hoặc kim loại Na giải phóng khí H₂.',
+        'Sản xuất công nghiệp bằng phản ứng mở vòng Ethylene oxide (Oxirane) với Ammonia (NH₃).'
+      ],
+      reactionsEn: [
+        'Aqueous solutions turn litmus blue and reversibly scrub CO₂ gas at ambient temperature, releasing pure CO₂ upon heating.',
+        'Free -OH group reacts with Na metal to evolve H₂ and forms amides/esters with fatty acids.',
+        'Manufactured by reacting Ethylene oxide cleanly with aqueous Ammonia.'
+      ],
+      note: 'Tên chuẩn IUPAC: 2-aminoethan-1-ol (C₂H₇NO); đại diện tiêu biểu cho nhóm hợp chất tạp chức bền vững vừa là Alcohol vừa là Amine.',
+      noteEn: 'IUPAC name: 2-aminoethan-1-ol (C₂H₇NO); benchmark bifunctional amino alcohol.'
+    },
+    {
+      id: 'methanediol',
+      catKey: 'alcohol',
+      elements: ['O','C','O'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Methanediol (Formaldehyde hydrate)',
+      nameEn: 'Methanediol (Formaldehyde hydrate)',
+      category: 'Polyalcohol (Gem-diol)',
+      categoryEn: 'Polyalcohol (Gem-diol)',
+      state: 'Tồn tại chủ yếu trong dung dịch nước (Formalin)',
+      stateEn: 'Exists primarily in aqueous solution (Formalin)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water (equilibrium form)',
+      realLife: 'Thực chất chính là dạng tồn tại chiếm tới >99,9% của khí Formaldehyde khi hòa tan vào nước tạo dung dịch Formalin ngâm mẫu vật sinh học và sản xuất keo nhựa gỗ.',
+      realLifeEn: 'Accounts for >99.9% of dissolved Formaldehyde in commercial aqueous Formalin used for specimen preservation and resin manufacturing.',
+      reactions: [
+        'Hình thành từ phản ứng cộng nước thuận nghịch vào liên kết đôi C=O của Methanal: HCHO + H₂O ⇌ HO–CH₂–OH.',
+        'Khi cô đặc hoặc đun nóng dễ tách nước trả lại khí Formaldehyde và tạo oligomer Paraformaldehyde.',
+        'Trong dung dịch nước vẫn tham gia phản ứng tráng bạc với AgNO₃/NH₃ do cân bằng chuyển hóa về HCHO.'
+      ],
+      reactionsEn: [
+        'Formed via rapid hydration of Formaldehyde: HCHO + H₂O ⇌ CH₂(OH)₂.',
+        'Condenses upon concentration into solid polymeric Paraformaldehyde.',
+        'Equilibrates readily back to HCHO in alkaline Tollens reagent to deposit a silver mirror.'
+      ],
+      note: 'Công thức CH₄O₂; ngoại lệ hiếm hoi mà gem-diol (hai nhóm -OH gắn cùng một C) lại bền hơn dạng aldehyde tự do trong nước.',
+      noteEn: 'Formula CH₄O₂; notable exception where a geminal diol is favored overwhelmingly over its parent carbonyl in water.'
+    },
+    {
+      id: 'methyl-hydroperoxide',
+      catKey: 'custom',
+      elements: ['C','O','O'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Methyl hydroperoxide',
+      nameEn: 'Methyl hydroperoxide',
+      category: 'Peroxide hữu cơ',
+      categoryEn: 'Organic peroxide',
+      state: 'Lỏng không màu (dễ bay hơi, kém bền nhiệt)',
+      stateEn: 'Colorless volatile liquid (thermally shock-sensitive)',
+      solubility: 'Tan tốt trong nước',
+      solubilityEn: 'Soluble in water',
+      realLife: 'Hợp chất oxi hóa trung gian xuất hiện tự nhiên trong khí quyển khi Methane bị oxi hóa quang hóa dưới ánh nắng mặt trời, góp phần điều hòa khả năng tự làm sạch của tầng đối lưu.',
+      realLifeEn: 'Key atmospheric hydroperoxide intermediate generated during sunlight-driven Methane oxidation in the troposphere.',
+      reactions: [
+        'Chứa liên kết cầu –O–O– kém bền nên dễ phân hủy khi đun nóng hoặc va đập mạnh tỏa nhiều nhiệt.',
+        'Thể hiện tính oxi hóa mạnh tương tự Hydrogen peroxide (H₂O₂), oxi hóa ion I⁻ thành I₂ trong môi trường acid.',
+        'Phản ứng với kiềm mạnh tạo muối peroxide tương ứng.'
+      ],
+      reactionsEn: [
+        'Weak O–O peroxide bond cleaves homolytically upon warming or mechanical shock.',
+        'Acts as a strong oxidizer analogous to H₂O₂, oxidizing aqueous iodide to I₂.',
+        'Deprotonates gently in strong aqueous alkali.'
+      ],
+      note: 'Công thức CH₄O₂; đồng phân chứa cầu –O–O– của Methanediol (HO–CH₂–OH).',
+      noteEn: 'Formula CH₄O₂; peroxide isomer of Methanediol featuring a C–O–O linkage.'
+    },
+    {
+      id: 'methyl-carbamate',
+      catKey: 'ester',
+      elements: ['C','O','C','O','N'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1]],
+      name: 'Methyl carbamate',
+      nameEn: 'Methyl carbamate',
+      category: 'Carbamate',
+      categoryEn: 'Carbamate',
+      state: 'Rắn (tinh thể trắng, nóng chảy ở 54 °C)',
+      stateEn: 'Solid (white crystals, mp 54 °C)',
+      solubility: 'Tan rất tốt trong nước và Ethanol',
+      solubilityEn: 'Very soluble in water and Ethanol',
+      realLife: 'Đơn vị cấu trúc nền tảng của họ thuốc bảo vệ thực vật nhóm carbamate tác dụng nhanh và là hợp chất mẫu đại diện cho liên kết urethane (–O–CO–NH–) tạo nên nệm mút xốp Polyurethane.',
+      realLifeEn: 'Simplest alkyl carbamate modeling the urethane linkage (–O–CO–NH–) used in Polyurethane foams and fast-acting agricultural carbamate insecticides.',
+      reactions: [
+        'Thủy phân khi đun nóng với dung dịch NaOH tạo Methanol, muối Carbonate (Na₂CO₃) và giải phóng khí NH₃.',
+        'Phản ứng với Formaldehyde tạo chất hoàn tất giúp vải sợi chống nhăn trong ngành dệt may.',
+        'Là phân tử trung tính, không làm đổi màu giấy quỳ tím dù mang nhóm -NH₂ do gắn sát nhóm >C=O.'
+      ],
+      reactionsEn: [
+        'Hot alkaline hydrolysis breaks both ester and amide bonds to yield Methanol, Na₂CO₃, and NH₃ gas.',
+        'Condenses with Formaldehyde into textile wrinkle-resistant finishing agents.',
+        'Essentially neutral to litmus because the carbonyl group withdraws electron density from Nitrogen.'
+      ],
+      note: 'Công thức C₂H₅NO₂ (cùng công thức phân tử với Glycine nhưng là Carbamate không có tính lưỡng tính).',
+      noteEn: 'Shares C₂H₅NO₂ with Glycine, yet behaves as a neutral carbamate rather than an amphoteric amino acid.'
+    },
+    {
+      id: 'bromomethane',
+      catKey: 'halogen',
+      elements: ['C','Br'],
+      bonds: [[0,1,1]],
+      name: 'Bromomethane (Methyl bromide)',
+      nameEn: 'Bromomethane (Methyl bromide)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Khí không màu (sôi ở 3,6 °C, nặng hơn không khí)',
+      stateEn: 'Colorless gas (bp 3.6 °C)',
+      solubility: 'Ít tan trong nước',
+      solubilityEn: 'Slightly soluble in water',
+      realLife: 'Từng được dùng rộng rãi để xông hơi khử trùng đất trồng và kho chứa ngũ cốc xuất khẩu diệt sâu mọt, nhưng hiện bị hạn chế nghiêm trọng theo Nghị định thư Montreal do nguy cơ phá hủy tầng ozone.',
+      realLifeEn: 'Formerly a major agricultural soil and grain-storage fumigant, now heavily restricted under the Montreal Protocol for ozone depletion.',
+      reactions: [
+        'Thủy phân dễ dàng khi đun nóng với dung dịch NaOH loãng tạo Methanol và muối NaBr.',
+        'Dung dịch sau thủy phân được acid hóa bằng HNO₃ rồi nhỏ AgNO₃ lập tức tạo kết tủa VÀNG NHẠT AgBr↓.',
+        'Là tác nhân methyl hóa rất nhạy nhờ nhóm -Br tách loại tốt hơn nhóm -Cl.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes briskly in warm aqueous NaOH to give Methanol and NaBr.',
+        'Acidifying the hydrolysate with HNO₃ and adding AgNO₃ yields a pale yellow AgBr precipitate.',
+        'Highly effective methylating reagent because Bromide is a superior leaving group.'
+      ],
+      note: 'Công thức CH₃Br; dễ thủy phân trong nước kiềm hơn Chloromethane.',
+      noteEn: 'Formula CH₃Br; reacts faster in nucleophilic substitution than Chloromethane.'
+    },
+    {
+      id: 'bromoethane',
+      catKey: 'halogen',
+      elements: ['C','C','Br'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Bromoethane (Ethyl bromide)',
+      nameEn: 'Bromoethane (Ethyl bromide)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (dễ bay hơi, sôi ở 38,4 °C, nặng hơn nước)',
+      stateEn: 'Colorless volatile dense liquid (bp 38.4 °C, 1.46 g/mL)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Slightly soluble in water (bottom layer)',
+      realLife: 'Thí nghiệm mẫu chuẩn trong sách giáo khoa Hóa học 11 (GDPT 2018) để minh họa sự khác biệt giữa phản ứng thế (tạo Ethanol) và phản ứng tách (tạo Ethylene), đồng thời là tác nhân gắn nhóm ethyl trong tổng hợp thuốc.',
+      realLifeEn: 'Core textbook halogen derivative in GDPT 2018 Chemistry 11 contrasting aqueous substitution (Ethanol) vs. alcoholic elimination (Ethylene), and classic ethylating reagent.',
+      reactions: [
+        'Đun nóng với dung dịch NaOH/H₂O thực hiện phản ứng THẾ tạo Ethanol và muối NaBr.',
+        'Đun nóng với KOH trong Ethanol (C₂H₅OH) thực hiện phản ứng TÁCH HBr tạo khí Ethylene (làm mất màu nước Br₂).',
+        'Sản phẩm sau thủy phân kiềm khi acid hóa bằng HNO₃ tạo kết tủa vàng nhạt AgBr với dung dịch AgNO₃.'
+      ],
+      reactionsEn: [
+        'Warming with aqueous NaOH favors nucleophilic substitution to Ethanol and NaBr.',
+        'Heating with alcoholic KOH (KOH/EtOH) drives elimination of HBr to yield Ethylene gas.',
+        'Released Br⁻ ion gives a pale yellow AgBr precipitate with AgNO₃ after HNO₃ acidification.'
+      ],
+      note: 'Thay cho Ethyl chloride dạng khí khó thao tác, Bromoethane là chất lỏng sôi 38 °C nên rất dễ dùng làm thí nghiệm thực hành trên lớp.',
+      noteEn: 'Liquid at room temperature (unlike gaseous Ethyl chloride), making it ideal for classroom hydrolysis/elimination labs.'
+    },
+    {
+      id: '1,2-dichloroethane',
+      catKey: 'halogen',
+      elements: ['C','C','Cl','Cl'],
+      bonds: [[0,1,1],[0,2,1],[1,3,1]],
+      name: '1,2-Dichloroethane',
+      nameEn: '1,2-Dichloroethane',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (mùi ngọt giống Chloroform, D = 1,25 g/cm³)',
+      stateEn: 'Colorless dense liquid (1.25 g/cm³, sweet odor)',
+      solubility: 'Ít tan trong nước',
+      solubilityEn: 'Slightly soluble in water',
+      realLife: 'Hóa chất trung gian có sản lượng hàng chục triệu tấn mỗi năm trên thế giới dùng để nhiệt phân tách HCl sản xuất Vinyl chloride (monomer tạo nhựa ống nước PVC).',
+      realLifeEn: 'Multi-million-ton industrial intermediate thermally cracked into Vinyl chloride monomer for PVC pipes and siding.',
+      reactions: [
+        'Nhiệt phân ở ~500 °C tách 1 phân tử HCl tạo Vinyl chloride (CH₂=CHCl) — quy trình sản xuất PVC hiện đại.',
+        'Điều chế bằng phản ứng cộng khí Cl₂ vào Ethylene hoặc oxi hóa-chlorine hóa Ethylene.',
+        'Đun nóng với dung dịch NaOH loãng thủy phân tạo Ethylene glycol.'
+      ],
+      reactionsEn: [
+        'Thermal cracking at ~500 °C eliminates HCl to manufacture Vinyl chloride monomer.',
+        'Produced on vast scale by adding Cl₂ across Ethylene.',
+        'Hydrolyzes in warm aqueous NaOH to form Ethylene glycol.'
+      ],
+      note: 'Công thức C₂H₄Cl₂; cùng nhóm cộng hợp 1,2 với 1,2-Dibromoethane.',
+      noteEn: 'Formula C₂H₄Cl₂; chloro analog of 1,2-Dibromoethane and key gateway to PVC plastics.'
+    },
+    {
+      id: '2-bromopropane',
+      catKey: 'halogen',
+      elements: ['C','C','C','Br'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1]],
+      name: '2-Bromopropane (Isopropyl bromide)',
+      nameEn: '2-Bromopropane (Isopropyl bromide)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (sôi ở 59,4 °C, nặng hơn nước)',
+      stateEn: 'Colorless dense liquid (bp 59.4 °C)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Slightly soluble in water',
+      realLife: 'Sản phẩm chính của hai phản ứng chuẩn chương trình phổ thông: thế Br₂ vào Propane có chiếu sáng và cộng HBr vào Propene theo quy tắc Markovnikov; dùng gắn nhóm isopropyl trong tổng hợp dược phẩm.',
+      realLifeEn: 'Signature major product of both Propane photochemical bromination and Markovnikov HBr addition to Propene, used in pharmaceutical isopropyl synthesis.',
+      reactions: [
+        'Đun nóng với dung dịch NaOH tạo alcohol bậc hai Propan-2-ol và NaBr.',
+        'Đun nóng với KOH trong Ethanol tách HBr tạo khí Propene.',
+        'Tác dụng với Mg trong Ether khan tạo thuốc thử Grignard isopropylmagnesium bromide.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes with warm aqueous NaOH into secondary alcohol Propan-2-ol.',
+        'Dehydrobrominates cleanly with hot alcoholic KOH to Propene.',
+        'Forms isopropylmagnesium bromide Grignard reagent with Magnesium turnings.'
+      ],
+      note: 'Công thức C₃H₇Br; minh họa trực tiếp quy tắc ưu tiên Carbon bậc cao khi thế alkane hoặc cộng Markovnikov.',
+      noteEn: 'Formula C₃H₇Br; textbook product demonstrating secondary carbon selectivity.'
+    },
+    {
+      id: 'benzyl-chloride',
+      catKey: 'halogen',
+      elements: [...C6_AROM,'C','Cl'],
+      bonds: [...BENZENE, [0,6,1],[6,7,1]],
+      name: 'Benzyl chloride',
+      nameEn: 'Benzyl chloride',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (mùi hăng cay chảy nước mắt)',
+      stateEn: 'Colorless pungent liquid (lacrimator)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Nguyên liệu tổng hợp chất sát khuẩn bậc bốn (Benzalkonium chloride trong nước rửa tay, nước súc miệng), hương liệu Benzyl acetate mùi hoa nhài và chất hóa dẻo nhựa.',
+      realLifeEn: 'Feedstock for Benzalkonium chloride antiseptics in sanitizers and disinfectants, jasmine-scented Benzyl esters, and specialty plasticizers.',
+      reactions: [
+        'Thủy phân CỰC NHANH trong dung dịch kiềm hoặc nước ấm tạo Benzyl alcohol và kết tủa trắng AgCl ngay khi thử AgNO₃ (khác hẳn Chlorobenzene trơ hoàn toàn!).',
+        'Điều chế bằng phản ứng thế Cl₂ vào nhánh -CH₃ của Toluene khi chiếu sáng hoặc đun nóng.',
+        'Không làm mất màu nước Br₂ ở điều kiện thường.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes rapidly in warm aqueous alkali to Benzyl alcohol and precipitates white AgCl immediately with AgNO₃ (unlike wholly inert Chlorobenzene!).',
+        'Prepared via free-radical chlorination of Toluene side chain under light.',
+        'Unreactive toward cold aqueous bromine water.'
+      ],
+      note: 'Cặp so sánh kinh điển: Chlorobenzene (Cl gắn thẳng vòng thơm nên rất bền) vs. Benzyl chloride (Cl gắn nhánh -CH₂- nên thủy phân cực dễ).',
+      noteEn: 'Classic contrast with Chlorobenzene: benzylic C(sp³)–Cl undergoes rapid substitution while aryl C(sp²)–Cl resists boiling NaOH.'
+    },
+    {
+      id: '2,4,6-tribromophenol',
+      catKey: 'phenol',
+      elements: [...C6_AROM,'O','Br','Br','Br'],
+      bonds: [...BENZENE, [0,6,1],[1,7,1],[3,8,1],[5,9,1]],
+      name: '2,4,6-Tribromophenol',
+      nameEn: '2,4,6-Tribromophenol',
+      category: 'Phenol',
+      categoryEn: 'Phenol',
+      state: 'Rắn (kết tủa trắng hoặc tinh thể hình kim mùi hắc)',
+      stateEn: 'Solid (white precipitate / pungent crystals)',
+      solubility: 'Hầu như không tan trong nước',
+      solubilityEn: 'Practically insoluble in water',
+      realLife: 'Chính là lớp KẾT TỦA TRẮNG quen thuộc xuất hiện tức thì trong ống nghiệm khi nhỏ nước Br₂ vào dung dịch Phenol để nhận biết Phenol; trong công nghiệp còn dùng làm chất chống cháy cho nhựa điện tử và bảo quản gỗ.',
+      realLifeEn: 'The unmistakable WHITE precipitate formed instantaneously when bromine water meets Phenol in lab tests; industrially used as a flame retardant and wood preservative.',
+      reactions: [
+        'Tạo thành định lượng khi cho Phenol tác dụng với dung dịch Br₂ dư ở điều kiện thường.',
+        'Có tính acid mạnh hơn Phenol tự do nhờ 3 nguyên tử Bromine hút electron, nên tan dễ dàng trong dung dịch NaOH và NaHCO₃.',
+        'Không làm mất màu thêm dung dịch Br₂ do các vị trí ortho, para đã thế kín.'
+      ],
+      reactionsEn: [
+        'Precipitates quantitatively at room temperature when Phenol reacts with excess bromine water.',
+        'Significantly more acidic than Phenol owing to three electron-withdrawing Bromine atoms; dissolves in NaOH and even NaHCO₃.',
+        'All ortho and para ring sites are saturated against further room-temperature bromination.'
+      ],
+      note: 'Công thức C₆H₃Br₃O (M = 330,8); thí nghiệm nhận biết Phenol kinh điển trong Hóa học 11.',
+      noteEn: 'Formula C₆H₃Br₃O (M = 330.8 g/mol); diagnostic white precipitate identifying Phenol.'
+    },
+    {
+      id: 'methyl-acrylate',
+      catKey: 'ester',
+      elements: ['C','C','C','O','O','C'],
+      bonds: [[0,1,2],[1,2,1],[2,3,2],[2,4,1],[4,5,1]],
+      name: 'Methyl acrylate',
+      nameEn: 'Methyl acrylate',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi hắc nồng, dễ bay hơi)',
+      stateEn: 'Colorless volatile liquid (acrid odor)',
+      solubility: 'Ít tan trong nước (~6 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~6 g/100 mL)',
+      realLife: 'Monomer thiết yếu đồng trùng hợp với Acrylonitrile để dệt sợi vải acrylic giả len mềm ấm và sản xuất màng sơn phủ bảo vệ bề mặt kim loại, gỗ, vải da.',
+      realLifeEn: 'Key monomer copolymerized with Acrylonitrile into warm wool-like acrylic fibers and durable flexible surface coatings.',
+      reactions: [
+        'Làm mất màu nhanh nước Br₂ và dung dịch KMnO₄ ở nhiệt độ thường nhờ liên kết đôi C=C.',
+        'Thủy phân khi đun nóng với dung dịch NaOH tạo muối Sodium acrylate và Methanol.',
+        'Trùng hợp (xt, t°, p) tạo polymer Poly(methyl acrylate) đàn hồi.'
+      ],
+      reactionsEn: [
+        'Rapidly decolorizes bromine water and cold KMnO₄ across its vinyl double bond.',
+        'Hot alkaline saponification yields Sodium acrylate and Methanol.',
+        'Undergoes free-radical vinyl polymerization into flexible polyacrylate resins.'
+      ],
+      note: 'Công thức C₄H₆O₂; cùng công thức phân tử với Vinyl acetate (CH₃COOCH=CH₂), thường được hỏi phân biệt sản phẩm thủy phân kiềm!',
+      noteEn: 'Shares C₄H₆O₂ with Vinyl acetate, but saponifies to Methanol rather than Acetaldehyde.'
+    },
+    {
+      id: 'phenyl-acetate',
+      catKey: 'ester',
+      elements: [...C6_AROM,'O','C','O','C'],
+      bonds: [...BENZENE, [0,6,1],[6,7,1],[7,8,2],[7,9,1]],
+      name: 'Phenyl acetate',
+      nameEn: 'Phenyl acetate',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm nhẹ đặc trưng)',
+      stateEn: 'Colorless oily liquid',
+      solubility: 'Hầu như không tan trong nước',
+      solubilityEn: 'Practically insoluble in water',
+      realLife: 'Hợp chất mẫu tiêu biểu cho nhóm ester của Phenol trong chương trình Hóa học 12; dùng làm dung môi đặc biệt và tiền chất tổng hợp các hợp chất trung gian chứa nhân thơm.',
+      realLifeEn: 'Benchmark phenolic ester illustrating the 1:2 NaOH saponification ratio in organic chemistry, used as a specialty synthesis intermediate.',
+      reactions: [
+        'Xà phòng hóa trong dung dịch NaOH dư theo tỉ lệ mol 1 : 2 (tạo HAI muối là Sodium acetate và Sodium phenolate cùng 1 H₂O — KHÔNG tạo alcohol)!',
+        'Không điều chế trực tiếp bằng Acetic acid + Phenol mà phải dùng Acetic anhydride + Phenol.',
+        'Không tác dụng với kim loại Na và không làm đổi màu giấy quỳ tím.'
+      ],
+      reactionsEn: [
+        'Consumes TWO equivalents of NaOH upon hydrolysis, yielding TWO salts (Sodium acetate + Sodium phenolate) and water with NO alcohol!',
+        'Prepared from Phenol and Acetic anhydride rather than direct esterification with Acetic acid.',
+        'Unreactive toward metallic Na and neutral to litmus.'
+      ],
+      note: 'Công thức C₈H₈O₂; câu hỏi "ester phản ứng với NaOH tỉ lệ 1 : 2 tạo hai muối" kinh điển bậc nhất kỳ thi THPT!',
+      noteEn: 'Formula C₈H₈O₂; classic exam ester consuming 2 mol NaOH per mole to produce two sodium salts.'
+    },
+    {
+      id: 'methyl-salicylate',
+      catKey: 'ester',
+      elements: [...C6_AROM,'C','O','O','C','O'],
+      bonds: [...BENZENE, [0,6,1],[6,7,2],[6,8,1],[8,9,1],[1,10,1]],
+      name: 'Methyl salicylate (Dầu nóng)',
+      nameEn: 'Methyl salicylate (Oil of wintergreen)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu hoặc vàng nhạt (mùi dầu gió xanh đặc trưng)',
+      stateEn: 'Colorless/pale-yellow liquid (wintergreen aroma)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Thành phần tạo mùi nóng ấm quen thuộc trong cao dán giảm đau cơ khớp (Salonpas), dầu gió xoa bóp và một lượng rất nhỏ tạo hương bạc hà thơm mát trong kẹo cao su, nước súc miệng.',
+      realLifeEn: 'Characteristic cooling-warm active ingredient in topical muscle pain patches and balms, and natural wintergreen flavoring in mints and mouthwash.',
+      reactions: [
+        'Tác dụng với dung dịch NaOH dư đun nóng theo tỉ lệ mol 1 : 2 (1 mol phản ứng nhóm -OH phenol, 1 mol xà phòng hóa chức ester -COOCH₃) tạo Disodium salicylate và Methanol.',
+        'Tạo màu TÍM ĐẶC TRƯNG với dung dịch FeCl₃ do vẫn còn nguyên nhóm -OH phenol tự do.',
+        'Điều chế bằng phản ứng ester hóa Salicylic acid với Methanol dư (xúc tác H₂SO₄ đặc, đun nóng).'
+      ],
+      reactionsEn: [
+        'Consumes 2 moles of NaOH upon hot saponification (neutralizing the phenolic -OH and hydrolyzing the methyl ester) to give Disodium salicylate and Methanol.',
+        'Turns intense VIOLET with aqueous FeCl₃ owing to its intact phenolic -OH group.',
+        'Synthesized by Fischer esterification of Salicylic acid with Methanol over conc. H₂SO₄.'
+      ],
+      note: 'Công thức C₈H₈O₃; phân tử tạp chức chứa đồng thời vòng thơm, ester và -OH phenol (rất hay xuất hiện trong đề Hóa 12 GDPT 2018).',
+      noteEn: 'Formula C₈H₈O₃; bifunctional ester-phenol consuming 2 NaOH per mole and giving a positive FeCl₃ test.'
+    },
+    {
+      id: 'ethyl-butyrate',
+      catKey: 'ester',
+      elements: ['C','C','C','C','O','O','C','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,2],[3,5,1],[5,6,1],[6,7,1]],
+      name: 'Ethyl butyrate (Hương dứa)',
+      nameEn: 'Ethyl butyrate (Pineapple ester)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi quả dứa chín thơm ngọt)',
+      stateEn: 'Colorless liquid (sweet ripe-pineapple aroma)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Ester tạo hương liệu thực phẩm nổi tiếng mang mùi thơm ngọt ngào của quả dứa (thơm) chín và cam tươi dùng trong nước ép đóng hộp, kẹo dẻo, kem trái cây và siro.',
+      realLifeEn: 'Signature food-flavoring ester delivering fresh pineapple aroma naturally present in pineapples, oranges, and fruit candies.',
+      reactions: [
+        'Xà phòng hóa trong dung dịch NaOH đun nóng tạo muối Sodium butyrate và Ethanol.',
+        'Điều chế từ Butyric acid (mùi bơ ôi khó chịu) và Ethanol với xúc tác H₂SO₄ đặc đun nóng.',
+        'Không làm mất màu nước Br₂ và không phản ứng với kim loại Na.'
+      ],
+      reactionsEn: [
+        'Saponifies with hot aqueous NaOH cleanly into Sodium butyrate and Ethanol.',
+        'Prepared via Fischer esterification of foul-smelling Butyric acid and Ethanol over conc. H₂SO₄.',
+        'Inert toward metallic Na and cold bromine water.'
+      ],
+      note: 'Công thức C₆H₁₂O₂; cặp hương ester quen thuộc trong SGK: Ethyl butyrate (mùi dứa), Isoamyl acetate (mùi chuối).',
+      noteEn: 'Formula C₆H₁₂O₂; textbook pineapple-scented ester alongside banana-scented Isoamyl acetate.'
+    },
+    {
+      id: 'methyl-ethyl-ether',
+      catKey: 'ether',
+      elements: ['C','O','C','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1]],
+      name: 'Ethyl methyl ether (Methoxyethane)',
+      nameEn: 'Ethyl methyl ether (Methoxyethane)',
+      category: 'Ether',
+      categoryEn: 'Ether',
+      state: 'Khí không màu (sôi ở 7,4 °C, mùi Ether nhẹ)',
+      stateEn: 'Colorless gas (bp 7.4 °C, ethereal odor)',
+      solubility: 'Tan khá trong nước',
+      solubilityEn: 'Moderately soluble in water',
+      realLife: 'Ether bất đối xứng đơn giản nhất, dễ bay hơi và bắt cháy mạnh; thường được dùng làm mô hình học thuật minh họa danh pháp thay thế (Methoxyethane) và phân biệt đồng phân C₃H₈O.',
+      realLifeEn: 'Simplest unsymmetrical dialkyl ether, widely used in curricula to teach alkoxyalkane nomenclature (Methoxyethane) and C₃H₈O isomerism.',
+      reactions: [
+        'Không tác dụng với kim loại Na (giúp phân biệt ngay với hai đồng phân Alcohol cùng công thức là Propan-1-ol và Propan-2-ol).',
+        'Đun nóng với dung dịch HI đặc phân cắt thành hỗn hợp Iodomethane (CH₃I) và Ethanol hoặc Iodoethane.',
+        'Bền vững với dung dịch kiềm NaOH và nước Br₂ ở điều kiện thường.'
+      ],
+      reactionsEn: [
+        'Completely unreactive with metallic Na, cleanly distinguishing it from isomeric Propan-1-ol and Propan-2-ol.',
+        'Cleaves on heating with concentrated HI into alkyl iodides and alcohols.',
+        'Chemically inert toward dilute aqueous bases and bromine water.'
+      ],
+      note: 'Công thức C₃H₈O; không có liên kết hydrogen giữa các phân tử nên sôi thấp hơn Propan-1-ol tới gần 90 °C.',
+      noteEn: 'Formula C₃H₈O; lacks intermolecular O–H···O hydrogen bonding, boiling 90 °C below Propan-1-ol.'
+    },
+    {
+      id: 'phthalic-acid',
+      catKey: 'carboxylic',
+      elements: [...C6_AROM,'C','O','O','C','O','O'],
+      bonds: [...BENZENE, [0,6,1],[6,7,2],[6,8,1],[1,9,1],[9,10,2],[9,11,1]],
+      name: 'Phthalic acid',
+      nameEn: 'Phthalic acid',
+      category: 'Carboxylic acid',
+      categoryEn: 'Carboxylic acid',
+      state: 'Rắn (tinh thể trắng)',
+      stateEn: 'Solid (white crystals)',
+      solubility: 'Ít tan trong nước lạnh, tan tốt hơn trong nước nóng',
+      solubilityEn: 'Slightly soluble cold; soluble in hot water',
+      realLife: 'Đồng phân ortho của Terephthalic acid, dùng sản xuất chất hóa dẻo nhựa PVC mềm dẻo (phthalate), nhựa sơn alkyd phủ bề mặt bền đẹp và phẩm nhuộm công nghiệp.',
+      realLifeEn: 'Ortho-isomer of Terephthalic acid used primarily via Phthalic anhydride to produce alkyd surface coatings, dyes, and PVC plasticizers.',
+      reactions: [
+        'Tác dụng với dung dịch NaOH theo tỉ lệ mol 1 : 2 tạo muối Disodium phthalate tan tốt trong nước.',
+        'Khi đun nóng ở ~200 °C dễ dàng TÁCH 1 PHÂN TỬ H₂O đóng vòng nội phân tử tạo Phthalic anhydride (khác với Terephthalic acid không tự đóng vòng được!).',
+        'Làm quỳ tím hóa đỏ và giải phóng khí CO₂ khi tác dụng với NaHCO₃.'
+      ],
+      reactionsEn: [
+        'Neutralizes 2 equivalents of NaOH to form water-soluble Disodium phthalate.',
+        'Heating dehydrates the two adjacent ortho carboxyl groups cleanly into cyclic Phthalic anhydride (impossible for para-Terephthalic acid).',
+        'Turns litmus red and effervesces with NaHCO₃.'
+      ],
+      note: 'Tên chuẩn IUPAC: Benzene-1,2-dicarboxylic acid (C₈H₆O₄); hai nhóm -COOH cạnh nhau nên tách nước đóng vòng cực kỳ dễ.',
+      noteEn: 'IUPAC name: Benzene-1,2-dicarboxylic acid (C₈H₆O₄); ortho proximity enables effortless anhydride cyclization.'
+    },
+    {
+      id: 'propane-1,3-diol',
+      catKey: 'alcohol',
+      elements: ['O','C','C','C','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1]],
+      name: 'Propane-1,3-diol',
+      nameEn: 'Propane-1,3-diol',
+      category: 'Alcohol',
+      categoryEn: 'Alcohol',
+      state: 'Lỏng sánh không màu (không mùi, hút ẩm)',
+      stateEn: 'Colorless odorless viscous liquid',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Nguyên liệu sinh học xanh dùng sản xuất sợi vải tổng hợp PTT co giãn mềm mượt (thương hiệu Sorona), mỹ phẩm giữ ẩm lành tính và chất chống đông thân thiện môi trường hơn Ethylene glycol.',
+      realLifeEn: 'Bio-derived diol condensed into elastic, stain-resistant PTT textiles (Sorona) and mild skin-care humectants.',
+      reactions: [
+        'KHÔNG hòa tan Cu(OH)₂ ở nhiệt độ thường thành dung dịch xanh lam (vì hai nhóm -OH nằm cách xa nhau ở vị trí 1 và 3, không kề nhau!).',
+        'Tác dụng với kim loại Na dư giải phóng 1 mol khí H₂ trên mỗi mol diol.',
+        'Trùng ngưng với Terephthalic acid tạo sợi polyester PTT đàn hồi tốt.'
+      ],
+      reactionsEn: [
+        'Does NOT dissolve Cu(OH)₂ to a deep blue solution at room temperature because its -OH groups are separated (1,3-diol rather than vicinal 1,2-diol)!',
+        'Reacts with excess metallic Na liberating 1 mol H₂ per mole of diol.',
+        'Polycondenses with Terephthalic acid to spin resilient PTT fibers.'
+      ],
+      note: 'Công thức C₃H₈O₂; phản ứng thử với Cu(OH)₂ giúp phân biệt ngay Propane-1,3-diol (−) với Propane-1,2-diol hoặc Glycerol (+).',
+      noteEn: 'Formula C₃H₈O₂; classic negative Cu(OH)₂ test contrasting separated 1,3-diols against vicinal 1,2-diols.'
+    },
+    {
+      id: 'glycolic-acid',
+      catKey: 'carboxylic',
+      elements: ['O','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1]],
+      name: 'Glycolic acid',
+      nameEn: 'Glycolic acid',
+      category: 'Carboxylic acid (Hydroxy acid)',
+      categoryEn: 'Carboxylic acid (Hydroxy acid)',
+      state: 'Rắn (tinh thể không màu, hút ẩm nhẹ)',
+      stateEn: 'Solid (colorless hygroscopic crystals)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Hoạt chất AHA (Alpha Hydroxy Acid) tự nhiên có trong nước mía ép; nhờ kích thước phân tử nhỏ nhất nhóm AHA nên thấm sâu hiệu quả trong kem tẩy tế bào chết, trị thâm nám và trẻ hóa làn da.',
+      realLifeEn: 'Smallest natural Alpha Hydroxy Acid (AHA) derived from sugarcane; prized in dermatology peels for deep exfoliation and skin renewal.',
+      reactions: [
+        'Tác dụng với kim loại Na giải phóng 1 mol H₂ (tỉ lệ 1 : 2 Na), nhưng chỉ tác dụng với NaOH theo tỉ lệ 1 : 1 (nhóm -OH alcohol không phản ứng với NaOH)!',
+        'Làm quỳ tím hóa đỏ và giải phóng khí CO₂ khi gặp muối NaHCO₃/CaCO₃.',
+        'Đun nóng tự trùng ngưng tạo polymer sinh học tự tiêu PGA làm chỉ khâu phẫu thuật tự tan.'
+      ],
+      reactionsEn: [
+        'Reacts 1:2 with Na metal (evolving 1 mol H₂ from both -OH and -COOH) yet consumes only 1 equivalent of aqueous NaOH!',
+        'Turns litmus red and liberates CO₂ gas from bicarbonates.',
+        'Polycondenses into Polyglycolic acid (PGA) bioabsorbable surgical sutures.'
+      ],
+      note: 'Công thức C₂H₄O₃ (HO–CH₂–COOH); α-hydroxy acid đơn giản nhất và hay ra câu hỏi đếm tỉ lệ phản ứng với Na và NaOH.',
+      noteEn: 'Formula C₂H₄O₃ (HO–CH₂–COOH); simplest α-hydroxy acid showing 2:1 Na vs. 1:1 NaOH stoichiometry.'
+    },
+    {
+      id: 'but-1-yne',
+      catKey: 'alkyne',
+      elements: ['C','C','C','C'],
+      bonds: [[0,1,3],[1,2,1],[2,3,1]],
+      name: 'But-1-yne',
+      nameEn: 'But-1-yne',
+      category: 'Alkyne',
+      categoryEn: 'Alkyne',
+      state: 'Khí không màu (sôi ở 8,1 °C)',
+      stateEn: 'Colorless flammable gas (bp 8.1 °C)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Khí hydrocarbon không no mạch 4 Carbon được dùng trong tổng hợp hữu cơ tinh khiết để kéo dài mạch Carbon tổng hợp dược chất và vitamin.',
+      realLifeEn: 'Terminal 4-carbon alkyne gas used as a C4 nucleophilic acetylide building block in pharmaceutical and vitamin synthesis.',
+      reactions: [
+        'Là alkyne đầu mạch nên THAM GIA phản ứng với dung dịch AgNO₃/NH₃ tạo kết tủa vàng nhạt CH₃CH₂C≡CAg↓ (phân biệt ngay với đồng phân But-2-yne!).',
+        'Làm mất màu tối đa 2 mol Br₂ trong dung dịch và mất màu KMnO₄ ở điều kiện thường.',
+        'Cộng H₂O (xt HgSO₄/H⁺, 80 °C) theo quy tắc Markovnikov tạo ketone Butanone (MEK).'
+      ],
+      reactionsEn: [
+        'Terminal C≡C–H reacts immediately with AgNO₃/NH₃ to form a pale yellow Silver acetylide precipitate (cleanly separating it from But-2-yne!).',
+        'Consumes up to 2 equivalents of Br₂(aq) and decolorizes cold KMnO₄.',
+        'Hg²⁺/H⁺ hydration yields Butanone (MEK) via Markovnikov selectivity.'
+      ],
+      note: 'Cùng công thức C₄H₆ với But-2-yne và Buta-1,3-diene; cặp phân biệt bằng AgNO₃/NH₃ cực hay ra thi.',
+      noteEn: 'Shares C₄H₆ with But-2-yne and Buta-1,3-diene; uniquely tests positive with AgNO₃/NH₃ among these three isomers.'
+    },
+    {
+      id: 'but-2-yne',
+      catKey: 'alkyne',
+      elements: ['C','C','C','C'],
+      bonds: [[0,1,1],[1,2,3],[2,3,1]],
+      name: 'But-2-yne',
+      nameEn: 'But-2-yne',
+      category: 'Alkyne',
+      categoryEn: 'Alkyne',
+      state: 'Lỏng không màu (sôi ở 27 °C)',
+      stateEn: 'Colorless volatile liquid (bp 27 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Alkyne đối xứng đầu tiên có liên kết ba nằm giữa mạch, được dùng làm chất mẫu nghiên cứu xúc tác chọn lọc tạo đồng phân cis- hoặc trans-alkene tinh khiết trong tổng hợp hóa học.',
+      realLifeEn: 'Simplest internal symmetrical alkyne, serving as a benchmark substrate for stereoselective partial hydrogenation to cis- or trans-2-butene.',
+      reactions: [
+        'KHÔNG phản ứng với dung dịch AgNO₃/NH₃ do không còn nguyên tử H linh động ở nối ba (phân biệt với But-1-yne).',
+        'Làm mất màu tối đa 2 mol nước Br₂ tạo 2,2,3,3-tetrabromobutane và làm mất màu dung dịch KMnO₄.',
+        'Cộng H₂ có xúc tác Lindlar chọn lọc tạo cis-but-2-ene hoặc xúc tác Ni dư tạo Butane.'
+      ],
+      reactionsEn: [
+        'Gives NO precipitate with AgNO₃/NH₃ because it lacks a terminal ≡C–H bond (unlike But-1-yne).',
+        'Decolorizes 2 moles of Br₂(aq) and aqueous KMnO₄ cleanly.',
+        'Lindlar hydrogenation stops selectively at cis-but-2-ene; excess H₂ over Ni gives Butane.'
+      ],
+      note: 'Cùng công thức C₄H₆ với But-1-yne và Buta-1,3-diene; sôi cao hơn But-1-yne gần 19 °C nhờ cấu trúc đối xứng chặt chẽ.',
+      noteEn: 'Isomeric with But-1-yne (C₄H₆), yet uniquely lacks terminal alkyne acidity and boils 19 °C higher.'
+    },
+    {
+      id: 'pent-1-ene',
+      catKey: 'alkene',
+      elements: ['C','C','C','C','C'],
+      bonds: [[0,1,2],[1,2,1],[2,3,1],[3,4,1]],
+      name: 'Pent-1-ene',
+      nameEn: 'Pent-1-ene',
+      category: 'Alkene',
+      categoryEn: 'Alkene',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 30 °C)',
+      stateEn: 'Colorless ultra-volatile liquid (bp 30 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Là alkene mạch thẳng đầu tiên tồn tại ở thể lỏng tại nhiệt độ phòng; sinh ra trong quá trình cracking dầu mỏ và được dùng làm phụ gia pha trộn đồng trùng hợp nhựa Polyethylene tỉ trọng thấp.',
+      realLifeEn: 'Smallest straight-chain alkene that is liquid at room temperature (bp 30 °C); recovered from petroleum cracking as a polyethylene comonomer.',
+      reactions: [
+        'Làm mất màu nhanh nước Br₂ và dung dịch KMnO₄ loãng ngay ở nhiệt độ thường.',
+        'Cộng HBr theo quy tắc Markovnikov tạo sản phẩm chính 2-bromopentane.',
+        'Không có đồng phân hình học cis–trans do Carbon đầu mạch gắn 2 nguyên tử H giống nhau.'
+      ],
+      reactionsEn: [
+        'Rapidly decolorizes bromine water and cold dilute KMnO₄.',
+        'Adds HBr cleanly by Markovnikov’s rule to form 2-bromopentane as the major isomer.',
+        'No cis–trans stereoisomerism because C1 bears two identical H atoms.'
+      ],
+      note: 'Công thức C₅H₁₀ (đồng phân mạch hở với Cyclopentane).',
+      noteEn: 'Formula C₅H₁₀; acyclic alkene isomer of Cyclopentane.'
+    },
+    {
+      id: 'isoamyl-alcohol',
+      catKey: 'alcohol',
+      elements: ['C','C','C','C','C','O'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1],[3,4,1],[4,5,1]],
+      name: 'Isoamyl alcohol (3-Methylbutan-1-ol)',
+      nameEn: 'Isoamyl alcohol (3-Methylbutan-1-ol)',
+      category: 'Alcohol',
+      categoryEn: 'Alcohol',
+      state: 'Lỏng không màu (mùi hăng đặc trưng của dầu fusel)',
+      stateEn: 'Colorless liquid (strong characteristic fusel odor)',
+      solubility: 'Ít tan trong nước (~2,7 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.7 g/100 mL)',
+      realLife: 'Thành phần chính của "dầu fusel" sinh ra khi chưng cất rượu lên men từ ngũ cốc; giá trị lớn nhất là nguyên liệu phản ứng ester hóa với Acetic acid tạo ra Isoamyl acetate (dầu chuối chín) thơm ngát và tách chiết DNA trong sinh học.',
+      realLifeEn: 'Principal fermentation fusel alcohol esterified with Acetic acid to manufacture banana-oil Isoamyl acetate and used in molecular biology to extract DNA.',
+      reactions: [
+        'Đun nóng với Acetic acid (xúc tác H₂SO₄ đặc) tạo ester Isoamyl acetate có mùi chuối chín đặc trưng.',
+        'Tác dụng với kim loại Na giải phóng khí H₂ và oxi hóa nhẹ bằng CuO đun nóng tạo 3-methylbutanal.',
+        'Tách nước ở 170 °C (H₂SO₄ đặc) tạo 3-methylbut-1-ene.'
+      ],
+      reactionsEn: [
+        'Fischer esterification with Acetic acid over conc. H₂SO₄ yields banana-scented Isoamyl acetate.',
+        'Liberates H₂ with metallic Na and oxidizes over hot CuO to 3-methylbutanal.',
+        'Dehydrates over hot acid catalyst to 3-methylbut-1-ene.'
+      ],
+      note: 'Công thức C₅H₁₂O; luôn ghi nhớ trong chuỗi phản ứng điều chế dầu chuối: Isoamyl alcohol + Acetic acid → Isoamyl acetate.',
+      noteEn: 'Formula C₅H₁₂O; essential alcohol partner in synthesizing banana oil (Isoamyl acetate).'
+    },
+    {
+      id: 'p-cresol',
+      catKey: 'phenol',
+      elements: [...C6_AROM,'O','C'],
+      bonds: [...BENZENE, [0,6,1],[3,7,1]],
+      name: 'p-Cresol (4-Methylphenol)',
+      nameEn: 'p-Cresol (4-Methylphenol)',
+      category: 'Phenol',
+      categoryEn: 'Phenol',
+      state: 'Rắn (tinh thể không màu, mùi nhựa than đá sát trùng)',
+      stateEn: 'Solid (colorless crystals, tar-like phenolic odor)',
+      solubility: 'Ít tan trong nước (~2 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2 g/100 mL)',
+      realLife: 'Hợp chất họ Phenol chiết xuất từ nhựa than đá, được dùng tổng hợp chất chống oxi hóa BHT bảo quản dầu ăn, thực phẩm đóng gói và chất sát trùng công nghiệp.',
+      realLifeEn: 'Coal-tar phenolic used globally as the direct industrial precursor to the food antioxidant BHT (butylated hydroxytoluene) and disinfectants.',
+      reactions: [
+        'Thể hiện tính Phenol rõ rệt: tác dụng với cả kim loại Na và dung dịch NaOH tạo muối tan (phân biệt hoàn toàn với đồng phân Benzyl alcohol không tan trong NaOH!).',
+        'Tạo màu tím xanh đặc trưng với dung dịch FeCl₃ và tạo kết tủa trắng với nước Br₂ (thế vào 2 vị trí ortho còn trống).',
+        'Không phản ứng với dung dịch NaHCO₃ do lực acid yếu hơn Carbonic acid.'
+      ],
+      reactionsEn: [
+        'Dissolves cleanly in aqueous NaOH as Sodium p-cresolate (readily distinguished from isomeric Benzyl alcohol and Anisole).',
+        'Develops a blue-violet color with FeCl₃ and precipitates a dibromo derivative with bromine water.',
+        'Too weakly acidic to liberate CO₂ from aqueous NaHCO₃.'
+      ],
+      note: 'Công thức C₇H₈O; bộ ba đồng phân C₇H₈O hay thi THPT: p-Cresol (Phenol) – Benzyl alcohol (Alcohol) – Anisole (Ether).',
+      noteEn: 'Formula C₇H₈O; completes the classic Grade 11/12 isomer triad alongside Benzyl alcohol and Anisole.'
+    },
+    {
+      id: 'isobutanal',
+      catKey: 'aldehyde',
+      elements: ['C','C','C','C','O'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1],[3,4,2]],
+      name: 'Isobutanal (2-Methylpropanal)',
+      nameEn: 'Isobutanal (2-Methylpropanal)',
+      category: 'Aldehyde',
+      categoryEn: 'Aldehyde',
+      state: 'Lỏng không màu (dễ bay hơi, sôi ở 64 °C, mùi ngũ cốc hăng)',
+      stateEn: 'Colorless volatile liquid (bp 64 °C)',
+      solubility: 'Tan vừa phải trong nước (~6 g/100 mL)',
+      solubilityEn: 'Moderately soluble in water (~6 g/100 mL)',
+      realLife: 'Sản phẩm phụ quan trọng của công nghệ hydroformyl hóa Propene trong công nghiệp dầu khí, dùng để sản xuất dung môi pha sơn sạch không độc và tiền chất tổng hợp amino acid thiết yếu Valine.',
+      realLifeEn: 'Co-product of industrial Propene hydroformylation converted into low-toxicity paint coalescents and the amino acid Valine.',
+      reactions: [
+        'Tham gia phản ứng tráng bạc với AgNO₃/NH₃ tạo lớp bạc kim loại và đun với Cu(OH)₂/NaOH tạo kết tủa đỏ gạch Cu₂O.',
+        'Làm mất màu nước Br₂ tạo Isobutyric acid.',
+        'Cộng H₂ (Ni, t°) khử trực tiếp thành Isobutanol (2-methylpropan-1-ol).'
+      ],
+      reactionsEn: [
+        'Positive to both Tollens silver-mirror reagent and Fehling Cu₂O reduction.',
+        'Decolorizes bromine water cleanly to yield Isobutyric acid.',
+        'Hydrogenates over Ni catalyst into Isobutanol.'
+      ],
+      note: 'Công thức C₄H₈O; đồng phân mạch nhánh của Butanal và đồng phân nhóm chức với Butanone (MEK).',
+      noteEn: 'Formula C₄H₈O; branched aldehyde isomer of Butanal and Butanone (MEK).'
+    },
+    {
+      id: 'pentan-2-one',
+      catKey: 'ketone',
+      elements: ['C','C','C','C','C','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[1,5,2]],
+      name: 'Pentan-2-one (Methyl propyl ketone)',
+      nameEn: 'Pentan-2-one (Methyl propyl ketone)',
+      category: 'Ketone',
+      categoryEn: 'Ketone',
+      state: 'Lỏng không màu (mùi giống Acetone pha lê)',
+      stateEn: 'Colorless liquid (acetone-like fruity odor)',
+      solubility: 'Tan ít trong nước (~4,3 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~4.3 g/100 mL)',
+      realLife: 'Dung môi công nghiệp nhiệt độ sôi trung bình (102 °C) thay thế cho các dung môi độc hại trong mực in, sơn nhựa acrylic và cũng góp phần tạo hương phô mai xanh tự nhiên.',
+      realLifeEn: 'Medium-boiling (102 °C) coatings and ink solvent that also contributes naturally to blue-cheese aroma.',
+      reactions: [
+        'DƯƠNG TÍNH với phản ứng Iodoform (tạo kết tủa VÀNG CHI₃↓ khi gặp I₂/NaOH) do mang nhóm CH₃–C(=O)–, giúp phân biệt ngay với Pentan-3-one âm tính!',
+        'KHÔNG tham gia phản ứng tráng bạc với thuốc thử Tollens (AgNO₃/NH₃).',
+        'Khử hóa bằng H₂ (Ni, t°) hoặc NaBH₄ chuyển thành Pentan-2-ol.'
+      ],
+      reactionsEn: [
+        'Gives a POSITIVE yellow Iodoform precipitate (CHI₃↓) with I₂/NaOH via its CH₃–C(=O)– motif — distinguishing it directly from Pentan-3-one (−)!',
+        'Fails the Tollens silver-mirror test (typical ketone behavior).',
+        'Reduces smoothly over Ni or with NaBH₄ to Pentan-2-ol.'
+      ],
+      note: 'Công thức C₅H₁₀O; cặp đối chiếu kinh điển Pentan-2-one (+ Iodoform) vs. Pentan-3-one (− Iodoform).',
+      noteEn: 'Formula C₅H₁₀O; classic Iodoform test pair alongside symmetric isomer Pentan-3-one.'
+    },
+
+    // =========================================================================
+    // 12. NITRO, NITRILE, AMINE, ALKALOID, ESTER, ACID & HYDROCARBON PACK (+58)
+    // =========================================================================
+    {
+      id: 'nitromethane',
+      catKey: 'nitro',
+      elements: ['C','N','O','O'],
+      bonds: [[0,1,1],[1,2,2],[1,3,2]],
+      name: 'Nitromethane',
+      nameEn: 'Nitromethane',
+      category: 'Hợp chất Nitro',
+      categoryEn: 'Nitro compound',
+      state: 'Lỏng sánh không màu (mùi hơi ngọt, sôi ở 101 °C)',
+      stateEn: 'Colorless oily liquid (bp 101 °C)',
+      solubility: 'Ít tan trong nước (~10 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~10 g/100 mL)',
+      realLife: 'Hợp chất nitro hữu cơ đơn giản nhất, nổi tiếng làm nhiên liệu đua xe mô hình RC và xe đua tốc độ cao Top Fuel Dragster (cháy cung cấp tới hơn 2 lần công suất so với xăng thông thường nhờ sẵn có nguồn Oxygen nội tại trong phân tử), đồng thời là dung môi phân cực công nghiệp.',
+      realLifeEn: 'Simplest nitroalkane, famous as a high-energy racing fuel for Top Fuel dragsters and RC model engines (supplying internal Oxygen for combustion) and as a polar industrial solvent.',
+      reactions: [
+        'Khử nhóm -NO₂ bằng Fe/HCl hoặc H₂ (xúc tác Ni) tạo thành Methylamine (CH₃NH₂).',
+        'Trong môi trường kiềm NaOH mạnh có thể chuyển sang dạng muối aci-nitronate (tính CH-acid yếu).',
+        'Cháy trong Oxygen ít hơn xăng nhưng giải phóng năng lượng tức thì rất mạnh: 4 CH₃NO₂ + 3 O₂ → 4 CO₂ + 6 H₂O + 2 N₂.'
+      ],
+      reactionsEn: [
+        'Reduction of its -NO₂ group with Fe/HCl or catalytic H₂/Ni yields Methylamine.',
+        'Shows weak C–H acidity in strong aqueous base (forming aci-nitromethanoate salts).',
+        'Combusts vigorously with far less external air required than gasoline hydrocarbons.'
+      ],
+      note: 'Công thức CH₃NO₂ (chứa nhóm -NO₂); là đồng phân cấu tạo phổ biến nhất của Carbamic acid và Methyl nitrite.',
+      noteEn: 'Formula CH₃NO₂; benchmark nitroalkane isomer alongside Carbamic acid and Methyl nitrite.'
+    },
+    {
+      id: 'carbamic-acid',
+      catKey: 'carboxylic',
+      elements: ['N','C','O','O'],
+      bonds: [[0,1,1],[1,2,2],[1,3,1]],
+      name: 'Carbamic acid',
+      nameEn: 'Carbamic acid',
+      category: 'Carboxylic acid (Amino-carboxylic)',
+      categoryEn: 'Carboxylic acid',
+      state: 'Không tồn tại bền ở trạng thái tự do (bền ở dạng muối và Ester)',
+      stateEn: 'Unstable free acid (isolable as salts & esters)',
+      solubility: 'Tồn tại cân bằng trong dung dịch',
+      solubilityEn: 'Exists in aqueous equilibrium',
+      realLife: 'Phân tử nền tảng tạo nên muối Ammonium carbamate trong quá trình công nghiệp sản xuất hàng trăm triệu tấn phân đạm Urea mỗi năm và là bộ khung gốc của họ nhựa Polyurethane (nhóm carbamate/urethane) làm nệm mút, giày thể thao.',
+      realLifeEn: 'Parent scaffold of Ammonium carbamate (the key industrial intermediate to Urea fertilizer) and of every Polyurethane foam and coating.',
+      reactions: [
+        'Tự phân hủy nhanh ở trạng thái tự do thành khí CO₂ và khí NH₃: H₂N–COOH → NH₃ + CO₂.',
+        'Ở nhiệt độ và áp suất cao, NH₃ kết hợp CO₂ tạo muối Ammonium carbamate rồi tách nước thành Urea.',
+        'Các dẫn xuất ester của nó (như Methyl carbamate, Polyurethane) hoàn toàn bền vững.'
+      ],
+      reactionsEn: [
+        'Free Carbamic acid decomposes spontaneously into Ammonia and Carbon dioxide gas.',
+        'Ammonium carbamate dehydrates at elevated temperature and pressure into Urea fertilizer.',
+        'Forms stable esters (carbamates / urethanes) widely used in polymers and agrochemicals.'
+      ],
+      note: 'Công thức CH₃NO₂ (H₂N–COOH); đồng phân carboxylic-amide của Nitromethane.',
+      noteEn: 'Formula CH₃NO₂ (H₂N–COOH); formally the simplest carbamic acid isomer of Nitromethane.'
+    },
+    {
+      id: 'methyl-nitrite',
+      catKey: 'nitroso',
+      elements: ['C','O','N','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2]],
+      name: 'Methyl nitrite',
+      nameEn: 'Methyl nitrite',
+      category: 'Nitrite / Nitroso',
+      categoryEn: 'Nitrite / Nitroso',
+      state: 'Khí không màu (sôi ở −12 °C, mùi ngọt đặc trưng)',
+      stateEn: 'Colorless gas (bp −12 °C)',
+      solubility: 'Ít tan trong nước',
+      solubilityEn: 'Slightly soluble in water',
+      realLife: 'Là ester alkyl của Nitrous acid (HNO₂), đóng vai trò chất trung gian quan trọng trong công nghiệp hóa dầu tổng hợp Oxime và làm chất oxy hóa nhẹ trong tổng hợp hữu cơ tinh khiết.',
+      realLifeEn: 'Simplest alkyl nitrite ester (from Methanol and HNO₂), serving as a gas-phase nitrosating reagent and intermediate in oxime manufacturing.',
+      reactions: [
+        'Thủy phân nhanh trong dung dịch kiềm NaOH tạo Methanol và muối Sodium nitrite (NaNO₂).',
+        'Điều chế bằng phản ứng giữa Methanol và dung dịch NaNO₂/H₂SO₄ lạnh.',
+        'Bị khử hoặc phân hủy nhiệt dễ hơn nhiều so với đồng phân Nitromethane.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes swiftly in aqueous NaOH back into Methanol and Sodium nitrite.',
+        'Prepared cleanly by treating Methanol with cold aqueous NaNO₂ and Sulfuric acid.',
+        'Thermally far more labile than its C-bonded isomer Nitromethane.'
+      ],
+      note: 'Công thức CH₃NO₂ (CH₃–O–N=O); khác Nitromethane (C gắn N) ở chỗ gốc methyl gắn qua nguyên tử Oxygen.',
+      noteEn: 'Formula CH₃NO₂ (CH₃–O–N=O); O-bonded nitrite ester isomer of Nitromethane.'
+    },
+    {
+      id: 'formohydroxamic-acid',
+      catKey: 'amide',
+      elements: ['C','O','N','O'],
+      bonds: [[0,1,2],[0,2,1],[2,3,1]],
+      name: 'Formohydroxamic acid',
+      nameEn: 'Formohydroxamic acid',
+      category: 'Hydroxamic acid / Amide',
+      categoryEn: 'Hydroxamic acid / Amide',
+      state: 'Rắn (tinh thể không màu, nóng chảy ở 81 °C)',
+      stateEn: 'Solid (colorless crystals, mp 81 °C)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Hợp chất hydroxamic acid đơn giản nhất dùng làm tác nhân tạo phức chelat mạnh với ion kim loại Fe³⁺ (màu đỏ tía đặc trưng trong phép thử nhận biết dẫn xuất carboxylic) và trong nghiên cứu ức chế enzyme.',
+      realLifeEn: 'Simplest hydroxamic acid, renowned for forming intense red-violet complexes with Fe³⁺ ions (ferric hydroxamate test) and modeling metalloprotein inhibitors.',
+      reactions: [
+        'Tạo phức chất màu ĐỎ TÍA ĐẶC TRƯNG với dung dịch FeCl₃ — cơ sở của phép thử nhận biết ester/anhydride kinh điển.',
+        'Thủy phân trong dung dịch kiềm hoặc acid nóng tạo Formic acid và Hydroxylamine.',
+        'Có tính acid yếu (nhờ nhóm N–OH cạnh C=O).'
+      ],
+      reactionsEn: [
+        'Chelates Fe³⁺ ions immediately to give a vivid burgundy-violet ferric hydroxamate complex.',
+        'Hydrolyzes in hot aqueous acid or base into Formic acid and Hydroxylamine.',
+        'Displays mild acidity at its N–OH proton.'
+      ],
+      note: 'Công thức CH₃NO₂ (H–CO–NH–OH); đồng phân của Nitromethane và Carbamic acid.',
+      noteEn: 'Formula CH₃NO₂ (HCONHOH); hydroxamic acid isomer of Nitromethane.'
+    },
+    {
+      id: 'o-formylhydroxylamine',
+      catKey: 'ester',
+      elements: ['C','O','O','N'],
+      bonds: [[0,1,2],[0,2,1],[2,3,1]],
+      name: 'O-Formylhydroxylamine',
+      nameEn: 'O-Formylhydroxylamine',
+      category: 'Ester / Hydroxylamine',
+      categoryEn: 'Ester / Hydroxylamine',
+      state: 'Chất trung gian hóa học / dung dịch',
+      stateEn: 'Reactive ester-hydroxylamine isomer',
+      solubility: 'Tan trong dung môi phân cực',
+      solubilityEn: 'Soluble in polar solvents',
+      realLife: 'Đồng phân cấu tạo dạng ester-amine (H–COO–NH₂) của CH₃NO₂, thường dùng làm ví dụ đối chiếu đồng phân nhóm chức trong hóa học hữu cơ tính toán và tổng hợp hóa dược.',
+      realLifeEn: 'O-Acyl hydroxylamine ester isomer of CH₃NO₂ (H–COO–NH₂) studied in functional-group isomerism and amination reactions.',
+      reactions: [
+        'Dễ bị thủy phân tạo muối Formate và Hydroxylamine trong môi trường kiềm.',
+        'Nhóm –O–NH₂ đóng vai trò tác nhân chuyển nhóm –NH₂ trong một số phản ứng tổng hợp hữu cơ.',
+        'Tự chuyển vị chậm hoặc phản ứng ngưng tụ ở nhóm -NH₂ khi có mặt carbonyl.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes cleanly in alkaline solution to Formate and Hydroxylamine.',
+        'Can serve as an electrophilic aminating motif via its –O–NH₂ linkage.',
+        'Condenses with electrophilic carbonyls at its free -NH₂ site.'
+      ],
+      note: 'Công thức CH₃NO₂ (H–CO–O–NH₂); hoàn thiện đủ bộ 5 đồng phân cấu tạo tiêu biểu của CH₃NO₂.',
+      noteEn: 'Formula CH₃NO₂ (H–CO–O–NH₂); completes the 5 main structural isomers of CH₃NO₂.'
+    },
+    {
+      id: 'nitrobenzene',
+      catKey: 'nitro',
+      elements: [...C6_AROM,'N','O','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[6,8,2]],
+      name: 'Nitrobenzene',
+      nameEn: 'Nitrobenzene',
+      category: 'Hợp chất Nitro',
+      categoryEn: 'Nitro compound',
+      state: 'Chất lỏng sánh màu vàng nhạt (mùi hạnh nhân đắng, D = 1,20 g/cm³)',
+      stateEn: 'Pale-yellow oily liquid (bitter almond odor, 1.20 g/mL)',
+      solubility: 'Không tan trong nước, chìm xuống đáy',
+      solubilityEn: 'Insoluble in water (denser than water)',
+      realLife: 'Hóa chất công nghiệp chủ lực (>95% sản lượng) dùng để khử hóa sản xuất Aniline phục vụ công nghiệp thuốc nhuộm, cao su và dược phẩm Paracetamol; từng được gọi là dầu Mirbane có mùi hạnh nhân.',
+      realLifeEn: 'Major petrochemical intermediate (>95% reduced industrially to Aniline for dyes, rubber chemicals, and Paracetamol); historically called oil of Mirbane.',
+      reactions: [
+        'Điều chế bằng phản ứng nitro hóa Benzene với hỗn hợp HNO₃ đặc / H₂SO₄ đặc (50–60 °C), tạo chất lỏng dầu vàng nặng lắng xuống đáy ống nghiệm.',
+        'Khử bằng bột Fe + dung dịch HCl (sau đó trung hòa bằng NaOH) chuyển thành Aniline (C₆H₅NH₂).',
+        'Nhóm -NO₂ hút electron mạnh làm vòng thơm kém hoạt động hơn Benzene và định hướng phản ứng thế tiếp theo vào vị trí meta.'
+      ],
+      reactionsEn: [
+        'Synthesized by nitrating Benzene with mixed conc. HNO₃/H₂SO₄ at ~55 °C, separating as a dense pale-yellow bottom layer.',
+        'Reduced cleanly by Fe/HCl (followed by NaOH neutralization) into Aniline.',
+        'Strongly electron-withdrawing -NO₂ deactivates the aromatic ring and directs further substitution to the meta position.'
+      ],
+      note: 'Công thức C₆H₅NO₂; chất lỏng nặng hơn nước và rất độc (gây methemoglobin máu khi tiếp xúc qua da hoặc hít hơi).',
+      noteEn: 'Formula C₆H₅NO₂; dense toxic oil serving as the industrial gateway from Benzene to Aniline.'
+    },
+    {
+      id: 'tnt',
+      catKey: 'nitro',
+      elements: [...C6_AROM,'C','N','O','O','N','O','O','N','O','O'],
+      bonds: [...BENZENE,[0,6,1],[1,7,1],[7,8,2],[7,9,2],[3,10,1],[10,11,2],[10,12,2],[5,13,1],[13,14,2],[13,15,2]],
+      name: 'TNT (2,4,6-Trinitrotoluene)',
+      nameEn: 'TNT (2,4,6-Trinitrotoluene)',
+      category: 'Hợp chất Nitro',
+      categoryEn: 'Nitro compound',
+      state: 'Rắn (tinh thể màu vàng nhạt, nóng chảy ở 80,4 °C)',
+      stateEn: 'Solid (pale-yellow crystals, mp 80.4 °C)',
+      solubility: 'Hầu như không tan trong nước',
+      solubilityEn: 'Practically insoluble in water',
+      realLife: 'Thuốc nổ quân sự và công nghiệp khai khoáng phổ biến nhất lịch sử nhờ tính an toàn cơ học cao (nóng chảy ở 80 °C để đúc khuôn dễ dàng mà không phát nổ khi va chạm hay đun nóng nhẹ, chỉ nổ khi có kíp nổ mạnh).',
+      realLifeEn: 'Classic military and mining explosive prized because it melts safely at 80 °C for casting and resists accidental shock unless triggered by a detonator.',
+      reactions: [
+        'Điều chế bằng cách cho Toluene phản ứng với hỗn hợp HNO₃ đặc / H₂SO₄ đặc đun nóng (thế vào cả 3 vị trí 2, 4, 6 nhờ nhóm -CH₃ hoạt hóa mạnh).',
+        'Khi kích nổ phân hủy cực nhanh giải phóng lượng lớn khí N₂, CO, H₂O và muội Carbon tỏa nhiệt khổng lồ.',
+        'Tạo phức màu đỏ nâu đặc trưng khi tác dụng với dung dịch kiềm mạnh trong Acetone.'
+      ],
+      reactionsEn: [
+        'Synthesized by exhaustive nitration of Toluene with mixed conc. HNO₃/H₂SO₄ at positions 2, 4, and 6.',
+        'Detonates via rapid intramolecular redox decomposition releasing hot N₂, CO, H₂O, and soot.',
+        'Forms dark red Meisenheimer complexes with strong base in Acetone.'
+      ],
+      note: 'Công thức C₇H₅N₃O₆ (M = 227); bài toán tính hiệu suất điều chế thuốc nổ TNT từ Toluene thường gặp trong Hóa 11.',
+      noteEn: 'Formula C₇H₅N₃O₆ (M = 227.13 g/mol); classic Grade 11 stoichiometry compound synthesized from Toluene.'
+    },
+    {
+      id: 'picric-acid',
+      catKey: 'phenol',
+      elements: [...C6_AROM,'O','N','O','O','N','O','O','N','O','O'],
+      bonds: [...BENZENE,[0,6,1],[1,7,1],[7,8,2],[7,9,2],[3,10,1],[10,11,2],[10,12,2],[5,13,1],[13,14,2],[13,15,2]],
+      name: 'Picric acid (2,4,6-Trinitrophenol)',
+      nameEn: 'Picric acid (2,4,6-Trinitrophenol)',
+      category: 'Phenol (Nitro-phenol)',
+      categoryEn: 'Phenol (Nitro-phenol)',
+      state: 'Rắn (tinh thể màu vàng rực, vị cực đắng)',
+      stateEn: 'Solid (bright yellow bitter crystals)',
+      solubility: 'Ít tan trong nước lạnh (~1,3 g/100 mL), tan tốt trong nước nóng',
+      solubilityEn: 'Slightly soluble cold; soluble in hot water',
+      realLife: 'Thuốc thử hóa học dùng định danh alkaloid, thuốc nhuộm màu vàng rực cho tơ lụa len từ thế kỷ 19, dung dịch cố định mô giải phẫu và vật liệu nổ mạnh trong lịch sử (cần bảo quản ẩm dưới lớp nước để tránh nổ khi khô).',
+      realLifeEn: 'Intensely yellow dye and biological histological fixative (Bouin solution), plus historic high explosive stored wet for safety.',
+      reactions: [
+        'Tạo KẾT TỦA VÀNG ngay khi nhỏ HNO₃ đặc vào Phenol (có H₂SO₄ đặc xúc tác) — phản ứng nhận biết Phenol trong SGK!',
+        'Nhờ 3 nhóm -NO₂ hút electron rất mạnh, có LỰC ACID MẠNH GẦN BẰNG ACID VÔ CƠ (làm đỏ quỳ tím, giải phóng khí CO₂ với Na₂CO₃/NaHCO₃ — khác hẳn Phenol thường!).',
+        'Khi khô ráo dễ nổ mạnh nếu va đập hoặc gia nhiệt.'
+      ],
+      reactionsEn: [
+        'Precipitates as bright YELLOW crystals upon nitrating Phenol with conc. HNO₃/H₂SO₄.',
+        'Three electron-withdrawing -NO₂ groups render it nearly as strong as mineral acids (turns litmus red and bubbles CO₂ with NaHCO₃ — unlike Phenol!).',
+        'Shock-sensitive explosive when dry, forming explosive metal picrates with heavy metals.'
+      ],
+      note: 'Công thức C₆H₃N₃O₇; lưu ý điểm đặc biệt: Phenol không tác dụng với NaHCO₃ nhưng Picric acid lại sủi bọt CO₂ rất mạnh!',
+      noteEn: 'Formula C₆H₃N₃O₇; crucial acidity contrast: Phenol fails to react with NaHCO₃, whereas Picric acid bubbles CO₂ briskly.'
+    },
+    {
+      id: 'nitroglycerin',
+      catKey: 'ester',
+      elements: ['C','C','C','O','O','O','N','O','O','N','O','O','N','O','O'],
+      bonds: [[0,1,1],[1,2,1],[0,3,1],[1,4,1],[2,5,1],[3,6,1],[6,7,2],[6,8,2],[4,9,1],[9,10,2],[9,11,2],[5,12,1],[12,13,2],[12,14,2]],
+      name: 'Nitroglycerin (Glyceryl trinitrate)',
+      nameEn: 'Nitroglycerin (Glyceryl trinitrate)',
+      category: 'Ester vô cơ (Nitrate ester)',
+      categoryEn: 'Inorganic nitrate ester',
+      state: 'Lỏng sánh không màu đến vàng nhạt (rất nhạy nổ khi va chạm)',
+      stateEn: 'Colorless/pale-yellow dense oily liquid (highly shock-sensitive)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Vừa là thành phần cốt lõi của thuốc nổ Dynamite do Alfred Nobel phát minh năm 1867 (người sáng lập Giải Nobel), vừa là thuốc cấp cứu ngậm dưới lưỡi giãn mạch vành tức thì cho bệnh nhân đau thắt ngực, nhồi máu cơ tim.',
+      realLifeEn: 'Dual-role icon: stabilized by Alfred Nobel into Dynamite (1867) and prescribed sublingually as a fast-acting vasodilator to relieve angina heart pain.',
+      reactions: [
+        'Điều chế bằng phản ứng ester hóa Glycerol với hỗn hợp HNO₃ đặc / H₂SO₄ đặc ở nhiệt độ thấp được kiểm soát chặt.',
+        'Thủy phân trong dung dịch kiềm NaOH đặc tạo lại Glycerol và muối Sodium nitrate (NaNO₃).',
+        'Phân hủy nổ tức thì tỏa lượng khí khổng lồ: 4 C₃H₅(ONO₂)₃ → 12 CO₂ + 10 H₂O + 6 N₂ + O₂.'
+      ],
+      reactionsEn: [
+        'Prepared by esterifying Glycerol with cold mixed conc. HNO₃/H₂SO₄.',
+        'Hydrolyzes in strong aqueous NaOH into Glycerol and NaNO₃.',
+        'Detonates upon shock releasing huge volumes of hot N₂, CO₂, H₂O, and O₂ gas.'
+      ],
+      note: 'Công thức C₃H₅N₃O₉; dù tên thường gọi là "Nitroglycerin" nhưng thực chất cấu tạo là Ester của Nitric acid (–O–NO₂), không phải hợp chất Nitro.',
+      noteEn: 'Formula C₃H₅N₃O₉; technically an organic nitrate ester (–O–NO₂) rather than a C-bonded nitro compound.'
+    },
+    {
+      id: 'hydrogen-cyanide',
+      catKey: 'nitrile',
+      elements: ['C','N'],
+      bonds: [[0,1,3]],
+      name: 'Hydrogen cyanide (Hydrocyanic acid)',
+      nameEn: 'Hydrogen cyanide (Hydrocyanic acid)',
+      category: 'Nitrile',
+      categoryEn: 'Nitrile',
+      state: 'Khí hoặc lỏng không màu (sôi ở 25,6 °C, mùi hạnh nhân đắng, cực độc)',
+      stateEn: 'Colorless ultra-volatile liquid/gas (bp 25.6 °C, bitter almond odor, lethal toxin)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Chất độc cực mạnh ức chế hô hấp tế bào (có lượng vết trong hạt hạnh nhân đắng, hạt táo và sắn tươi chưa chế biến kỹ); nhưng trong công nghiệp hóa chất lại là nguyên liệu tổng hợp Methyl methacrylate (nhựa mica PMMA), Nylon-6,6 và tách chiết vàng.',
+      realLifeEn: 'Potent cellular respiration inhibitor occurring naturally in trace cyanogenic glycosides (cassava, apple seeds), yet vital industrially for synthesizing PMMA (Plexiglas) and adiponitrile.',
+      reactions: [
+        'Tan trong nước tạo Hydrocyanic acid rất yếu, tác dụng với kiềm NaOH tạo muối Sodium cyanide (NaCN).',
+        'Cộng hợp vào nhóm carbonyl của Acetone tạo Acetone cyanohydrin — bước đầu sản xuất thủy tinh hữu cơ Plexiglas.',
+        'Cộng hợp vào Acetylene tạo Acrylonitrile (nguyên liệu dệt tơ Nitron).'
+      ],
+      reactionsEn: [
+        'Weak acid in water, neutralized cleanly by NaOH to Sodium cyanide.',
+        'Adds across the carbonyl of Acetone to yield acetone cyanohydrin en route to Plexiglas.',
+        'Adds across Acetylene to synthesize Acrylonitrile.'
+      ],
+      note: 'Công thức HCN (H–C≡N); vì có chứa Carbon liên kết ba trực tiếp với Nitrogen, đây là nitrile đơn giản nhất.',
+      noteEn: 'Formula HCN (H–C≡N); simplest nitrile structure (formally Methanenitrile).'
+    },
+    {
+      id: 'acetonitrile',
+      catKey: 'nitrile',
+      elements: ['C','C','N'],
+      bonds: [[0,1,1],[1,2,3]],
+      name: 'Acetonitrile (Ethanenitrile)',
+      nameEn: 'Acetonitrile (Ethanenitrile)',
+      category: 'Nitrile',
+      categoryEn: 'Nitrile',
+      state: 'Lỏng không màu (mùi hơi ngọt giống Ether, sôi ở 82 °C)',
+      stateEn: 'Colorless mobile liquid (bp 82 °C)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Dung môi phân cực hàng đầu trong sắc ký lỏng hiệu năng cao (HPLC) tại các phòng kiểm nghiệm dược phẩm, thực phẩm, hóa sinh và dùng làm dung môi điện phân trong pin, siêu tụ điện.',
+      realLifeEn: 'Premier polar aprotic mobile-phase solvent in HPLC analytical chemistry labs, pharmaceutical purification, and supercapacitor electrolytes.',
+      reactions: [
+        'Thủy phân hoàn toàn khi đun nóng trong môi trường acid hoặc kiềm (tạo Acetic acid + NH₄⁺ hoặc Sodium acetate + NH₃).',
+        'Khử nhóm -C≡N bằng H₂ (xúc tác Ni) hoặc LiAlH₄ tạo thành Ethylamine.',
+        'Rất bền với nhiều chất oxy hóa mạnh nên được ưu tiên chọn làm dung môi phân tích.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes on heating with aqueous acid or base to Acetic acid / Acetate + Ammonia.',
+        'Catalytic hydrogenation or LiAlH₄ reduction yields Ethylamine.',
+        'High electrochemical and oxidative stability makes it ideal for HPLC and electrochemistry.'
+      ],
+      note: 'Công thức CH₃C≡N (C₂H₃N); sản phẩm phụ chủ yếu từ quy trình tổng hợp Acrylonitrile.',
+      noteEn: 'Formula CH₃CN (C₂H₃N); simplest alkyl nitrile.'
+    },
+    {
+      id: 'acrylonitrile',
+      catKey: 'nitrile',
+      elements: ['C','C','C','N'],
+      bonds: [[0,1,2],[1,2,1],[2,3,3]],
+      name: 'Acrylonitrile',
+      nameEn: 'Acrylonitrile',
+      category: 'Nitrile',
+      categoryEn: 'Nitrile',
+      state: 'Lỏng không màu (mùi hắc giống hành tây, độc và dễ cháy)',
+      stateEn: 'Colorless pungent flammable liquid',
+      solubility: 'Tan vừa trong nước (~7 g/100 mL)',
+      solubilityEn: 'Moderately soluble in water (~7 g/100 mL)',
+      realLife: 'Monomer cốt lõi để trùng hợp tạo tơ Nitron (tơ Olon / Polyacrylonitrile) xốp nhẹ, giữ ấm cực tốt thay cho lông cừu tự nhiên để dệt áo len mùa đông, đồng thời sản xuất nhựa siêu bền ABS (vỏ mũ bảo hiểm, đồ chơi Lego) và sợi carbon hàng không.',
+      realLifeEn: 'Critical monomer polymerized into warm wool-like acrylic fiber (Orlon/Nitron), tough ABS plastics (Lego bricks, helmets), and aerospace carbon fiber precursors.',
+      reactions: [
+        'Trùng hợp (xt, t°, p) tạo thành Polyacrylonitrile (PAN) để kéo sợi tơ Olon / Nitron.',
+        'Đồng trùng hợp với Buta-1,3-diene tạo cao su Buna-N (chống dầu cực tốt) hoặc với Butadiene và Styrene tạo nhựa ABS.',
+        'Làm mất màu nước Br₂ và dung dịch KMnO₄ ở nhiệt độ thường; thủy phân nhóm -C≡N thành Acrylic acid.'
+      ],
+      reactionsEn: [
+        'Undergoes vinyl polymerization to Polyacrylonitrile (PAN) — Nitron/Olon synthetic wool fiber.',
+        'Copolymerizes with Buta-1,3-diene into oil-resistant Buna-N nitrile rubber and with Styrene into ABS resin.',
+        'Decolorizes bromine water and cold KMnO₄; nitrile hydrolysis gives Acrylic acid.'
+      ],
+      note: 'Công thức CH₂=CH–C≡N (C₃H₃N); nhớ bài Polymer Hóa 12: Tơ Nitron (tơ Olon) điều chế từ phản ứng trùng hợp Acrylonitrile.',
+      noteEn: 'Formula C₃H₃N; high-frequency Grade 12 polymer monomer for Nitron/Olon acrylic fiber and Buna-N rubber.'
+    },
+    {
+      id: 'propylamine',
+      catKey: 'amine',
+      elements: ['C','C','C','N'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1]],
+      name: 'Propylamine (Propan-1-amine)',
+      nameEn: 'Propylamine (Propan-1-amine)',
+      category: 'Amine',
+      categoryEn: 'Amine',
+      state: 'Lỏng không màu (dễ bay hơi, sôi ở 48 °C, mùi cá tanh khai)',
+      stateEn: 'Colorless volatile liquid (bp 48 °C, fishy ammonia odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Là alkylamine mạch thẳng đầu tiên tồn tại ở thể lỏng tại nhiệt độ phòng (khác với C1–C2 dạng khí); được dùng làm chất trung gian tổng hợp thuốc trừ cỏ, cao su và dược chất.',
+      realLifeEn: 'Smallest linear primary aliphatic amine that is liquid at room temperature (bp 48 °C); intermediate for agrochemicals, rubber accelerators, and drugs.',
+      reactions: [
+        'Có tính base mạnh hơn NH₃: làm quỳ tím hóa xanh, phenolphthalein hóa hồng và phản ứng nhanh với HCl tạo muối tan.',
+        'Phản ứng với HNO₂ (NaNO₂/HCl) giải phóng khí N₂ tạo Propan-1-ol (cùng sản phẩm phụ chuyển vị).',
+        'Tạo phức màu xanh thẫm với dung dịch CuSO₄ khi nhỏ dư.'
+      ],
+      reactionsEn: [
+        'Turns red litmus blue and phenolphthalein pink; neutralizes HCl to Propylammonium chloride.',
+        'Reacts with nitrous acid evolving N₂ gas bubbles (primary amine test).',
+        'Dissolves precipitated Cu(OH)₂ into a deep royal-blue amine complex.'
+      ],
+      note: 'Công thức C₃H₉N; cùng công thức phân tử với Isopropylamine, Ethylmethylamine và Trimethylamine (tổng cộng 4 đồng phân amine C₃H₉N).',
+      noteEn: 'Formula C₃H₉N; one of four constitutional amine isomers of C₃H₉N.'
+    },
+    {
+      id: 'isopropylamine',
+      catKey: 'amine',
+      elements: ['C','C','C','N'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1]],
+      name: 'Isopropylamine (Propan-2-amine)',
+      nameEn: 'Isopropylamine (Propan-2-amine)',
+      category: 'Amine',
+      categoryEn: 'Amine',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 32 °C, mùi ammonia khai)',
+      stateEn: 'Colorless ultra-volatile liquid (bp 32 °C, ammonia odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Hóa chất trung gian sản lượng lớn dùng pha chế muối thuốc diệt cỏ phổ rộng (như muối isopropylammonium của Glyphosate), chất chống oxy hóa cao su và tổng hợp thuốc tim mạch nhóm beta-blocker (Propranolol).',
+      realLifeEn: 'High-volume industrial intermediate for herbicide formulations (Glyphosate salts), rubber stabilizers, and beta-blocker heart medications (Propranolol).',
+      reactions: [
+        'Làm xanh giấy quỳ tím và hòa tan trong acid HCl tạo muối tan.',
+        'Tác dụng với acid nitrous (NaNO₂ + HCl) ở nhiệt độ thường sủi bọt khí N₂ và tạo Propan-2-ol.',
+        'Phản ứng với Acetic anhydride tạo amide tương ứng.'
+      ],
+      reactionsEn: [
+        'Strongly basic aqueous solution turns litmus blue and forms crystalline salts with HCl.',
+        'Liberates N₂ gas with cold NaNO₂/HCl yielding Propan-2-ol.',
+        'Acylates cleanly with acid anhydrides to N-isopropyl amides.'
+      ],
+      note: 'Công thức C₃H₉N (amine bậc 1 mạch nhánh); là chất lỏng sôi thấp hơn nhiều so với Propylamine mạch thẳng.',
+      noteEn: 'Branched primary C₃H₉N amine isomer boiling 16 °C lower than linear Propylamine.'
+    },
+    {
+      id: '2,4,6-tribromoaniline',
+      catKey: 'amine',
+      elements: [...C6_AROM,'N','Br','Br','Br'],
+      bonds: [...BENZENE,[0,6,1],[1,7,1],[3,8,1],[5,9,1]],
+      name: '2,4,6-Tribromoaniline',
+      nameEn: '2,4,6-Tribromoaniline',
+      category: 'Amine',
+      categoryEn: 'Amine',
+      state: 'Rắn (kết tủa trắng hoặc tinh thể hình kim trắng, nóng chảy ở 120 °C)',
+      stateEn: 'Solid (white precipitate / needles, mp 120 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Chính là KẾT TỦA TRẮNG quen thuộc xuất hiện tức thì khi nhỏ nước Br₂ vào dung dịch Aniline để nhận biết Aniline trong phòng thí nghiệm phổ thông; trong công nghiệp còn dùng làm chất phụ gia chống cháy.',
+      realLifeEn: 'The signature WHITE precipitate formed instantly when aqueous bromine is added to Aniline in classroom qualitative tests; also used as a flame-retardant intermediate.',
+      reactions: [
+        'Tạo thành ngay ở nhiệt độ phòng khi Aniline phản ứng với nước Br₂ dư (thế đồng thời cả 3 vị trí 2, 4, 6).',
+        'Tính base CỰC YẾU do 3 nguyên tử Bromine hút electron mạnh (không tan tốt trong HCl loãng như Aniline).',
+        'Không làm mất màu thêm dung dịch Br₂ ở điều kiện thường.'
+      ],
+      reactionsEn: [
+        'Precipitates instantaneously when Aniline meets aqueous Bromine water at room temperature.',
+        'Even weaker base than Aniline because three Bromine atoms pull electron density away from -NH₂.',
+        'All ortho and para ring sites are blocked against further cold bromination.'
+      ],
+      note: 'Công thức C₆H₄Br₃N (M = 329,8); tương tự Phenol, Aniline nhận biết cực nhạy bằng nước Br₂ tạo kết tủa trắng.',
+      noteEn: 'Formula C₆H₄Br₃N (M = 329.8 g/mol); diagnostic white precipitate identifying Aniline.'
+    },
+    {
+      id: 'dmf',
+      catKey: 'amide',
+      elements: ['C','O','N','C','C'],
+      bonds: [[0,1,2],[0,2,1],[2,3,1],[2,4,1]],
+      name: 'Dimethylformamide (DMF)',
+      nameEn: 'Dimethylformamide (DMF)',
+      category: 'Amide',
+      categoryEn: 'Amide',
+      state: 'Lỏng không màu (mùi tanh amine nhẹ, sôi ở 153 °C)',
+      stateEn: 'Colorless high-boiling liquid (bp 153 °C)',
+      solubility: 'Tan vô hạn trong nước và hầu hết dung môi hữu cơ',
+      solubilityEn: 'Miscible with water and most organic solvents',
+      realLife: 'Dung môi công nghiệp đa năng hàng đầu dùng để hòa tan kéo sợi vải thun co giãn Spandex/Lycra, sản xuất da tổng hợp PU (giả da), màng lọc và hòa tan thuốc trong tổng hợp hóa dược.',
+      realLifeEn: 'Ubiquitous polar aprotic solvent indispensable for spinning elastic Spandex/Lycra fibers, polyurethane synthetic leather, and fine pharmaceutical synthesis.',
+      reactions: [
+        'Thủy phân khi đun nóng trong acid mạnh hoặc kiềm đặc tạo Formic acid (hoặc muối Formate) và khí Dimethylamine.',
+        'Rất bền nhiệt và không có nguyên tử H linh động (dung môi aprotic), hỗ trợ đắc lực các phản ứng thế nucleophile S_N2.',
+        'Trung tính với giấy quỳ tím ở điều kiện thường.'
+      ],
+      reactionsEn: [
+        'Hydrolyzes slowly in hot strong acid or base to Formate and Dimethylamine.',
+        'Polar aprotic solvent strongly accelerating bimolecular nucleophilic substitution (SN2) reactions.',
+        'Neutral to litmus under ordinary conditions.'
+      ],
+      note: 'Công thức (CH₃)₂N–CHO (C₃H₇NO); dẫn xuất thế hai lần của Formamide.',
+      noteEn: 'Formula C₃H₇NO; N,N-dimethyl derivative of Formamide.'
+    },
+    {
+      id: 'caprolactam',
+      catKey: 'amide',
+      elements: ['C','C','C','C','C','C','N','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1],[6,0,1],[0,7,2]],
+      name: 'ε-Caprolactam',
+      nameEn: 'ε-Caprolactam',
+      category: 'Amide (Lactam vòng 7 cạnh)',
+      categoryEn: 'Amide (Cyclic lactam)',
+      state: 'Rắn (tinh thể trắng hút ẩm, nóng chảy ở 69 °C)',
+      stateEn: 'Solid (hygroscopic white flakes, mp 69 °C)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Monomer sản xuất hàng triệu tấn tơ Capron (tơ Nylon-6) bền dai, đàn hồi tốt dùng dệt lưới đánh cá, dây thừng chịu lực, thảm trải sàn, chỉ phẫu thuật y tế và bánh răng nhựa kỹ thuật chịu mài mòn.',
+      realLifeEn: 'Multi-million-ton monomer ring-opened into tough Nylon-6 (Capron) fibers for fishing nets, carpets, tire cords, and precision engineering gears.',
+      reactions: [
+        'Trùng hợp MỞ VÒNG ở nhiệt độ cao (khoảng 250 °C có mặt ít nước xúc tác) tạo ra Polymer Tơ Capron (Nylon-6).',
+        'Thủy phân mở vòng hoàn toàn trong dung dịch kiềm hoặc acid nóng tạo thành 6-Aminohexanoic acid (ε-aminocaproic acid).',
+        'Là amide vòng (lactam) trung tính, không làm đổi màu giấy quỳ.'
+      ],
+      reactionsEn: [
+        'Undergoes ring-opening polymerization (~250 °C) directly into Nylon-6 (Capron) polyamide.',
+        'Complete aqueous hydrolysis opens the 7-membered ring into 6-Aminohexanoic acid.',
+        'Neutral cyclic amide unreactive toward litmus at room temperature.'
+      ],
+      note: 'Công thức C₆H₁₁NO; nhớ câu hỏi Hóa 12: Tơ Capron (Nylon-6) có thể điều chế bằng trùng hợp Caprolactam HOẶC trùng ngưng 6-Aminohexanoic acid.',
+      noteEn: 'Formula C₆H₁₁NO; Nylon-6 can be formed by ring-opening polymerization of Caprolactam OR polycondensation of 6-Aminohexanoic acid.'
+    },
+    {
+      id: '6-aminohexanoic-acid',
+      catKey: 'aminoacid',
+      elements: ['N','C','C','C','C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1],[6,7,2],[6,8,1]],
+      name: '6-Aminohexanoic acid (ε-Aminocaproic acid)',
+      nameEn: '6-Aminohexanoic acid (Aminocaproic acid)',
+      category: 'Amino acid',
+      categoryEn: 'Amino acid',
+      state: 'Rắn (bột tinh thể trắng)',
+      stateEn: 'Solid (white crystalline powder)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Monomer trực tiếp tham gia phản ứng trùng ngưng tạo Tơ Nylon-6 (tơ Capron), đồng thời dùng trong y học làm thuốc cầm máu (ức chế tiêu sợi huyết) sau phẫu thuật tim mạch, nha khoa.',
+      realLifeEn: 'Polycondensation monomer for Nylon-6 (Capron) fiber and clinically approved antifibrinolytic medication used to prevent excessive surgical bleeding.',
+      reactions: [
+        'Trùng ngưng khi đun nóng loại nước tạo Tơ Nylon-6 (tơ Capron) — phản ứng trùng ngưng điển hình của ε-amino acid.',
+        'Có tính lưỡng tính: phản ứng với cả dung dịch HCl lẫn dung dịch NaOH tỉ lệ 1 : 1.',
+        'Thu được trực tiếp khi thủy phân mở vòng Caprolactam trong nước.'
+      ],
+      reactionsEn: [
+        'Self-polycondenses upon heating with water elimination to yield Nylon-6 (Capron).',
+        'Amphoteric amino acid reacting 1:1 with both aqueous HCl and NaOH.',
+        'Produced by ring-opening hydrolysis of ε-Caprolactam.'
+      ],
+      note: 'Công thức H₂N–(CH₂)₅–COOH (C₆H₁₃NO₂); là ε-amino acid (nhóm -NH₂ ở vị trí C số 6, KHÔNG phải α-amino acid trong protein).',
+      noteEn: 'Formula C₆H₁₃NO₂; synthetic ε-amino acid (not found in natural proteins) used for Nylon-6.'
+    },
+    {
+      id: 'methylhydrazine',
+      catKey: 'amine',
+      elements: ['C','N','N'],
+      bonds: [[0,1,1],[1,2,1]],
+      name: 'Methylhydrazine (MMH)',
+      nameEn: 'Methylhydrazine (MMH)',
+      category: 'Amine / Hydrazine',
+      categoryEn: 'Amine / Hydrazine',
+      state: 'Lỏng không màu (mùi khai ammonia rất mạnh, dễ cháy)',
+      stateEn: 'Colorless volatile liquid (strong ammonia odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Nhiên liệu đẩy tàu vũ trụ nổi tiếng (từng dùng trong động cơ hạ cánh mặt trăng Apollo, tàu con thoi và hệ thống điều khiển quỹ đạo vệ tinh ngày nay) do tự bốc cháy tức thì (hypergolic) không cần bugi đánh lửa khi tiếp xúc chất oxy hóa N₂O₄ ngoài chân không vũ trụ.',
+      realLifeEn: 'Famous space-propulsion hypergolic rocket fuel powering Apollo Lunar Module thrusters, Space Shuttle orbital engines, and satellite attitude rockets — igniting spontaneously on contact with N₂O₄.',
+      reactions: [
+        'Tự bốc cháy nổ tức thì khi chạm chất oxy hóa Dinitrogen tetroxide (N₂O₄) mà không cần tia lửa mồi.',
+        'Có tính base và tính khử rất mạnh, tạo muối với HCl và phản ứng nhanh với Aldehyde tạo Hydrazone.',
+        'Mang liên kết đơn N–N giàu năng lượng tương tự Hydrazine.'
+      ],
+      reactionsEn: [
+        'Ignites hypergolically upon mixing with N₂O₄ oxidizer in vacuum without ignition sparks.',
+        'Strong base and potent reducing agent; condenses cleanly with aldehydes to methylhydrazones.',
+        'Contains an energetic N–N hydrazine linkage.'
+      ],
+      note: 'Công thức CH₃NHNH₂ (CH₆N₂); hợp chất dị tố C–N–N tiêu biểu trong công nghệ hàng không vũ trụ.',
+      noteEn: 'Formula CH₆N₂; signature C–N–N hydrazine propellant in spacecraft engineering.'
+    },
+    {
+      id: 'phenylalanine',
+      catKey: 'aminoacid',
+      elements: [...C6_AROM,'C','C','N','C','O','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,1],[7,8,1],[7,9,1],[9,10,2],[9,11,1]],
+      name: 'Phenylalanine (Phe)',
+      nameEn: 'Phenylalanine (Phe)',
+      category: 'Amino acid',
+      categoryEn: 'Amino acid',
+      state: 'Rắn (tinh thể trắng vị hơi đắng)',
+      stateEn: 'Solid (white crystals)',
+      solubility: 'Tan ít trong nước (~2,7 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.7 g/100 mL)',
+      realLife: 'α-Amino acid thiết yếu giàu vòng thơm tự nhiên trong thịt, sữa, trứng; là nguyên liệu tổng hợp chất tạo ngọt ít calo Aspartame (trong nước ngọt không đường) và tiền chất tạo chất dẫn truyền thần kinh Dopamine.',
+      realLifeEn: 'Essential aromatic α-amino acid abundant in protein foods; converted industrially into zero-calorie sweetener Aspartame and biologically into Dopamine.',
+      reactions: [
+        'Có tính lưỡng tính: phản ứng với HCl và NaOH tỉ lệ 1 : 1; dung dịch nước hầu như trung tính (không đổi màu quỳ tím).',
+        'Vòng thơm vẫn tham gia phản ứng thế ái điện tử (như nitro hóa với HNO₃ đặc) tạo dẫn xuất màu vàng đặc trưng (phản ứng Xanthoproteic của protein!).',
+        'Trùng ngưng ghép chuỗi peptide cùng các amino acid khác.'
+      ],
+      reactionsEn: [
+        'Amphoteric zwitterion reacting 1:1 with both HCl and NaOH; neutral solution leaves litmus unchanged.',
+        'Aromatic side chain undergoes nitration with conc. HNO₃ giving the yellow Xanthoproteic protein test.',
+        'Couples via peptide bonds into hydrophobic interiors of folded proteins.'
+      ],
+      note: 'Công thức C₉H₁₁NO₂ (M = 165,2); vòng thơm trong gốc -CH₂-C₆H₅ là nguyên nhân khiến lòng trắng trứng hóa vàng khi nhỏ HNO₃ đặc.',
+      noteEn: 'Formula C₉H₁₁NO₂ (M = 165.19 g/mol); its benzene ring accounts for the classic yellow Xanthoproteic protein test.'
+    },
+    {
+      id: 'aspartic-acid',
+      catKey: 'aminoacid',
+      elements: ['C','C','C','C','N','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[1,4,1],[0,5,2],[0,6,1],[3,7,2],[3,8,1]],
+      name: 'Aspartic acid (Asp)',
+      nameEn: 'Aspartic acid (Asp)',
+      category: 'Amino acid',
+      categoryEn: 'Amino acid',
+      state: 'Rắn (tinh thể trắng vị hơi chua)',
+      stateEn: 'Solid (white sourish crystals)',
+      solubility: 'Ít tan trong nước lạnh (~0,5 g/100 mL)',
+      solubilityEn: 'Sparingly soluble in cold water',
+      realLife: 'Một trong hai amino acid mang tính acid tạo nên protein (cùng Glutamic acid), từng phân lập từ măng tây; kết hợp với Phenylalanine tạo ra chất tạo ngọt Aspartame ngọt gấp ~200 lần đường mía.',
+      realLifeEn: 'One of two acidic proteinogenic amino acids (alongside Glutamic acid), first isolated from asparagus and combined with Phenylalanine to make Aspartame sweetener.',
+      reactions: [
+        'Dung dịch nước LÀM QUỲ TÍM HÓA ĐỎ do phân tử có 2 nhóm -COOH và chỉ 1 nhóm -NH₂ (tương tự Glutamic acid).',
+        'Tác dụng với dung dịch NaOH tối đa theo tỉ lệ mol 1 : 2 và tác dụng với HCl theo tỉ lệ 1 : 1.',
+        'Tham gia chu trình chuyển amine và tổng hợp urea trong gan.'
+      ],
+      reactionsEn: [
+        'Turns blue LITMUS RED (pI ≈ 2.8) because two -COOH groups outnumber one -NH₂ group.',
+        'Consumes 2 equivalents of NaOH upon complete neutralization versus 1 equivalent of HCl.',
+        'Plays a vital role in hepatic urea-cycle nitrogen metabolism.'
+      ],
+      note: 'Công thức C₄H₇NO₄ (M = 133,1); đồng đẳng kế tiếp ngay dưới Glutamic acid (chỉ kém đúng 1 nhóm -CH₂-).',
+      noteEn: 'Formula C₄H₇NO₄ (M = 133.10 g/mol); one methylene group shorter than Glutamic acid.'
+    },
+    {
+      id: 'glycylglycine',
+      catKey: 'aminoacid',
+      elements: ['N','C','C','O','N','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1],[4,5,1],[5,6,1],[6,7,2],[6,8,1]],
+      name: 'Glycylglycine (Gly-Gly)',
+      nameEn: 'Glycylglycine (Gly-Gly)',
+      category: 'Dipeptide',
+      categoryEn: 'Dipeptide',
+      state: 'Rắn (tinh thể trắng)',
+      stateEn: 'Solid (white crystalline powder)',
+      solubility: 'Tan tốt trong nước',
+      solubilityEn: 'Soluble in water',
+      realLife: 'Dipeptide đơn giản nhất được ghép từ hai phân tử Glycine qua một liên kết peptide (–CO–NH–); thường dùng làm chất đệm pH chuẩn trong sinh hóa, phòng thí nghiệm và mô hình học tập cơ bản về thủy phân peptide.',
+      realLifeEn: 'Simplest dipeptide formed from two Glycine units joined by one peptide bond; widely used as a biochemical pH buffer and textbook peptide hydrolysis model.',
+      reactions: [
+        'KHÔNG cho phản ứng màu Biuret tím với Cu(OH)₂/NaOH (phải từ Tripeptide chứa ít nhất 2 liên kết peptide trở lên mới có phản ứng màu Biuret!).',
+        'Thủy phân hoàn toàn trong dung dịch acid HCl dư (đun nóng) tạo 2 mol muối ClH₃N–CH₂–COOH; trong NaOH dư tạo 2 mol H₂N–CH₂–COONa và 1 H₂O.',
+        'Tác dụng với cả HCl (tỉ lệ 1 : 2 khi thủy phân) và NaOH (tỉ lệ 1 : 2 khi thủy phân).'
+      ],
+      reactionsEn: [
+        'NEGATIVE to the purple Biuret Cu(OH)₂ test (requires tripeptides or longer with ≥ 2 peptide bonds!).',
+        'Complete hydrolysis in hot HCl or NaOH breaks the single peptide bond to yield 2 equivalents of Glycine salts.',
+        'Consumes 2 moles of NaOH per mole upon complete alkaline hydrolysis (releasing 1 mole H₂O).'
+      ],
+      note: 'Công thức C₄H₈N₂O₃ (M = 132,1); câu hỏi bẫy kinh điển Hóa 12: Dipeptide Gly-Gly KHÔNG có phản ứng màu Biuret!',
+      noteEn: 'Formula C₄H₈N₂O₃ (M = 132.12 g/mol); classic Grade 12 trap: dipeptides give NO violet Biuret color.'
+    },
+    {
+      id: 'caffeine',
+      catKey: 'heterocycle',
+      elements: ['N','C','N','C','C','C','N','C','N','C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,2],[4,5,1],[5,0,1],[4,6,1],[6,7,1],[7,8,2],[8,3,1],[0,9,1],[2,10,1],[6,11,1],[1,12,2],[5,13,2]],
+      name: 'Caffeine',
+      nameEn: 'Caffeine',
+      category: 'Alkaloid / Heterocycle',
+      categoryEn: 'Alkaloid / Heterocycle',
+      state: 'Rắn (tinh thể hình kim trắng mượt, vị đắng)',
+      stateEn: 'Solid (silky white bitter needles)',
+      solubility: 'Tan vừa trong nước lạnh, tan rất tốt trong nước nóng',
+      solubilityEn: 'Moderately soluble cold; freely soluble in hot water',
+      realLife: 'Alkaloid kích thích hệ thần kinh trung ương phổ biến nhất hành tinh, có tự nhiên trong hạt cà phê, lá trà xanh, hạt cacao và ca cao cola; giúp tăng tỉnh táo, tập trung và giảm mệt mỏi tạm thời.',
+      realLifeEn: 'World’s most widely consumed natural psychoactive alkaloid found in coffee beans, tea leaves, and cacao; blocks adenosine receptors to promote alertness.',
+      reactions: [
+        'Có tính base CỰC YẾU do các cặp electron của Nitrogen tham gia liên hợp trong hệ vòng purine (chỉ tạo muối yếu với acid mạnh).',
+        'Không bị thủy phân dễ dàng như ester thường nhưng vòng purine bền vững khi pha chế đun sôi nước pha trà, cà phê.',
+        'Dễ thăng hoa trực tiếp ở khoảng 178 °C tạo tinh thể hình kim trắng tinh khiết.'
+      ],
+      reactionsEn: [
+        'Extremely weak base because its Nitrogen lone pairs delocalize into the fused xanthine aromatic ring system.',
+        'Thermally stable to coffee roasting and boiling-water extraction; sublimes cleanly around 178 °C.',
+        'Dissolves cleanly into dichloromethane during laboratory coffee/tea liquid–liquid extraction.'
+      ],
+      note: 'Công thức C₈H₁₀N₄O₂ (M = 194,2); khung nhân xanthine gồm vòng 6 cạnh hợp nhất với vòng 5 cạnh chứa 4 nguyên tử Nitrogen.',
+      noteEn: 'Formula C₈H₁₀N₄O₂ (M = 194.19 g/mol); methylxanthine purine heterocycle.'
+    },
+    {
+      id: 'nicotine',
+      catKey: 'heterocycle',
+      elements: ['C','C','C','C','C','N','C','C','C','C','N','C'],
+      bonds: [...BENZENE,[1,6,1],[6,7,1],[7,8,1],[8,9,1],[9,10,1],[10,6,1],[10,11,1]],
+      name: 'Nicotine',
+      nameEn: 'Nicotine',
+      category: 'Alkaloid / Heterocycle',
+      categoryEn: 'Alkaloid / Heterocycle',
+      state: 'Lỏng sánh không màu (hóa nâu ngoài không khí, mùi thuốc lá hắc)',
+      stateEn: 'Colorless oily liquid (browns in air, sharp tobacco odor)',
+      solubility: 'Tan vô hạn trong nước dưới 60 °C',
+      solubilityEn: 'Miscible with water below 60 °C',
+      realLife: 'Alkaloid gây nghiện mạnh có trong lá cây thuốc lá và thuốc lào (với lượng rất nhỏ trong cà chua, khoai tây họ Cà); tác động nhanh lên thụ thể acetylcholine thần kinh gây lệ thuộc và hại tim mạch, đồng thời từng được dùng làm thuốc trừ sâu tự nhiên.',
+      realLifeEn: 'Addictive pyridine-pyrrolidine alkaloid concentrated in tobacco leaves; acts rapidly on brain nicotinic receptors and serves ecologically as a natural plant insecticide.',
+      reactions: [
+        'Chứa HAI nguyên tử Nitrogen dị vòng (một nhân Pyridine yếu và một nhân Pyrrolidine bậc ba mạnh hơn), nên có tính base rõ rệt, tác dụng với HCl theo tỉ lệ tối đa 1 : 2.',
+        'Dễ bị oxi hóa bởi KMnO₄ đun nóng cắt nhánh vòng 5 cạnh chuyển vòng Pyridine thành Nicotinic acid (Vitamin B3 / Niacin!).',
+        'Làm xanh nhẹ giấy quỳ tím ẩm.'
+      ],
+      reactionsEn: [
+        'Dibasic alkaloid combining a weak pyridine Nitrogen and a stronger tertiary pyrrolidine Nitrogen (reacting up to 1:2 with HCl).',
+        'Vigorous oxidation with KMnO₄ or HNO₃ cleaves the pyrrolidine ring cleanly into Nicotinic acid (Vitamin B3)!',
+        'Turns moist red litmus paper blue.'
+      ],
+      note: 'Công thức C₁₀H₁₄N₂; điểm thú vị: oxi hóa chất độc Nicotine lại tạo thành Vitamin B3 (Nicotinic acid).',
+      noteEn: 'Formula C₁₀H₁₄N₂; classic chemical irony: oxidizing toxic Nicotine yields essential Vitamin B3 (Niacin).'
+    },
+    {
+      id: 'methyl-propionate',
+      catKey: 'ester',
+      elements: ['C','C','C','O','O','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1],[4,5,1]],
+      name: 'Methyl propionate (Methyl propanoate)',
+      nameEn: 'Methyl propionate (Methyl propanoate)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm ngọt giống trái cây và rượu rum)',
+      stateEn: 'Colorless volatile liquid (fruity rum-like scent)',
+      solubility: 'Tan ít trong nước (~6 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~6 g/100 mL)',
+      realLife: 'Dung môi công nghiệp cho sơn cellulose, mực in và hương liệu tổng hợp vị trái cây chín; cũng là nguyên liệu trung gian điều chế Methyl methacrylate theo công nghệ xanh hiện đại.',
+      realLifeEn: 'Sweet-smelling solvent for lacquers and flavorings, and key green-chemistry feedstock converted into Methyl methacrylate.',
+      reactions: [
+        'Xà phòng hóa trong dung dịch NaOH đun nóng tạo muối Sodium propionate (C₂H₅COONa) và Methanol.',
+        'Không có phản ứng tráng bạc với AgNO₃/NH₃ và không làm mất màu nước Br₂.',
+        'Điều chế bằng phản ứng ester hóa Propionic acid với Methanol (H₂SO₄ đặc, t°).'
+      ],
+      reactionsEn: [
+        'Saponifies cleanly with hot aqueous NaOH into Sodium propionate and Methanol.',
+        'Negative to Tollens reagent and cold bromine water.',
+        'Prepared via Fischer esterification of Propionic acid and Methanol.'
+      ],
+      note: 'Công thức C₄H₈O₂; một trong 4 đồng phân ester no đơn chức của C₄H₈O₂ (cùng Ethyl acetate, Propyl formate, Isopropyl formate).',
+      noteEn: 'Formula C₄H₈O₂; one of four saturated aliphatic ester isomers of C₄H₈O₂.'
+    },
+    {
+      id: 'propyl-formate',
+      catKey: 'ester',
+      elements: ['C','O','O','C','C','C'],
+      bonds: [[0,1,2],[0,2,1],[2,3,1],[3,4,1],[4,5,1]],
+      name: 'Propyl formate (Propyl methanoate)',
+      nameEn: 'Propyl formate (Propyl methanoate)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm lê và quả mận chín)',
+      stateEn: 'Colorless liquid (pear/plum aroma)',
+      solubility: 'Ít tan trong nước (~2,2 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.2 g/100 mL)',
+      realLife: 'Ester có mùi thơm dịu của quả lê và mận chín dùng trong công nghiệp thực phẩm tạo hương hoa quả và làm dung môi cho nhựa tổng hợp.',
+      realLifeEn: 'Pleasant pear- and plum-scented ester employed in fruit flavorings and specialty resin solvents.',
+      reactions: [
+        'Vẫn có nhóm HCOO– nên THAM GIA phản ứng tráng bạc với dung dịch AgNO₃/NH₃ tạo 2 mol Ag.',
+        'Xà phòng hóa với dung dịch NaOH đun nóng tạo muối Sodium formate (HCOONa) và Propan-1-ol.',
+        'Làm mất màu dung dịch nước Br₂ khi đun nhẹ nhờ đầu formate có tính khử.'
+      ],
+      reactionsEn: [
+        'Retains an HCOO– formate headgroup and therefore produces a positive Tollens silver-mirror reaction.',
+        'Saponifies with aqueous NaOH into Sodium formate and Propan-1-ol.',
+        'Reduces mild oxidants like bromine water upon warming.'
+      ],
+      note: 'Công thức C₄H₈O₂; giúp phân biệt với hai đồng phân Ethyl acetate và Methyl propionate nhờ phản ứng tráng bạc dương tính.',
+      noteEn: 'Formula C₄H₈O₂; Tollens-positive ester isomer of Ethyl acetate and Methyl propionate.'
+    },
+    {
+      id: 'butyl-acetate',
+      catKey: 'ester',
+      elements: ['C','C','O','O','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,2],[1,3,1],[3,4,1],[4,5,1],[5,6,1],[6,7,1]],
+      name: 'Butyl acetate',
+      nameEn: 'Butyl acetate',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi chuối và lê chín dễ chịu)',
+      stateEn: 'Colorless liquid (sweet banana/pear odor)',
+      solubility: 'Rất ít tan trong nước (~0,7 g/100 mL)',
+      solubilityEn: 'Very slightly soluble in water (~0.7 g/100 mL)',
+      realLife: 'Dung môi sơn công nghiệp cực kỳ phổ biến trong sơn gỗ PU, sơn ô tô, sơn móng tay và mực in vì bốc hơi ở tốc độ vừa phải giúp màng sơn bóng mịn không bị đục ẩm; đồng thời có tự nhiên tạo hương trong quả táo chín.',
+      realLifeEn: 'Premier industrial lacquer and automotive paint solvent prized for its balanced evaporation rate, and natural aroma ester in crisp apples.',
+      reactions: [
+        'Xà phòng hóa với dung dịch NaOH đun nóng thu được muối Sodium acetate và Butan-1-ol.',
+        'Điều chế bằng phản ứng ester hóa Acetic acid và Butan-1-ol có mặt H₂SO₄ đặc đun nóng.',
+        'Nổi tách lớp rõ rệt trên mặt nước và không phản ứng với Na kim loại.'
+      ],
+      reactionsEn: [
+        'Hot NaOH hydrolysis yields Sodium acetate and Butan-1-ol cleanly.',
+        'Synthesized commercially by Fischer esterification of Acetic acid with Butan-1-ol.',
+        'Floats cleanly above water and shows zero reactivity toward Na metal.'
+      ],
+      note: 'Công thức C₆H₁₂O₂; đồng phân ester rất quan trọng cùng Ethyl butyrate.',
+      noteEn: 'Formula C₆H₁₂O₂; isomeric with pineapple-scented Ethyl butyrate.'
+    },
+    {
+      id: 'methyl-benzoate',
+      catKey: 'ester',
+      elements: [...C6_AROM,'C','O','O','C'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[6,8,1],[8,9,1]],
+      name: 'Methyl benzoate',
+      nameEn: 'Methyl benzoate',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm nồng của quả ổi và hoa ngọc lan)',
+      stateEn: 'Colorless oily liquid (fruity/ylang-ylang floral odor)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Ester thơm tạo mùi hương tự nhiên trong hoa ngọc lan tây, đinh hương và quả ổi chín; được sử dụng làm nước hoa, hương liệu thực phẩm, dung môi nhựa tổng hợp và dẫn dụ côn trùng nghiên cứu.',
+      realLifeEn: 'Natural floral-fruity ester found in ylang-ylang and guava blossoms, used in fine perfumery and organic synthesis.',
+      reactions: [
+        'Xà phòng hóa với dung dịch NaOH đun nóng theo tỉ lệ mol 1 : 1 tạo muối Sodium benzoate và Methanol (KHÁC Phenyl acetate tỉ lệ 1 : 2!).',
+        'Khi acid hóa dung dịch sau thủy phân bằng HCl và làm lạnh thấy kết tủa trắng Benzoic acid tách ra.',
+        'Điều chế bằng phản ứng ester hóa Benzoic acid với Methanol (xt H₂SO₄ đặc, t°).'
+      ],
+      reactionsEn: [
+        'Saponifies 1:1 with NaOH to Sodium benzoate and Methanol (unlike 1:2 isomer Phenyl acetate!).',
+        'Acidifying the cooled hydrolysate precipitates pure white Benzoic acid.',
+        'Prepared via direct Fischer esterification of Benzoic acid and Methanol.'
+      ],
+      note: 'Công thức C₈H₈O₂; cặp bẫy kinh điển cùng Phenyl acetate: cùng C₈H₈O₂ nhưng Methyl benzoate phản ứng NaOH tỉ lệ 1 : 1 còn Phenyl acetate tỉ lệ 1 : 2!',
+      noteEn: 'Formula C₈H₈O₂; classic contrast with isomer Phenyl acetate: Methyl benzoate consumes 1 NaOH (giving Methanol), whereas Phenyl acetate consumes 2 NaOH.'
+    },
+    {
+      id: 'ethyl-benzoate',
+      catKey: 'ester',
+      elements: [...C6_AROM,'C','O','O','C','C'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[6,8,1],[8,9,1],[9,10,1]],
+      name: 'Ethyl benzoate',
+      nameEn: 'Ethyl benzoate',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm bạc hà pha quả anh đào nhẹ)',
+      stateEn: 'Colorless liquid (minty-cherry floral aroma)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Thành phần hương liệu trong nước hoa, tinh dầu trái cây anh đào nhân tạo và dùng làm chất trợ xúc tác chọn lọc khi trùng hợp nhựa Polypropylene (PP) công nghiệp.',
+      realLifeEn: 'Fragrance ester with a pleasant cherry-wintergreen aroma, also serving as an industrial Ziegler–Natta catalyst modifier for Polypropylene.',
+      reactions: [
+        'Xà phòng hóa với dung dịch NaOH đun nóng theo tỉ lệ 1 : 1 thu được Sodium benzoate và Ethanol.',
+        'Điều chế từ Benzoic acid và Ethanol đun hồi lưu với xúc tác H₂SO₄ đặc.',
+        'Không làm mất màu nước Br₂ và không phản ứng với Na kim loại.'
+      ],
+      reactionsEn: [
+        'Hot NaOH saponification (1:1) yields Sodium benzoate and Ethanol cleanly.',
+        'Synthesized by acid-catalyzed esterification of Benzoic acid and Ethanol.',
+        'Unreactive toward metallic Na and cold bromine water.'
+      ],
+      note: 'Công thức C₉H₁₀O₂; đồng phân với Benzyl acetate (CH₃COOCH₂C₆H₅).',
+      noteEn: 'Formula C₉H₁₀O₂; constitutional isomer of jasmine-scented Benzyl acetate.'
+    },
+    {
+      id: 'benzyl-acetate',
+      catKey: 'ester',
+      elements: [...C6_AROM,'C','O','C','O','C'],
+      bonds: [...BENZENE,[0,6,1],[6,7,1],[7,8,1],[8,9,2],[8,10,1]],
+      name: 'Benzyl acetate (Hương hoa nhài)',
+      nameEn: 'Benzyl acetate (Jasmine ester)',
+      category: 'Ester',
+      categoryEn: 'Ester',
+      state: 'Lỏng không màu (mùi thơm ngào ngạt đặc trưng của hoa nhài)',
+      stateEn: 'Colorless liquid (rich jasmine floral aroma)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Thành phần chính (~65%) tạo nên hương thơm quyến rũ của tinh dầu hoa nhài (hoa lài) và ngọc lan tây; được ứng dụng rộng rãi trong sản xuất nước hoa cao cấp, xà phòng thơm, nước xả vải và mỹ phẩm.',
+      realLifeEn: 'Principal aroma constituent of natural jasmine and ylang-ylang essential oils, indispensable in fine perfumery, soaps, and cosmetics.',
+      reactions: [
+        'Xà phòng hóa trong dung dịch NaOH đun nóng theo tỉ lệ mol 1 : 1 tạo Sodium acetate và Benzyl alcohol (lưu ý: không phải tỉ lệ 1 : 2 vì -CH₂- ngăn cách vòng thơm!).',
+        'Điều chế bằng phản ứng ester hóa Acetic acid với Benzyl alcohol hoặc từ Benzyl chloride với Sodium acetate.',
+        'Không làm đổi màu quỳ tím và không phản ứng với Na.'
+      ],
+      reactionsEn: [
+        'Consumes only 1 equivalent of NaOH (unlike phenolic esters!) to produce Sodium acetate and Benzyl alcohol.',
+        'Synthesized by esterifying Acetic acid with Benzyl alcohol or reacting Benzyl chloride with Sodium acetate.',
+        'Neutral to litmus and inert toward metallic Na.'
+      ],
+      note: 'Công thức C₉H₁₀O₂; đừng nhầm với ester của Phenol — Benzyl acetate có cầu -CH₂- nên chỉ tác dụng với NaOH theo tỉ lệ 1 : 1.',
+      noteEn: 'Formula C₉H₁₀O₂; remember that the -CH₂- spacer makes it an ordinary 1:1-saponifying benzylic ester rather than a phenolic ester.'
+    },
+    {
+      id: 'dimethyl-oxalate',
+      catKey: 'ester',
+      elements: ['C','O','C','O','C','O','O','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,2],[2,4,1],[4,5,2],[4,6,1],[6,7,1]],
+      name: 'Dimethyl oxalate',
+      nameEn: 'Dimethyl oxalate',
+      category: 'Ester (Diester)',
+      categoryEn: 'Ester (Diester)',
+      state: 'Rắn (tinh thể trắng tinh khiết, nóng chảy ở 54 °C)',
+      stateEn: 'Solid (white crystals, mp 54 °C)',
+      solubility: 'Ít tan trong nước lạnh, phản ứng thủy phân chậm trong nước nóng',
+      solubilityEn: 'Slightly soluble cold; slowly hydrolyzes in warm water',
+      realLife: 'Diester đơn giản nhất (ở trạng thái rắn tinh thể chứ không phải chất lỏng như các ester đơn chức nhỏ), là hóa chất trung gian xanh sản xuất Ethylene glycol từ khí tổng hợp CO + H₂ và dùng làm chất tạo hương.',
+      realLifeEn: 'Simplest symmetrical diester (unusually a crystalline solid at room temperature); key syngas-derived intermediate for manufacturing Ethylene glycol from coal/CO.',
+      reactions: [
+        'Xà phòng hóa trong dung dịch NaOH theo tỉ lệ mol 1 : 2 tạo muối Disodium oxalate (Na₂C₂O₄) và 2 mol Methanol.',
+        'Cộng H₂ có xúc tác đồng ở áp suất cao khử cả hai nhóm ester tạo Ethylene glycol và 2 Methanol.',
+        'Thủy phân với dung dịch NH₃ tạo tinh thể Oxamide.'
+      ],
+      reactionsEn: [
+        'Saponifies 1:2 with NaOH to yield Disodium oxalate and 2 equivalents of Methanol.',
+        'Catalytic hydrogenation over copper reduces both ester groups cleanly into Ethylene glycol + Methanol.',
+        'Reacts with aqueous Ammonia to precipitate Oxamide.'
+      ],
+      note: 'Công thức (COOCH₃)₂ (C₄H₆O₄); ester hai chức no đơn giản nhất thường dùng trong bài toán thủy phân 1 : 2 NaOH.',
+      noteEn: 'Formula C₄H₆O₄; simplest saturated diester frequently featured in 1:2 NaOH saponification stoichiometry.'
+    },
+    {
+      id: 'carbonic-acid',
+      catKey: 'carboxylic',
+      elements: ['C','O','O','O'],
+      bonds: [[0,1,2],[0,2,1],[0,3,1]],
+      name: 'Carbonic acid',
+      nameEn: 'Carbonic acid',
+      category: 'Acid yếu (H₂CO₃)',
+      categoryEn: 'Weak acid (H₂CO₃)',
+      state: 'Tồn tại chủ yếu trong dung dịch nước có khí CO₂ hòa tan',
+      stateEn: 'Exists primarily in CO₂-saturated aqueous solution',
+      solubility: 'Cân bằng trong nước',
+      solubilityEn: 'Aqueous CO₂ equilibrium',
+      realLife: 'Acid yếu tạo cảm giác tê cay sảng khoái trong nước giải khát có ga (nước ngọt, bia, soda) khi nén khí CO₂ dưới áp suất cao; đồng thời cặp đệm bicarbonate/carbonic acid đóng vai trò sống còn giữ ổn định pH máu người quanh mức 7,4.',
+      realLifeEn: 'Provides the crisp tangy fizz in carbonated sodas and sparkling water, while the bicarbonate buffer system maintains human blood pH strictly around 7.4.',
+      reactions: [
+        'Kém bền, dễ phân hủy ngay ở nhiệt độ thường tạo khí CO₂ và H₂O: H₂CO₃ ⇌ H₂O + CO₂↑.',
+        'Tác dụng với kiềm NaOH tạo muối acid NaHCO₃ (baking soda) hoặc muối trung hòa Na₂CO₃ (soda).',
+        'Yếu hơn cả Acetic acid và Formic acid nên bị các carboxylic acid đẩy ra khỏi muối carbonate dưới dạng khí CO₂.'
+      ],
+      reactionsEn: [
+        'Decomposes reversibly into dissolved CO₂ gas and water: H₂CO₃ ⇌ H₂O + CO₂↑.',
+        'Neutralizes NaOH stepwise to Bicarbonate (HCO₃⁻) and Carbonate (CO₃²⁻) salts.',
+        'Weaker than Carboxylic acids (but stronger than Phenol!), enabling Acetic acid to fizz CO₂ from NaHCO₃.'
+      ],
+      note: 'Công thức H₂CO₃ (CH₂O₃); cầu nối so sánh lực acid chuẩn: HCl > Carboxylic acid > H₂CO₃ > Phenol.',
+      noteEn: 'Formula H₂CO₃ (CH₂O₃); fundamental acidity reference point: Carboxylic acids > H₂CO₃ > Phenol.'
+    },
+    {
+      id: 'isobutyric-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1],[3,4,2],[3,5,1]],
+      name: 'Isobutyric acid (2-Methylpropanoic acid)',
+      nameEn: 'Isobutyric acid (2-Methylpropanoic acid)',
+      category: 'Carboxylic acid',
+      categoryEn: 'Carboxylic acid',
+      state: 'Lỏng không màu (mùi hăng chua giống Butyric acid)',
+      stateEn: 'Colorless liquid (pungent odor)',
+      solubility: 'Tan khá tốt trong nước (~20 g/100 mL)',
+      solubilityEn: 'Soluble in water (~20 g/100 mL)',
+      realLife: 'Xuất hiện tự nhiên trong quả cây minh quyết (carob) và mật ong; các ester của nó mang mùi thơm dịu trái cây dùng làm hương liệu thực phẩm, đồng thời làm nguyên liệu tổng hợp Methacrylic acid.',
+      realLifeEn: 'Occurs naturally in carob pods and vanilla; its esters provide pleasant fruity flavorings and it is dehydrogenated industrially to Methacrylic acid.',
+      reactions: [
+        'Làm quỳ tím hóa đỏ, tác dụng với NaOH, Mg/Zn và giải phóng khí CO₂ với Na₂CO₃/NaHCO₃.',
+        'Ester hóa với Ethanol (xt H₂SO₄ đặc, t°) tạo Ethyl isobutyrate có mùi thơm dứa táo.',
+        'Oxi hóa tách H₂ có xúc tác chuyển hóa thành Methacrylic acid (monomer nhựa thủy tinh hữu cơ).'
+      ],
+      reactionsEn: [
+        'Standard Carboxylic acid reactivity with litmus, bases, active metals, and carbonates.',
+        'Esterifies with Ethanol to yield sweet fruit-scented Ethyl isobutyrate.',
+        'Oxidative dehydrogenation manufactures Methacrylic acid monomer.'
+      ],
+      note: 'Công thức C₄H₈O₂; là đồng phân carboxylic acid mạch nhánh duy nhất của Butyric acid.',
+      noteEn: 'Formula C₄H₈O₂; the sole branched carboxylic acid isomer of Butyric acid.'
+    },
+    {
+      id: 'valeric-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,2],[4,6,1]],
+      name: 'Valeric acid (Pentanoic acid)',
+      nameEn: 'Valeric acid (Pentanoic acid)',
+      category: 'Carboxylic acid',
+      categoryEn: 'Carboxylic acid',
+      state: 'Lỏng không màu (mùi hắc nồng đặc trưng)',
+      stateEn: 'Colorless oily liquid (unpleasant pungent odor)',
+      solubility: 'Tan ít trong nước (~2,4 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.4 g/100 mL)',
+      realLife: 'Được tìm thấy tự nhiên trong rễ cây nữ lang (Valeriana officinalis — thảo dược an thần giúp ngủ ngon); dù bản thân acid có mùi rất khó chịu nhưng các ester bay hơi của nó lại có hương táo, mơ thơm ngát dùng làm mỹ phẩm và dầu bôi trơn tổng hợp.',
+      realLifeEn: 'Named after the sedative valerian root (Valeriana officinalis); though foul-smelling on its own, its volatile esters deliver fruity aromas and synthetic lubricants.',
+      reactions: [
+        'Làm quỳ tím hóa đỏ, trung hòa NaOH tỉ lệ 1 : 1 và sủi bọt khí CO₂ với NaHCO₃.',
+        'Ester hóa với Methanol hoặc Ethanol (H₂SO₄ đặc, t°) tạo ester có mùi táo chín.',
+        'Oxi hóa nhẹ tại chuỗi carbon kém hoạt động hơn so với acid không no.'
+      ],
+      reactionsEn: [
+        'Turns litmus red, neutralizes bases cleanly, and liberates CO₂ from bicarbonates.',
+        'Fischer esterification with simple alcohols produces apple-scented esters.',
+        'Saturated chain resists cold bromine water and KMnO₄.'
+      ],
+      note: 'Công thức C₅H₁₀O₂ (Pentanoic acid); ví dụ cho thấy độ tan trong nước giảm mạnh khi mạch alkyl kéo dài lên 5 Carbon.',
+      noteEn: 'Formula C₅H₁₀O₂ (Pentanoic acid); highlights decreasing water solubility at 5 carbons.'
+    },
+    {
+      id: 'glutaric-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','C','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[0,5,2],[0,6,1],[4,7,2],[4,8,1]],
+      name: 'Glutaric acid (Pentanedioic acid)',
+      nameEn: 'Glutaric acid (Pentanedioic acid)',
+      category: 'Carboxylic acid',
+      categoryEn: 'Carboxylic acid',
+      state: 'Rắn (tinh thể không màu)',
+      stateEn: 'Solid (colorless crystals)',
+      solubility: 'Tan rất tốt trong nước (~64 g/100 mL)',
+      solubilityEn: 'Very soluble in water (~64 g/100 mL)',
+      realLife: 'Acid hai chức mạch 5 Carbon sinh ra tự nhiên trong cơ thể từ quá trình chuyển hóa các amino acid Lysine và Tryptophan; trong công nghiệp dùng sản xuất chất hóa dẻo polymer và chất tẩy rửa sinh học.',
+      realLifeEn: 'Natural 5-carbon dicarboxylic acid generated during bodily Lysine and Tryptophan metabolism, and industrially polymerized into specialty resins and polyesters.',
+      reactions: [
+        'Tác dụng với NaOH theo tỉ lệ mol 1 : 2 và làm quỳ tím hóa đỏ.',
+        'Đun nóng tách nước đóng vòng dễ dàng tạo thành vòng 6 cạnh bền Glutaric anhydride.',
+        'Trùng ngưng với diol hoặc diamine tạo polyester / polyamide mạch 5 Carbon.'
+      ],
+      reactionsEn: [
+        'Consumes 2 moles of NaOH per mole upon neutralization and turns litmus red.',
+        'Thermal dehydration cyclizes cleanly into a 6-membered cyclic Glutaric anhydride.',
+        'Condenses with diols and diamines into polyesters and nylons.'
+      ],
+      note: 'Công thức C₅H₈O₄ (Pentanedioic acid); nằm giữa Succinic acid (C4) và Adipic acid (C6) trong dãy đồng đẳng diacid (Oxalic – Malonic – Succinic – Glutaric – Adipic).',
+      noteEn: 'Formula C₅H₈O₄; completes the classic C2–C6 dicarboxylic acid series ("OMSGAP").'
+    },
+    {
+      id: 'isophthalic-acid',
+      catKey: 'carboxylic',
+      elements: [...C6_AROM,'C','O','O','C','O','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[6,8,1],[2,9,1],[9,10,2],[9,11,1]],
+      name: 'Isophthalic acid',
+      nameEn: 'Isophthalic acid',
+      category: 'Carboxylic acid',
+      categoryEn: 'Carboxylic acid',
+      state: 'Rắn (tinh thể trắng không mùi)',
+      stateEn: 'Solid (white crystalline powder)',
+      solubility: 'Hầu như không tan trong nước lạnh',
+      solubilityEn: 'Practically insoluble in cold water',
+      realLife: 'Đồng phân meta của Terephthalic acid, được phối trộn một tỉ lệ nhỏ trong sản xuất chai nhựa PET cao cấp giúp tăng độ trong suốt như thủy tinh và ngăn khí CO₂ thoát ra ngoài chai nước ngọt có ga.',
+      realLifeEn: 'Meta-isomer of Terephthalic acid co-polymerized into PET bottle resins to prevent crystallization haze and improve CO₂ barrier retention in soda bottles.',
+      reactions: [
+        'Tác dụng với NaOH theo tỉ lệ mol 1 : 2 tạo muối tan trong nước.',
+        'Được điều chế bằng cách oxi hóa m-Xylene bằng không khí hoặc KMnO₄ đun nóng.',
+        'Không thể tự tách nước đóng vòng nội phân tử như Phthalic acid do hai nhóm -COOH ở vị trí 1,3 cách xa nhau.'
+      ],
+      reactionsEn: [
+        'Consumes 2 equivalents of NaOH to yield soluble sodium isophthalate.',
+        'Manufactured industrially by catalytic air oxidation of m-Xylene.',
+        'Cannot form an intramolecular cyclic anhydride upon heating (unlike ortho-Phthalic acid).'
+      ],
+      note: 'Công thức C₈H₆O₄ (Benzene-1,3-dicarboxylic acid); cùng với Phthalic acid (1,2) và Terephthalic acid (1,4) hợp thành bộ 3 đồng phân diacid thơm.',
+      noteEn: 'Formula C₈H₆O₄ (1,3-benzenedicarboxylic acid); completes the ortho/meta/para aromatic diacid triad.'
+    },
+    {
+      id: 'malic-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','O','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[1,4,1],[0,5,2],[0,6,1],[3,7,2],[3,8,1]],
+      name: 'Malic acid',
+      nameEn: 'Malic acid',
+      category: 'Carboxylic acid (Hydroxy diacid)',
+      categoryEn: 'Carboxylic acid (Hydroxy diacid)',
+      state: 'Rắn (tinh thể trắng vị chua thanh đậm đà)',
+      stateEn: 'Solid (white sour crystals)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Tạo nên vị chua đặc trưng của quả táo xanh, nho xanh, lê và mận (tên bắt nguồn từ chữ Latin "malum" nghĩa là quả táo); được dùng trong kẹo siêu chua và làm mắt xích quan trọng của chu trình Krebs trong tế bào.',
+      realLifeEn: 'Natural fruit acid giving crisp sourness to green apples and unripe grapes (Latin malum, apple); prized in sour candies and essential to the cellular Krebs cycle.',
+      reactions: [
+        'Tác dụng với NaOH theo tỉ lệ 1 : 2 (2 nhóm -COOH), nhưng tác dụng với kim loại Na dư theo tỉ lệ 1 : 3 (giải phóng 1,5 mol H₂ do phản ứng thêm ở nhóm -OH alcohol!).',
+        'Khi đun nóng dễ tách nước tạo Fumaric acid và Maleic anhydride.',
+        'Làm quỳ tím hóa đỏ và sủi bọt CO₂ khi gặp NaHCO₃.'
+      ],
+      reactionsEn: [
+        'Neutralizes 2 moles of NaOH (2 -COOH) yet liberates 1.5 moles of H₂ with excess metallic Na (2 -COOH + 1 -OH)!',
+        'Thermal dehydration eliminates H₂O cleanly to form Fumaric acid / Maleic anhydride.',
+        'Turns litmus red and effervesces with NaHCO₃.'
+      ],
+      note: 'Công thức C₄H₆O₅ (HOOC–CH(OH)–CH₂–COOH); phân tử tạp chức kinh điển minh họa sự khác nhau về số nhóm phản ứng giữa Na và NaOH.',
+      noteEn: 'Formula C₄H₆O₅; classic bifunctional stoichiometry test (2 NaOH vs. 3 Na).'
+    },
+    {
+      id: 'tartaric-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','O','O','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[1,4,1],[2,5,1],[0,6,2],[0,7,1],[3,8,2],[3,9,1]],
+      name: 'Tartaric acid',
+      nameEn: 'Tartaric acid',
+      category: 'Carboxylic acid (Dihydroxy diacid)',
+      categoryEn: 'Carboxylic acid (Dihydroxy diacid)',
+      state: 'Rắn (tinh thể trắng vị chua sắc)',
+      stateEn: 'Solid (white sour crystals)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Có tự nhiên trong quả nho chín và bã rượu vang ("kem tartar" trong làm bánh giúp đánh bông lòng trắng trứng); là hợp chất lịch sử giúp nhà bác học Louis Pasteur khám phá ra tính bất đối xứng quang học (đồng phân gương) năm 1848 và tạo phức thuốc thử Fehling xanh lam thẫm nhận biết đường khử.',
+      realLifeEn: 'Natural acid of grapes and baking cream of tartar (stabilizes whipped egg whites); famous for Louis Pasteur’s 1848 discovery of molecular chirality and as the chelating ligand in Fehling reagent.',
+      reactions: [
+        'Tác dụng với NaOH tỉ lệ 1 : 2 (tạo muối Tartrate hòa tan Cu(OH)₂ tạo dung dịch xanh lam thẫm của thuốc thử Fehling), còn với Na dư tỉ lệ 1 : 4 (giải phóng 2 mol H₂)!',
+        'Làm quỳ tím hóa đỏ và giải phóng khí CO₂ khi trộn với NaHCO₃ (nguyên lý bột nở làm bánh).',
+        'Thể hiện tính đồng phân quang học gồm dạng D, L và dạng meso không quay cực.'
+      ],
+      reactionsEn: [
+        'Consumes 2 moles NaOH (2 -COOH, forming Fehling’s blue copper chelate) yet reacts 1:4 with metallic Na (releasing 2 moles H₂ from 2 -COOH + 2 -OH)!',
+        'Reacts with dry NaHCO₃ on wetting to evolve CO₂ leavening gas in baking powder.',
+        'Famous stereochemical benchmark possessing enantiomers and an achiral meso form.'
+      ],
+      note: 'Công thức C₄H₆O₆; muối Potassium sodium tartrate chính là thành phần giữ Cu²⁺ tan trong dung dịch kiềm của thuốc thử Fehling.',
+      noteEn: 'Formula C₄H₆O₆; Rochelle salt (its mixed Na/K salt) prevents Cu(OH)₂ precipitation in Fehling solution.'
+    },
+    {
+      id: 'pyruvic-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[1,3,2],[2,4,2],[2,5,1]],
+      name: 'Pyruvic acid',
+      nameEn: 'Pyruvic acid',
+      category: 'Carboxylic acid (Keto acid)',
+      categoryEn: 'Carboxylic acid (Keto acid)',
+      state: 'Lỏng không màu (mùi hơi giống Acetic acid, sôi ở 165 °C)',
+      stateEn: 'Colorless liquid (vinegar-like odor)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Ngã tư chuyển hóa sinh học trung tâm của mọi tế bào sống: mỗi phân tử Glucose sau đường phân tạo ra 2 phân tử Pyruvate để đi vào chu trình Krebs tạo năng lượng ATP hoặc lên men thành Lactic acid / Ethanol.',
+      realLifeEn: 'Central metabolic crossroads of cellular life: glycolysis splits Glucose into two Pyruvate molecules destined for either the aerobic Krebs cycle or fermentation to Lactic acid/Ethanol.',
+      reactions: [
+        'Vừa có tính acid mạnh (làm đỏ quỳ tím, tác dụng NaOH tỉ lệ 1 : 1, sủi bọt CO₂ với NaHCO₃) vừa mang nhóm ketone >C=O.',
+        'Cộng H₂ (Ni, t°) hoặc khử sinh học bởi NADH chuyển hóa thành Lactic acid.',
+        'Dương tính với phép thử Iodoform (I₂/NaOH) tạo kết tủa vàng CHI₃↓ nhờ nhóm CH₃–C(=O)–.'
+      ],
+      reactionsEn: [
+        'Combines carboxylic acidity (turns litmus red, fizzes with NaHCO₃) with ketone carbonyl reactivity.',
+        'Hydrogenates or reduces biologically via lactate dehydrogenase into Lactic acid.',
+        'Positive to the yellow Iodoform test (CHI₃↓) via its methyl ketone motif.'
+      ],
+      note: 'Công thức CH₃COCOOH (C₃H₄O₃); là α-keto acid đơn giản nhất và quan trọng nhất trong sinh hóa học.',
+      noteEn: 'Formula C₃H₄O₃; simplest and biochemically most vital α-keto acid.'
+    },
+    {
+      id: 'gluconic-acid',
+      catKey: 'carboxylic',
+      elements: ['C','C','C','C','C','C','O','O','O','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[0,6,2],[0,7,1],[1,8,1],[2,9,1],[3,10,1],[4,11,1],[5,12,1]],
+      name: 'Gluconic acid',
+      nameEn: 'Gluconic acid',
+      category: 'Carboxylic acid (Polyhydroxy acid)',
+      categoryEn: 'Carboxylic acid (Polyhydroxy acid)',
+      state: 'Rắn tinh thể hoặc dung dịch siro không màu (vị chua dịu)',
+      stateEn: 'Colorless crystals / mild sour syrup',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Sản phẩm của phản ứng kinh điển dùng NƯỚC BROMINE (Br₂) phân biệt Glucose với Fructose; có mặt tự nhiên trong mật ong, trái cây và làm phụ gia thực phẩm dịu vị, chất bổ sung khoáng chất (Calcium gluconate, Zinc gluconate).',
+      realLifeEn: 'Direct oxidation product when bromine water distinguishes Glucose from Fructose; natural honey acidulant and gentle pharmaceutical mineral carrier (Calcium/Zinc gluconate).',
+      reactions: [
+        'Tạo thành khi oxi hóa nhóm -CHO của Glucose bằng nước Br₂ (trong khi Fructose không phản ứng).',
+        'Hòa tan Cu(OH)₂ ở nhiệt độ thường tạo dung dịch xanh lam đậm (vừa do tính acid vừa do polyalcohol nhiều -OH kề nhau).',
+        'Tác dụng với NaOH theo tỉ lệ 1 : 1 tạo muối Sodium gluconate (hoặc Ammonium gluconate khi dùng Tollens).'
+      ],
+      reactionsEn: [
+        'Formed selectively by oxidizing Glucose (and not Fructose) with aqueous bromine water.',
+        'Dissolves Cu(OH)₂ at room temperature to a deep blue solution via acid reaction and vicinal polyol chelation.',
+        'Neutralizes 1 equivalent of NaOH cleanly to yield water-soluble Sodium gluconate.'
+      ],
+      note: 'Công thức C₆H₁₂O₇ (HOCH₂–(CHOH)₄–COOH); sản phẩm chuẩn cần nhớ khi cho Glucose tác dụng với dung dịch Br₂.',
+      noteEn: 'Formula C₆H₁₂O₇; key Grade 12 carbohydrate reaction product of Glucose + Br₂(aq).'
+    },
+    {
+      id: 'phthalic-anhydride',
+      catKey: 'anhydride',
+      elements: [...C6_AROM,'C','O','C','O','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,1],[7,8,1],[8,1,1],[6,9,2],[8,10,2]],
+      name: 'Phthalic anhydride',
+      nameEn: 'Phthalic anhydride',
+      category: 'Acid anhydride',
+      categoryEn: 'Acid anhydride',
+      state: 'Rắn (tinh thể hình kim hoặc vảy màu trắng)',
+      stateEn: 'Solid (white crystalline needles/flakes)',
+      solubility: 'Rất ít tan trong nước lạnh, phản ứng thủy phân chậm với nước nóng tạo Phthalic acid',
+      solubilityEn: 'Slightly soluble cold; hydrolyzes in hot water to Phthalic acid',
+      realLife: 'Hóa chất công nghiệp lớn dùng sản xuất nhựa sơn phủ alkyd, chất hóa dẻo nhựa PVC và chất chỉ thị acid–base quen thuộc nhất phòng thí nghiệm: Phenolphthalein (khi đun nóng với Phenol)!',
+      realLifeEn: 'Major industrial chemical used for alkyd paints, plasticizers, and synthesizing the quintessential acid–base lab indicator Phenolphthalein (by condensation with Phenol)!',
+      reactions: [
+        'Thủy phân với nước nóng tạo lại Phthalic acid; tác dụng với NaOH dư (tỉ lệ 1 : 2) tạo muối Disodium phthalate.',
+        'Ngưng tụ với 2 phân tử Phenol (xúc tác H₂SO₄ đặc, đun nóng) tạo chất chỉ thị màu Phenolphthalein (chuyển màu hồng trong môi trường kiềm).',
+        'Điều chế bằng phản ứng oxi hóa o-Xylene hoặc Naphthalene bằng O₂ không khí (xt V₂O₅).'
+      ],
+      reactionsEn: [
+        'Hydrolyzes in hot water to Phthalic acid and reacts 1:2 with NaOH to Disodium phthalate.',
+        'Condenses with 2 equivalents of Phenol over conc. H₂SO₄ to synthesize Phenolphthalein pH indicator.',
+        'Manufactured industrially by catalytic vapor-phase oxidation of o-Xylene or Naphthalene over V₂O₅.'
+      ],
+      note: 'Công thức C₈H₄O₃; đồng phân anhydride vòng nội phân tử của Phthalic acid.',
+      noteEn: 'Formula C₈H₄O₃; cyclic internal anhydride of Phthalic acid and synthetic parent of Phenolphthalein.'
+    },
+    {
+      id: 'propylene-glycol',
+      catKey: 'alcohol',
+      elements: ['C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,1],[1,3,1],[2,4,1]],
+      name: 'Propylene glycol (Propane-1,2-diol)',
+      nameEn: 'Propylene glycol (Propane-1,2-diol)',
+      category: 'Alcohol',
+      categoryEn: 'Alcohol',
+      state: 'Lỏng sánh không màu (không mùi, vị hơi ngọt)',
+      stateEn: 'Colorless odorless syrupy liquid (faintly sweet)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Chất giữ ẩm, dung môi an toàn không độc được phê duyệt rộng rãi trong thực phẩm, kem dưỡng da, thuốc nhỏ mắt, dung dịch tạo khói sân khấu và chất chống đông an toàn cho hệ thống làm lạnh thực phẩm (thay thế Ethylene glycol độc hại).',
+      realLifeEn: 'Food-safe, non-toxic humectant and solvent in cosmetics, medicines, theatrical fog machines, and food-grade antifreeze (replacing toxic Ethylene glycol).',
+      reactions: [
+        'Hòa tan Cu(OH)₂ ở nhiệt độ thường tạo dung dịch phức đồng XANH LAM ĐẬM (do có 2 nhóm -OH kề nhau ở vị trí 1 và 2 — phân biệt ngay với Propane-1,3-diol!).',
+        'Tác dụng với kim loại Na dư giải phóng 1 mol khí H₂ trên mỗi mol diol.',
+        'Điều chế bằng phản ứng cộng nước mở vòng Propylene oxide hoặc oxi hóa Propene bằng dung dịch KMnO₄ loãng lạnh.'
+      ],
+      reactionsEn: [
+        'Dissolves Cu(OH)₂ at room temperature to give a DEEP BLUE solution thanks to adjacent 1,2-diol hydroxyls (distinguishing it cleanly from Propane-1,3-diol!).',
+        'Reacts with excess Na metal to evolve 1 mole of H₂ per mole of diol.',
+        'Formed cleanly via cold dilute KMnO₄ oxidation of Propene.'
+      ],
+      note: 'Công thức C₃H₈O₂; bộ đôi so sánh kinh điển: Propane-1,2-diol hòa tan được Cu(OH)₂ còn Propane-1,3-diol thì KHÔNG!',
+      noteEn: 'Formula C₃H₈O₂; contrasts sharply with isomer Propane-1,3-diol by giving a positive Cu(OH)₂ blue chelate test.'
+    },
+    {
+      id: 'o-cresol',
+      catKey: 'phenol',
+      elements: [...C6_AROM,'O','C'],
+      bonds: [...BENZENE,[0,6,1],[1,7,1]],
+      name: 'o-Cresol (2-Methylphenol)',
+      nameEn: 'o-Cresol (2-Methylphenol)',
+      category: 'Phenol',
+      categoryEn: 'Phenol',
+      state: 'Rắn (tinh thể không màu, nóng chảy ở 30 °C, mùi sát trùng)',
+      stateEn: 'Solid (colorless crystals, mp 30 °C, antiseptic odor)',
+      solubility: 'Ít tan trong nước (~2,5 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~2.5 g/100 mL)',
+      realLife: 'Chất sát trùng cổ điển trong dung dịch tẩy uế Lysol từ nhựa than đá và hóa chất trung gian để tổng hợp chất diệt cỏ chọn lọc, nhựa epoxy phenolic chịu nhiệt và chất chống oxy hóa.',
+      realLifeEn: 'Coal-tar phenolic used traditionally in household disinfectants (Lysol) and industrially in epoxy-novolac resins and selective herbicides.',
+      reactions: [
+        'Tác dụng với cả Na kim loại lẫn dung dịch NaOH tạo muối Sodium o-cresolate tan tốt trong nước.',
+        'Tạo phức màu tím xanh đặc trưng với dung dịch FeCl₃ và kết tủa trắng với nước Br₂.',
+        'Không phản ứng với NaHCO₃ (do lực acid yếu hơn H₂CO₃).'
+      ],
+      reactionsEn: [
+        'Reacts with both metallic Na and aqueous NaOH to form water-soluble phenolate salts.',
+        'Develops a characteristic blue-violet FeCl₃ color and precipitates with aqueous bromine.',
+        'Inert toward NaHCO₃ due to weak phenolic acidity.'
+      ],
+      note: 'Công thức C₇H₈O; đồng phân vị trí ortho của p-Cresol và đồng phân nhóm chức với Benzyl alcohol, Anisole.',
+      noteEn: 'Formula C₇H₈O; ortho positional isomer of p-Cresol.'
+    },
+    {
+      id: '1,4-dioxane',
+      catKey: 'heterocycle',
+      elements: ['O','C','C','O','C','C'],
+      bonds: C6_RING,
+      name: '1,4-Dioxane',
+      nameEn: '1,4-Dioxane',
+      category: 'Heterocycle / Ether vòng',
+      categoryEn: 'Heterocycle / Cyclic ether',
+      state: 'Lỏng không màu (nóng chảy ở 11,8 °C, sôi ở 101 °C, mùi Ether nhẹ)',
+      stateEn: 'Colorless liquid (mp 11.8 °C, bp 101 °C)',
+      solubility: 'Tan vô hạn trong nước',
+      solubilityEn: 'Miscible with water',
+      realLife: 'Dung môi dị vòng 6 cạnh đối xứng hoàn toàn (không có momen lưỡng cực tổng hợp) nhưng lại tan vô hạn trong nước nhờ hai nguyên tử Oxygen đối xứng lộ cặp electron; dùng làm dung môi ổn định hóa học và trong tổng hợp hữu cơ.',
+      realLifeEn: 'Remarkable symmetric cyclic diether (zero net dipole moment, yet completely water-miscible via hydrogen-bond acceptor oxygens) widely used as a high-boiling lab solvent.',
+      reactions: [
+        'Rất trơ với kiềm NaOH, kim loại Na và nhiều chất khử mạnh.',
+        'Liên kết ether vòng có thể bị phân cắt bởi acid HI đặc nóng hoặc tạo muối phức với Br₂.',
+        'Cháy hoàn toàn với ngọn lửa xanh lam.'
+      ],
+      reactionsEn: [
+        'Chemically inert toward metallic Sodium, strong bases, and hydrides.',
+        'Cleaved by hot concentrated HI and forms a well-defined crystalline adduct with Br₂.',
+        'Miscible cleanly with both water and nonpolar hydrocarbons.'
+      ],
+      note: 'Công thức C₄H₈O₂; đồng phân dị vòng đối xứng cùng công thức phân tử với Ethyl acetate và Butyric acid!',
+      noteEn: 'Formula C₄H₈O₂; cyclic diether isomer sharing its molecular formula with Ethyl acetate and Butyric acid.'
+    },
+    {
+      id: 'mtbe',
+      catKey: 'ether',
+      elements: ['C','C','C','C','O','C'],
+      bonds: [[0,1,1],[0,2,1],[0,3,1],[0,4,1],[4,5,1]],
+      name: 'MTBE (Methyl tert-butyl ether)',
+      nameEn: 'MTBE (Methyl tert-butyl ether)',
+      category: 'Ether',
+      categoryEn: 'Ether',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 55 °C, mùi bạc hà hắc)',
+      stateEn: 'Colorless volatile liquid (bp 55 °C)',
+      solubility: 'Tan ít trong nước (~4 g/100 mL)',
+      solubilityEn: 'Slightly soluble in water (~4 g/100 mL)',
+      realLife: 'Phụ gia pha xăng nổi tiếng dùng để nâng cao chỉ số octane chống kích nổ động cơ thay thế cho chì độc hại (tetraethyl lead) trong nhiều thập kỷ, đồng thời là dung môi chiết hữu cơ cực kỳ ưa chuộng thay Diethyl ether vì ít tạo peroxide nổ hơn.',
+      realLifeEn: 'High-octane gasoline oxygenate historically replacing toxic leaded fuel additives, and safer laboratory extraction ether forming far fewer explosive peroxides than Diethyl ether.',
+      reactions: [
+        'Hoàn toàn không tác dụng với Na và bền vững trong môi trường kiềm.',
+        'Trong môi trường acid HCl/HI hoặc H₂SO₄ đặc ấm dễ bị cắt đứt thành Methanol và Isobutene / tert-Butyl halide.',
+        'Sản xuất công nghiệp bằng phản ứng cộng Methanol vào Isobutene (xt acid).'
+      ],
+      reactionsEn: [
+        'Completely unreactive toward metallic Na and aqueous bases.',
+        'Cleaves selectively in warm mineral acids into Methanol and tert-butyl derivatives / Isobutene.',
+        'Manufactured cleanly by acid-catalyzed addition of Methanol across Isobutene.'
+      ],
+      note: 'Công thức C₅H₁₂O; tên thay thế chuẩn IUPAC: 2-methoxy-2-methylpropane.',
+      noteEn: 'Formula C₅H₁₂O; IUPAC name 2-methoxy-2-methylpropane.'
+    },
+    {
+      id: 'acetophenone',
+      catKey: 'ketone',
+      elements: [...C6_AROM,'C','C','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,1],[6,8,2]],
+      name: 'Acetophenone',
+      nameEn: 'Acetophenone',
+      category: 'Ketone (Ketone thơm)',
+      categoryEn: 'Ketone (Aromatic ketone)',
+      state: 'Lỏng không màu hoặc tinh thể trắng (nóng chảy ở 20 °C, mùi hoa cam hạnh nhân)',
+      stateEn: 'Colorless liquid / low-melting solid (mp 20 °C, sweet floral scent)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Ketone thơm đơn giản nhất có tự nhiên trong táo, phô mai, chuối và súp lơ; dùng làm hương liệu mùi hoa cam, hạnh nhân cho xà phòng, nước hoa và làm tiền chất tổng hợp nhiều dược phẩm.',
+      realLifeEn: 'Simplest alkyl-aryl ketone occurring naturally in apples and apricots; used in almond/cherry soaps, perfumes, and pharmaceutical chiral alcohol synthesis.',
+      reactions: [
+        'KHÔNG phản ứng tráng bạc với AgNO₃/NH₃, nhưng DƯƠNG TÍNH với phản ứng Iodoform (tạo kết tủa vàng CHI₃↓ khi đun với I₂/NaOH)!',
+        'Khử bằng H₂ (Ni) hoặc NaBH₄ tạo 1-phenylethanol.',
+        'Tổng hợp bằng phản ứng Friedel–Crafts giữa Benzene và Acetyl chloride (xt AlCl₃).'
+      ],
+      reactionsEn: [
+        'Negative to Tollens reagent, yet positive to the yellow Iodoform test (CHI₃↓) thanks to its -COCH₃ group.',
+        'Reduces smoothly with NaBH₄ to 1-phenylethanol.',
+        'Synthesized classically via Friedel–Crafts acylation of Benzene.'
+      ],
+      note: 'Công thức C₈H₈O; ví dụ mẫu cho Ketone thơm có nhóm CH₃CO– nên tham gia phản ứng tạo kết tủa vàng Iodoform.',
+      noteEn: 'Formula C₈H₈O; simplest aromatic ketone giving a positive Iodoform test.'
+    },
+    {
+      id: 'p-benzoquinone',
+      catKey: 'ketone',
+      elements: ['C','C','C','C','C','C','O','O'],
+      bonds: [[0,1,1],[1,2,2],[2,3,1],[3,4,1],[4,5,2],[5,0,1],[0,6,2],[3,7,2]],
+      name: 'p-Benzoquinone (1,4-Benzoquinone)',
+      nameEn: 'p-Benzoquinone (1,4-Benzoquinone)',
+      category: 'Ketone / Quinone',
+      categoryEn: 'Ketone / Quinone',
+      state: 'Rắn (tinh thể màu vàng rực, mùi hắc giống Chlorine, dễ thăng hoa)',
+      stateEn: 'Solid (bright yellow pungent crystals, sublimes readily)',
+      solubility: 'Ít tan trong nước lạnh',
+      solubilityEn: 'Slightly soluble in cold water',
+      realLife: 'Khung oxy hóa – khử vàng đặc trưng tạo thành khi Hydroquinone bị oxi hóa (hoặc khi táo, khoai bị thâm ngoài không khí); cấu trúc quinone này chính là nhân hoạt động của Vitamin K giúp đông máu và Coenzyme Q10 tạo năng lượng trong ty thể.',
+      realLifeEn: 'Bright yellow oxidized counterpart of Hydroquinone; its redox-active quinone core drives mitochondrial Coenzyme Q10 energy transport and blood-clotting Vitamin K.',
+      reactions: [
+        'Dễ bị khử thuận nghịch bởi chất khử nhẹ (SO₂, Vitamin C, H₂) trả lại phân tử Hydroquinone không màu.',
+        'Làm mất màu dung dịch Br₂ (cộng hợp vào các nối đôi C=C liên hợp vì KHÔNG phải vòng thơm Benzene!).',
+        'Là dienophile rất mạnh trong phản ứng cộng đóng vòng Diels–Alder.'
+      ],
+      reactionsEn: [
+        'Reversibly reduced back to colorless Hydroquinone by mild reductants such as Vitamin C or SO₂.',
+        'Reacts as an unsaturated diketone (NOT an aromatic benzene ring!), undergoing conjugate additions and Diels–Alder cycloadditions.',
+        'Accepts electrons readily as an organic oxidizer.'
+      ],
+      note: 'Công thức C₆H₄O₂; vòng 6 cạnh có 2 nhóm =O ở vị trí 1,4 nên không còn tính thơm như Benzene.',
+      noteEn: 'Formula C₆H₄O₂; non-aromatic conjugated cyclohexadienedione forming a classic redox pair with Hydroquinone.'
+    },
+    {
+      id: 'cinnamaldehyde',
+      catKey: 'aldehyde',
+      elements: [...C6_AROM,'C','C','C','O'],
+      bonds: [...BENZENE,[0,6,1],[6,7,2],[7,8,1],[8,9,2]],
+      name: 'Cinnamaldehyde (Hương quế)',
+      nameEn: 'Cinnamaldehyde (Cinnamon aldehyde)',
+      category: 'Aldehyde',
+      categoryEn: 'Aldehyde',
+      state: 'Lỏng sánh màu vàng nhạt (mùi thơm ngọt ấm đặc trưng của vỏ quế)',
+      stateEn: 'Pale-yellow oily liquid (rich warm cinnamon aroma)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Chiếm tới ~90% tinh dầu chiết xuất từ vỏ cây quế (Việt Nam là một trong những nước xuất khẩu quế nổi tiếng thế giới); dùng rộng rãi làm gia vị nấu phở, làm bánh ngọt, kẹo quế và xua đuổi côn trùng tự nhiên.',
+      realLifeEn: 'Makes up ~90% of cinnamon bark essential oil (celebrated in Vietnamese phở, pastries, and cinnamon candies) and serves as an effective natural insect repellent.',
+      reactions: [
+        'Nhóm -CHO tham gia phản ứng tráng bạc với AgNO₃/NH₃ tạo lớp bạc sáng bóng.',
+        'Nối đôi C=C mạch nhánh làm mất màu nhanh nước Br₂ và dung dịch KMnO₄ loãng ở nhiệt độ thường.',
+        'Cộng H₂ dư (xúc tác Ni, t°) khử cả nối đôi C=C và chức -CHO thành 3-phenylpropan-1-ol.'
+      ],
+      reactionsEn: [
+        'Aldehyde -CHO group gives a positive Tollens silver-mirror reaction with AgNO₃/NH₃.',
+        'Side-chain alkene bond rapidly decolorizes bromine water and cold aqueous KMnO₄.',
+        'Full catalytic hydrogenation reduces both C=C and -CHO to 3-phenylpropan-1-ol.'
+      ],
+      note: 'Công thức C₉H₈O; ví dụ thực tế sinh động về Aldehyde thơm không no có mặt trong tinh dầu thiên nhiên.',
+      noteEn: 'Formula C₉H₈O; signature natural conjugated aromatic unsaturated aldehyde.'
+    },
+    {
+      id: 'glyceraldehyde',
+      catKey: 'carbohydrate',
+      elements: ['C','C','C','O','O','O'],
+      bonds: [[0,1,1],[1,2,1],[0,3,2],[1,4,1],[2,5,1]],
+      name: 'Glyceraldehyde',
+      nameEn: 'Glyceraldehyde',
+      category: 'Carbohydrate (Aldotriose)',
+      categoryEn: 'Carbohydrate (Aldotriose)',
+      state: 'Rắn (tinh thể trắng vị ngọt nhẹ)',
+      stateEn: 'Solid (white sweet crystals)',
+      solubility: 'Tan rất tốt trong nước',
+      solubilityEn: 'Very soluble in water',
+      realLife: 'Đường đơn (monosaccharide) nhóm aldose nhỏ nhất trong tự nhiên (3 Carbon — aldotriose); dạng phosphate của nó là sản phẩm trực tiếp đầu tiên của quá trình quang hợp cây xanh và là điểm mốc phân loại cấu hình D/L cho mọi phân tử đường và amino acid.',
+      realLifeEn: 'Smallest aldose monosaccharide (aldotriose); its phosphate ester (G3P) is the direct primary carbohydrate product of plant photosynthesis and defines the global D/L stereochemical standard.',
+      reactions: [
+        'Hòa tan Cu(OH)₂ ở nhiệt độ thường tạo dung dịch xanh lam (hai nhóm -OH kề nhau) và đun nóng tạo kết tủa đỏ gạch Cu₂O.',
+        'Tham gia phản ứng tráng bạc với AgNO₃/NH₃ và làm mất màu nước Br₂ (tạo Glyceric acid).',
+        'Tác dụng với kim loại Na dư giải phóng khí H₂ và có công thức tổng quát khớp với C₃(H₂O)₃.'
+      ],
+      reactionsEn: [
+        'Dissolves Cu(OH)₂ at room temperature to a blue chelate and reduces it to brick-red Cu₂O upon heating.',
+        'Reduces Tollens reagent to metallic silver and decolorizes bromine water.',
+        'Fits the classical carbohydrate stoichiometry Cₙ(H₂O)ₘ (C₃H₆O₃).'
+      ],
+      note: 'Công thức C₃H₆O₃; đồng phân cấu tạo cùng công thức phân tử với Lactic acid và Dihydroxyacetone.',
+      noteEn: 'Formula C₃H₆O₃; smallest chiral sugar defining D/L nomenclature, isomeric with Lactic acid.'
+    },
+    {
+      id: 'eugenol',
+      catKey: 'phenol',
+      elements: [...C6_AROM,'O','O','C','C','C','C'],
+      bonds: [...BENZENE,[0,6,1],[1,7,1],[7,8,1],[3,9,1],[9,10,1],[10,11,2]],
+      name: 'Eugenol (Tinh dầu đinh hương)',
+      nameEn: 'Eugenol (Clove oil)',
+      category: 'Phenol (Hợp chất đa chức)',
+      categoryEn: 'Phenol (Multifunctional)',
+      state: 'Lỏng sánh màu vàng nhạt (mùi thơm nồng ấm của đinh hương và hương nhu)',
+      stateEn: 'Pale-yellow oily liquid (strong warm clove scent)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Thành phần chủ đạo (80–90%) trong tinh dầu nụ đinh hương và lá hương nhu trắng Việt Nam; được nha sĩ dùng trộn kẽm oxit làm chất trám răng tạm giảm đau, sát khuẩn ổ răng và dùng làm nguyên liệu tổng hợp Vanillin (hương vani).',
+      realLifeEn: 'Principal constituent (~85%) of clove bud and holy basil essential oils; mixed with Zinc oxide by dentists as a soothing antiseptic temporary tooth filling, and oxidized industrially to Vanillin.',
+      reactions: [
+        'Nhóm -OH phenol tác dụng với NaOH tạo muối phenolate tan tốt và tạo màu xanh lục đậm với FeCl₃.',
+        'Nối đôi allyl –CH₂–CH=CH₂ làm mất màu nước Br₂ và KMnO₄ ở điều kiện thường (chú ý: cộng cả vào nối đôi và thế vào vòng thơm!).',
+        'Đồng phân hóa nối đôi trong kiềm tạo Isoeugenol rồi oxi hóa chuyển hóa thành hương liệu Vanillin.'
+      ],
+      reactionsEn: [
+        'Phenolic -OH dissolves cleanly in aqueous NaOH and reacts characteristically with FeCl₃.',
+        'Allyl side chain rapidly decolorizes bromine water and cold KMnO₄.',
+        'Base-catalyzed double-bond shift to Isoeugenol followed by cleavage yields Vanillin.'
+      ],
+      note: 'Công thức C₁₀H₁₂O₂; phân tử thiên nhiên chứa đồng thời Phenol (-OH), Ether (-OCH₃), Arene và nối đôi Alkene.',
+      noteEn: 'Formula C₁₀H₁₂O₂; rich natural multifunctional phenol combining -OH, -OCH₃, aromatic ring, and allyl alkene.'
+    },
+    {
+      id: 'chloroprene',
+      catKey: 'halogen',
+      elements: ['C','C','C','C','Cl'],
+      bonds: [[0,1,2],[1,2,1],[2,3,2],[1,4,1]],
+      name: 'Chloroprene (2-Chlorobuta-1,3-diene)',
+      nameEn: 'Chloroprene (2-Chlorobuta-1,3-diene)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 59,4 °C, mùi giống Ether)',
+      stateEn: 'Colorless volatile liquid (bp 59.4 °C)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Monomer sản xuất cao su tổng hợp Neoprene (Polychloroprene / cao su Chloroprene) có khả năng chịu dầu mỡ, chịu nhiệt, chống cháy và chống thấm nước vượt trội — dùng làm bộ đồ lặn biển, ống dẫn xăng dầu và dây curoa ô tô.',
+      realLifeEn: 'Monomer polymerized into tough, oil- and weather-resistant Neoprene (Polychloroprene) rubber for scuba wetsuits, fuel hoses, and industrial belts.',
+      reactions: [
+        'Trùng hợp theo kiểu 1,4 (nhờ có hệ liên hợp như Isoprene thay nhóm -CH₃ bằng -Cl) tạo cao su Chloroprene (Neoprene).',
+        'Làm mất màu nước Br₂ và dung dịch KMnO₄ rất nhanh ở điều kiện thường.',
+        'Liên kết C(sp²)–Cl gắn trên nối đôi nên bền với dung dịch NaOH loãng đun sôi (khó thủy phân như Vinyl chloride).'
+      ],
+      reactionsEn: [
+        'Undergoes 1,4-polymerization analogous to Isoprene to manufacture oil-resistant Neoprene rubber.',
+        'Rapidly decolorizes aqueous bromine and cold KMnO₄ across its conjugated diene system.',
+        'Vinylic C(sp²)–Cl resists mild aqueous alkaline hydrolysis.'
+      ],
+      note: 'Công thức C₄H₅Cl; cấu trúc giống hệt Isoprene nhưng thay nhóm -CH₃ bằng nguyên tử Chlorine (-Cl), trong chương trình Hóa 12 là monomer của cao su Chloroprene.',
+      noteEn: 'Formula C₄H₅Cl; chloro-analog of Isoprene serving as the Grade 12 monomer for Chloroprene rubber.'
+    },
+    {
+      id: 'allyl-chloride',
+      catKey: 'halogen',
+      elements: ['C','C','C','Cl'],
+      bonds: [[0,1,2],[1,2,1],[2,3,1]],
+      name: 'Allyl chloride (3-Chloroprop-1-ene)',
+      nameEn: 'Allyl chloride (3-Chloroprop-1-ene)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (dễ bay hơi, sôi ở 45 °C, mùi tỏi cay nồng)',
+      stateEn: 'Colorless volatile liquid (bp 45 °C, pungent garlic odor)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Hóa chất trung gian then chốt để tổng hợp Epichlorohydrin làm keo dán siêu chắc Epoxy hai thành phần (keo AB) và điều chế Glycerol tổng hợp từ nguồn dầu mỏ.',
+      realLifeEn: 'Industrial gateway manufactured from Propene + Cl₂ (500 °C) to produce Epichlorohydrin for high-strength two-part Epoxy adhesives and synthetic Glycerol.',
+      reactions: [
+        'Thủy phân CỰC NHANH trong dung dịch NaOH ấm tạo Allyl alcohol và kết tủa trắng AgCl ngay khi thử với AgNO₃ (khác hẳn Vinyl chloride không thủy phân!).',
+        'Làm mất màu dung dịch nước Br₂ và KMnO₄ ở nhiệt độ thường nhờ nối đôi C=C.',
+        'Điều chế công nghiệp bằng phản ứng thế Cl₂ vào nhóm -CH₃ của Propene ở nhiệt độ cao (~500 °C) mà vẫn bảo toàn nối đôi!'
+      ],
+      reactionsEn: [
+        'Hydrolyzes briskly in warm aqueous NaOH to Allyl alcohol and gives immediate AgCl↓ with AgNO₃ (unlike wholly unreactive Vinyl chloride!).',
+        'Decolorizes bromine water and cold KMnO₄ across its alkene bond.',
+        'Produced by high-temperature (~500 °C) allylic radical chlorination of Propene.'
+      ],
+      note: 'Công thức C₃H₅Cl; cặp so sánh quan trọng trong Hóa 11: Vinyl chloride (Cl gắn trực tiếp C=C, trơ với NaOH loãng) vs. Allyl chloride (Cl cách nối đôi 1 C, thủy phân rất nhạy).',
+      noteEn: 'Formula C₃H₅Cl; classic Grade 11 contrast with Vinyl chloride demonstrating allylic C(sp³)–Cl reactivity.'
+    },
+    {
+      id: '1-bromopropane',
+      catKey: 'halogen',
+      elements: ['C','C','C','Br'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1]],
+      name: '1-Bromopropane (n-Propyl bromide)',
+      nameEn: '1-Bromopropane (n-Propyl bromide)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (sôi ở 71 °C, nặng hơn nước)',
+      stateEn: 'Colorless dense liquid (bp 71 °C, 1.35 g/mL)',
+      solubility: 'Rất ít tan trong nước',
+      solubilityEn: 'Very slightly soluble in water',
+      realLife: 'Dung môi tẩy rửa dầu mỡ chi tiết kim loại, bảng mạch điện tử và keo dán công nghiệp thay thế cho một số dung môi CFC cũ, đồng thời là đồng phân mạch thẳng chuẩn của 2-Bromopropane.',
+      realLifeEn: 'Industrial metal-degreasing and precision electronics cleaning solvent replacing ozone-depleting CFCs, and linear isomer of 2-Bromopropane.',
+      reactions: [
+        'Đun nóng với dung dịch NaOH loãng (thế) tạo alcohol bậc một Propan-1-ol và NaBr.',
+        'Đun nóng với KOH trong Ethanol (tách HBr) tạo khí Propene.',
+        'Dung dịch sau thủy phân kiềm đã acid hóa bằng HNO₃ tạo kết tủa vàng nhạt AgBr với AgNO₃.'
+      ],
+      reactionsEn: [
+        'Warmed aqueous NaOH hydrolysis produces primary alcohol Propan-1-ol and NaBr.',
+        'Heating with alcoholic KOH drives HBr elimination to yield Propene gas.',
+        'Hydrolysate forms pale-yellow AgBr precipitate with AgNO₃ after HNO₃ acidification.'
+      ],
+      note: 'Công thức C₃H₇Br; đồng phân vị trí với 2-Bromopropane.',
+      noteEn: 'Formula C₃H₇Br; primary positional isomer of 2-Bromopropane.'
+    },
+    {
+      id: '2-chloro-2-methylpropane',
+      catKey: 'halogen',
+      elements: ['C','C','C','C','Cl'],
+      bonds: [[0,1,1],[0,2,1],[0,3,1],[0,4,1]],
+      name: 'tert-Butyl chloride (2-Chloro-2-methylpropane)',
+      nameEn: 'tert-Butyl chloride (2-Chloro-2-methylpropane)',
+      category: 'Halogen derivative',
+      categoryEn: 'Halogen derivative',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 50,8 °C)',
+      stateEn: 'Colorless volatile liquid (bp 50.8 °C)',
+      solubility: 'Rất ít tan trong nước (tự thủy phân dần)',
+      solubilityEn: 'Very slightly soluble (slowly solvolyzes in water)',
+      realLife: 'Sản phẩm nhận biết tức thì (lớp dầu đục nổi lên sau vài giây) khi thử alcohol bậc ba tert-Butanol với thuốc thử Lucas (HCl đặc / ZnCl₂); là hợp chất mẫu kinh điển cho cơ chế thế S_N1 tạo carbocation bậc ba bền.',
+      realLifeEn: 'Instant cloudy-layer product formed in the Lucas test for tertiary alcohols (tert-Butanol + conc. HCl), and textbook prototype of unimolecular SN1 substitution.',
+      reactions: [
+        'Thủy phân cực nhanh ngay trong nước hoặc dung dịch kiềm loãng theo cơ chế S_N1 tạo tert-Butanol và HCl.',
+        'Đun nóng nhẹ với kiềm hoặc base tạo Isobutene (2-methylpropene).',
+        'Tạo kết tủa trắng AgCl gần như tức thì khi nhỏ dung dịch AgNO₃/Ethanol.'
+      ],
+      reactionsEn: [
+        'Undergoes rapid SN1 solvolysis in water or dilute alkali to regenerate tert-Butanol.',
+        'Eliminates HCl swiftly upon heating with base to yield Isobutene.',
+        'Precipitates AgCl almost instantaneously with ethanolic AgNO₃.'
+      ],
+      note: 'Công thức C₄H₉Cl; dẫn xuất halogen bậc ba có tốc độ thủy phân S_N1 nhanh nhất trong nhóm butyl chloride.',
+      noteEn: 'Formula C₄H₉Cl; tertiary haloalkane showcasing ultra-fast SN1 hydrolysis.'
+    },
+    {
+      id: 'propadiene',
+      catKey: 'alkadiene',
+      elements: ['C','C','C'],
+      bonds: [[0,1,2],[1,2,2]],
+      name: 'Propadiene (Allene)',
+      nameEn: 'Propadiene (Allene)',
+      category: 'Alkadiene',
+      categoryEn: 'Alkadiene',
+      state: 'Khí không màu (sôi ở −34,5 °C)',
+      stateEn: 'Colorless gas (bp −34.5 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Alkadiene đơn giản nhất trong hóa học hữu cơ và là phân tử mẫu đại diện cho nhóm diene có hai nối đôi liền kề (cumulated diene) — có mặt cùng Propyne trong khí hàn công nghiệp MAPP.',
+      realLifeEn: 'Simplest alkadiene (C₃H₄) and prototype cumulated diene ("allene"), blended with Propyne in MAPP industrial welding gas.',
+      reactions: [
+        'Làm mất màu nước Br₂ tối đa theo tỉ lệ 1 : 2 và làm mất màu dung dịch KMnO₄ ở điều kiện thường.',
+        'KHÔNG phản ứng với AgNO₃/NH₃ (giúp phân biệt ngay với đồng phân Propyne có kết tủa vàng nhạt!).',
+        'Cộng H₂ dư (Ni, t°) tạo khí Propane.'
+      ],
+      reactionsEn: [
+        'Consumes up to 2 moles of Br₂(aq) and decolorizes cold KMnO₄.',
+        'Unreactive toward AgNO₃/NH₃, cleanly distinguishing it from its isomer Propyne!',
+        'Hydrogenates completely over Ni catalyst to Propane.'
+      ],
+      note: 'Công thức CH₂=C=CH₂ (C₃H₄); khác với Buta-1,3-diene liên hợp, hai mặt phẳng nhóm =CH₂ vuông góc nhau 90° qua nguyên tử C ở giữa.',
+      noteEn: 'Formula C₃H₄; its two terminal CH₂ planes twist 90° perpendicular to each other around the linear sp center carbon.'
+    },
+    {
+      id: 'pent-2-ene',
+      catKey: 'alkene',
+      elements: ['C','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,2],[2,3,1],[3,4,1]],
+      name: 'Pent-2-ene',
+      nameEn: 'Pent-2-ene',
+      category: 'Alkene',
+      categoryEn: 'Alkene',
+      state: 'Lỏng không màu (rất dễ bay hơi, sôi ở 36–37 °C)',
+      stateEn: 'Colorless volatile liquid (bp 36–37 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Sản phẩm chính khi tách nước Pentan-2-ol hoặc tách HBr từ 2-bromopentane theo quy tắc Zaitsev; dùng trong công nghiệp hóa dầu sản xuất phụ gia nhiên liệu và chất đóng rắn nhựa.',
+      realLifeEn: 'Major Zaitsev elimination alkene formed from Pentan-2-ol or 2-bromopentane, used in petrochemical fuel blending and metathesis reactions.',
+      reactions: [
+        'Làm mất màu nước Br₂ và dung dịch KMnO₄ loãng ở nhiệt độ thường.',
+        'Tồn tại hai đồng phân hình học cis-pent-2-ene và trans-pent-2-ene (khác với Pent-1-ene không có đồng phân hình học).',
+        'Cộng HBr tạo hỗn hợp 2-bromopentane và 3-bromopentane.'
+      ],
+      reactionsEn: [
+        'Rapidly decolorizes aqueous bromine and cold KMnO₄.',
+        'Exhibits cis–trans geometric isomerism across its internal double bond (unlike Pent-1-ene).',
+        'Adds HBr to yield a mixture of 2- and 3-bromopentane.'
+      ],
+      note: 'Công thức C₅H₁₀; thường gặp trong câu hỏi đếm đồng phân cấu tạo và đồng phân hình học của Alkene C₅H₁₀.',
+      noteEn: 'Formula C₅H₁₀; featured in Grade 11 alkene structural + cis/trans isomer counting problems.'
+    },
+    {
+      id: 'methylcyclohexane',
+      catKey: 'cycloalkane',
+      elements: [...C6_AROM,'C'],
+      bonds: [...C6_RING,[0,6,1]],
+      name: 'Methylcyclohexane (MCH)',
+      nameEn: 'Methylcyclohexane (MCH)',
+      category: 'Cycloalkane',
+      categoryEn: 'Cycloalkane',
+      state: 'Lỏng không màu (mùi giống xăng nhẹ, sôi ở 101 °C)',
+      stateEn: 'Colorless liquid (mild hydrocarbon odor, bp 101 °C)',
+      solubility: 'Không tan trong nước',
+      solubilityEn: 'Insoluble in water',
+      realLife: 'Dung môi lau rửa công nghiệp, thành phần nhiên liệu phản lực có độ ổn định nhiệt cao và đặc biệt là chất mang lưu trữ – vận chuyển khí Hydrogen lỏng an toàn hàng đầu trong công nghệ năng lượng sạch hiện đại (chu trình MCH / Toluene).',
+      realLifeEn: 'Clean-burning solvent, jet-fuel component, and leading Liquid Organic Hydrogen Carrier (LOHC) safely storing and transporting clean H₂ energy via reversible Toluene hydrogenation.',
+      reactions: [
+        'Tách H₂ trên xúc tác Pt/Al₂O₃ (reforming) giải phóng 3 mol H₂ và tạo lại Toluene.',
+        'Trơ hoàn toàn với nước Br₂ và dung dịch KMnO₄ ở điều kiện thường (nhờ vòng 6 cạnh no bền vững).',
+        'Tham gia phản ứng thế Cl₂ hoặc Br₂ khi chiếu sáng.'
+      ],
+      reactionsEn: [
+        'Catalytic dehydrogenation releases 3 equivalents of pure H₂ fuel cleanly alongside recyclable Toluene.',
+        'Inert toward cold aqueous bromine and KMnO₄ due to its strain-free saturated ring.',
+        'Undergoes UV-initiated free-radical halogen substitution.'
+      ],
+      note: 'Công thức C₇H₁₄; đồng phân mạch vòng của Heptene và là cặp lưu trữ năng lượng xanh Toluene + 3 H₂ ⇌ Methylcyclohexane.',
+      noteEn: 'Formula C₇H₁₄; cyclic isomer of Heptene and core green Hydrogen carrier pair with Toluene.'
+    },
+    {
+      id: 'biphenyl',
+      catKey: 'arene',
+      elements: [...C6_AROM,...C6_AROM],
+      bonds: [...BENZENE,[6,7,2],[7,8,1],[8,9,2],[9,10,1],[10,11,2],[11,6,1],[0,6,1]],
+      name: 'Biphenyl',
+      nameEn: 'Biphenyl',
+      category: 'Arene',
+      categoryEn: 'Arene',
+      state: 'Rắn (tinh thể vảy trắng, mùi thơm nhẹ đặc trưng, nóng chảy ở 69 °C)',
+      stateEn: 'Solid (white flaky crystals, mp 69 °C)',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ',
+      solubilityEn: 'Insoluble in water; soluble in organic solvents',
+      realLife: 'Chất truyền nhiệt chịu nhiệt độ cao cực bền trong công nghiệp, từng dùng bọc giấy gói chống nấm mốc cho cam quýt xuất khẩu và làm khung cấu trúc cứng cho vật liệu tinh thể lỏng màn hình LCD.',
+      realLifeEn: 'Thermally ultra-stable heat-transfer fluid, historic citrus shipping mold inhibitor, and rigid core building block of LCD liquid-crystal display molecules.',
+      reactions: [
+        'Tham gia phản ứng thế ái điện tử (halogen hóa, nitro hóa) vào vị trí para (số 4) dễ hơn Benzene.',
+        'Không làm mất màu nước Br₂ và bền vững với KMnO₄ ở điều kiện thường.',
+        'Hai vòng benzene liên kết qua một trục nối đơn C–C tự do xoay lệch góc nhau trong pha khí để giảm lực đẩy H.'
+      ],
+      reactionsEn: [
+        'Undergoes electrophilic substitution faster than Benzene, selectively favoring the 4-para position.',
+        'Resists aqueous bromine and KMnO₄ under ambient conditions.',
+        'Features two phenyl rings linked by a single C–C bond (12 carbons total).'
+      ],
+      note: 'Công thức C₁₂H₁₀ (chứa 12 Carbon — giới hạn tối đa của trình dựng phân tử); khác Naphthalene ở chỗ 2 vòng nối đơn chứ không chung cạnh.',
+      noteEn: 'Formula C₁₂H₁₀ (maximum 12 carbons supported in builder); unlike fused Naphthalene, its two phenyl rings join via a single C–C bond.'
     }
   ];
 
