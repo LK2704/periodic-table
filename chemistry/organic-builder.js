@@ -118,7 +118,8 @@
         const names = { 1: 'Liên kết đơn (–)', 2: 'Liên kết đôi (=)', 3: 'Liên kết ba (≡)' };
         return `${names[ord] || 'Liên kết'} — Bấm để chọn / đổi bậc`;
       },
-      atomTooltip: (el, usedVal, maxVal) => `${el} (${usedVal}/${maxVal} hóa trị)`,
+      atomTooltip: (el, usedVal, maxVal, collapsedH) =>
+        `${el} (${usedVal}/${maxVal} hóa trị)${collapsedH > 0 ? ' — Nhấp đúp để tách H' : ''}`,
       topology: {
         cyclic: 'mạch vòng',
         branched: 'mạch nhánh',
@@ -236,7 +237,8 @@
         const names = { 1: 'Single bond (–)', 2: 'Double bond (=)', 3: 'Triple bond (≡)' };
         return `${names[ord] || 'Bond'} — Click to select / cycle order`;
       },
-      atomTooltip: (el, usedVal, maxVal) => `${el} (${usedVal}/${maxVal} valence)`,
+      atomTooltip: (el, usedVal, maxVal, collapsedH) =>
+        `${el} (${usedVal}/${maxVal} valence)${collapsedH > 0 ? ' — Double-click to expand H' : ''}`,
       topology: {
         cyclic: 'Cyclic',
         branched: 'Branched',
@@ -993,7 +995,7 @@
   }
 
   function relaxLayout(graph, positions, options = {}) {
-    const { draggedIds = new Set(), iterations = 115, showH = true } = options;
+    const { draggedIds = new Set(), collapsedHIds = new Set(), iterations = 115, showH = true } = options;
     const { atomMap, adj } = buildAdjacency(graph);
     const pos = new Map();
 
@@ -1013,8 +1015,9 @@
     rings.forEach((r) => r.forEach((id) => ringAtomSet.add(id)));
 
     const visibleIds = graph.atoms
-      .filter((a) => showH || a.element !== 'H')
+      .filter((a) => (showH && !collapsedHIds.has(a.id)) || a.element !== 'H')
       .map((a) => a.id);
+    const visibleSet = new Set(visibleIds);
 
     const anchorPos = new Map();
     draggedIds.forEach((id) => {
@@ -1027,6 +1030,7 @@
 
       // 1. Bond length springs
       graph.bonds.forEach((b, bIdx) => {
+        if (!visibleSet.has(b.from) || !visibleSet.has(b.to)) return;
         const pa = pos.get(b.from);
         const pb = pos.get(b.to);
         if (!pa || !pb) return;
@@ -1104,7 +1108,7 @@
           const cp = pos.get(cid);
           const { ux, uy } = safeUnitVec(cp.x - cx, cp.y - cy, 1);
           const nbs = adj.get(cid) || [];
-          const exo = nbs.filter((e) => !ringAtomSet.has(e.to));
+          const exo = nbs.filter((e) => !ringAtomSet.has(e.to) && visibleSet.has(e.to));
           if (exo.length === 1) {
             const eid = exo[0].to;
             const ep = pos.get(eid);
@@ -1127,9 +1131,7 @@
 
       // 3. Local sibling angular repulsion (keeps -NH2, -OH, -CH3 cleanly fanned at ~120°)
       graph.atoms.forEach((center, cIdx) => {
-        const nbs = (adj.get(center.id) || []).filter(
-          (e) => showH || atomMap.get(e.to)?.element !== 'H'
-        );
+        const nbs = (adj.get(center.id) || []).filter((e) => visibleSet.has(e.to));
         if (nbs.length < 2) return;
         const cp = pos.get(center.id);
         for (let i = 0; i < nbs.length; i++) {
@@ -1222,7 +1224,7 @@
     return pos;
   }
 
-  function computeTargetViewBox(pos, valenceSlots, atomMap, showH, zoom, panX, panY) {
+  function computeTargetViewBox(pos, valenceSlots, atomMap, showH, zoom, panX, panY, collapsedHIds = new Set()) {
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
@@ -1230,7 +1232,7 @@
 
     pos.forEach((p, id) => {
       const atom = atomMap.get(id);
-      if (!atom || (!showH && atom.element === 'H')) return;
+      if (!atom || ((!showH || collapsedHIds.has(id)) && atom.element === 'H')) return;
       if (p.x < minX) minX = p.x;
       if (p.x > maxX) maxX = p.x;
       if (p.y < minY) minY = p.y;
@@ -1291,12 +1293,18 @@
     startVB: null,
     targetVB: null,
     rafId: null,
+    ambientRafId: null,
+    visibilityObserver: null,
+    visibilityBound: false,
     animStart: 0,
     animDuration: 190,
     lastAtomMap: null,
     exitingIds: new Set(),
     drag: null,
-    pan: null
+    pan: null,
+    toolbarHDrag: null,
+    suppressAddHClick: false,
+    mergePreviewId: null
   };
 
   function ensureSVGScene() {
@@ -1341,6 +1349,7 @@
     scene.atomNodes.clear();
     scene.bondNodes.clear();
     scene.currentPos.clear();
+    scene.mergePreviewId = null;
     scene.currentVB = { x: -200, y: -120, w: 400, h: 240 };
     return svg;
   }
@@ -1353,6 +1362,143 @@
     );
   }
 
+  function hashAtomId(id) {
+    let h = 2166136261;
+    const s = String(id);
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  function getAmbientOffset(id, element, now) {
+    if (!now || prefersReducedMotion() || scene.exitingIds.has(id)) {
+      return { dx: 0, dy: 0 };
+    }
+    if (scene.drag && scene.drag.atomId === id) {
+      return { dx: 0, dy: 0 };
+    }
+    const seed = hashAtomId(id);
+    const freqX = 0.00105 + ((seed % 37) / 37) * 0.00055;
+    const freqY = 0.00095 + (((seed >> 4) % 41) / 41) * 0.00055;
+    const phaseX = (seed % 628) / 100;
+    const phaseY = ((seed >> 3) % 628) / 100;
+    const ampX = element === 'H' ? 2.4 : 1.85;
+    const ampY = element === 'H' ? 2.0 : 1.5;
+    return {
+      dx: Math.sin(now * freqX + phaseX) * ampX,
+      dy: Math.cos(now * freqY + phaseY) * ampY
+    };
+  }
+
+  function getRenderedPos(id, now) {
+    const base = scene.currentPos.get(id) || state.positions.get(id);
+    if (!base) return null;
+    const entry = scene.atomNodes.get(id);
+    const el = entry?.element || scene.lastAtomMap?.get(id)?.element || 'C';
+    const off = getAmbientOffset(id, el, now);
+    return { x: base.x + off.dx, y: base.y + off.dy };
+  }
+
+  function applyRenderedPositions(now) {
+    const renderedMap = new Map();
+    scene.atomNodes.forEach((entry, id) => {
+      const rp = getRenderedPos(id, now);
+      if (!rp) return;
+      renderedMap.set(id, rp);
+      entry.g.setAttribute('transform', `translate(${rp.x.toFixed(1)}, ${rp.y.toFixed(1)})`);
+    });
+
+    scene.bondNodes.forEach((bEntry) => {
+      const pa = renderedMap.get(bEntry.from);
+      const pb = renderedMap.get(bEntry.to);
+      if (pa && pb) updateBondGeometry(bEntry, pa, pb);
+    });
+
+    updateSlotsGeometry(renderedMap);
+  }
+
+  function isStageVisible() {
+    return Boolean(
+      dom.panel &&
+        !dom.panel.classList.contains('hidden') &&
+        dom.svgHost &&
+        dom.svgHost.offsetParent !== null &&
+        !document.hidden &&
+        !prefersReducedMotion()
+    );
+  }
+
+  function stopAmbientLoop() {
+    if (scene.ambientRafId) {
+      cancelAnimationFrame(scene.ambientRafId);
+      scene.ambientRafId = null;
+    }
+  }
+
+  function startAmbientLoop() {
+    if (scene.ambientRafId || !isStageVisible() || scene.atomNodes.size === 0) return;
+    function ambientTick(now) {
+      if (!isStageVisible() || scene.atomNodes.size === 0) {
+        scene.ambientRafId = null;
+        return;
+      }
+      if (!scene.rafId && !scene.pan) {
+        applyRenderedPositions(now);
+      }
+      scene.ambientRafId = requestAnimationFrame(ambientTick);
+    }
+    scene.ambientRafId = requestAnimationFrame(ambientTick);
+  }
+
+  function formatAtomDisplay(atom, adj, atomMap, extraCollapsedH = 0) {
+    const st = ATOM_STYLE[atom.element] || ATOM_STYLE.C;
+    let collapsedCount = 0;
+
+    if (atom.element === 'C') {
+      collapsedCount =
+        (adj.get(atom.id) || []).filter(
+          (e) => atomMap.get(e.to)?.element === 'H' && state.collapsedHIds.has(e.to)
+        ).length + extraCollapsedH;
+    } else if (atom.element === 'O' || atom.element === 'N') {
+      collapsedCount =
+        (adj.get(atom.id) || []).filter(
+          (e) =>
+            atomMap.get(e.to)?.element === 'H' &&
+            (!state.showH || state.collapsedHIds.has(e.to))
+        ).length + extraCollapsedH;
+    }
+
+    if (collapsedCount <= 0) {
+      return {
+        label: atom.element,
+        radius: ATOM_RADIUS[atom.element] || 16,
+        fontSize: st.fontSize,
+        collapsedCount: 0
+      };
+    }
+
+    const label =
+      atom.element === 'O' && collapsedCount === 2
+        ? 'H₂O'
+        : collapsedCount === 1
+          ? `${atom.element}H`
+          : `${atom.element}H${toSubscript(collapsedCount)}`;
+
+    let radius = ATOM_RADIUS[atom.element] || 17;
+    let fontSize = st.fontSize;
+    if (label.length === 2) {
+      radius = Math.max(radius, 19.5);
+      fontSize = 11.5;
+    } else if (label.length >= 3) {
+      radius = Math.max(radius, 21);
+      fontSize = 10.6;
+    }
+
+    return { label, radius, fontSize, collapsedCount };
+  }
+
   function updateBondGeometry(entry, pa, pb) {
     const dx = pb.x - pa.x;
     const dy = pb.y - pa.y;
@@ -1362,8 +1508,8 @@
     const nx = -uy;
     const ny = ux;
 
-    const rA = ATOM_RADIUS[entry.elA] || 16;
-    const rB = ATOM_RADIUS[entry.elB] || 16;
+    const rA = scene.atomNodes.get(entry.from)?.r || ATOM_RADIUS[entry.elA] || 16;
+    const rB = scene.atomNodes.get(entry.to)?.r || ATOM_RADIUS[entry.elB] || 16;
 
     const offsets = entry.order === 1 ? [0] : entry.order === 2 ? [-3.4, 3.4] : [-4.8, 0, 4.8];
 
@@ -1401,16 +1547,17 @@
     }
   }
 
-  function updateSlotsGeometry() {
+  function updateSlotsGeometry(posMap) {
     if (!scene.layerSlots) return;
+    const source = posMap || scene.currentPos;
     const slotEls = scene.layerSlots.children;
     for (let i = 0; i < slotEls.length; i++) {
       const g = slotEls[i];
       const cid = g.dataset.slotAtomId;
       const ang = Number(g.dataset.slotAngle || 0);
-      const cp = scene.currentPos.get(cid);
+      const cp = source.get(cid);
       if (!cp) continue;
-      const rA = ATOM_RADIUS[scene.lastAtomMap?.get(cid)?.element] || 18;
+      const rA = scene.atomNodes.get(cid)?.r || ATOM_RADIUS[scene.lastAtomMap?.get(cid)?.element] || 18;
       const len = rA + 22;
       const sx = cp.x + len * Math.cos(ang);
       const sy = cp.y + len * Math.sin(ang);
@@ -1464,16 +1611,9 @@
       const x = sPos.x + (tPos.x - sPos.x) * ease;
       const y = sPos.y + (tPos.y - sPos.y) * ease;
       scene.currentPos.set(id, { x, y });
-      entry.g.setAttribute('transform', `translate(${x.toFixed(1)}, ${y.toFixed(1)})`);
     });
 
-    scene.bondNodes.forEach((entry) => {
-      const pa = scene.currentPos.get(entry.from);
-      const pb = scene.currentPos.get(entry.to);
-      if (pa && pb) updateBondGeometry(entry, pa, pb);
-    });
-
-    updateSlotsGeometry();
+    applyRenderedPositions(performance.now());
   }
 
   function computeOpenSlotsForSelected(graph, positions, atomMap, adj) {
@@ -1489,13 +1629,15 @@
 
     const occupied = [];
     (adj.get(selId) || []).forEach((e) => {
-      if (!state.showH && atomMap.get(e.to)?.element === 'H') return;
+      const nbEl = atomMap.get(e.to)?.element;
+      if (nbEl === 'H' && (!state.showH || state.collapsedHIds.has(e.to))) return;
       const np = positions.get(e.to);
       if (np) occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
     });
 
     const angles = pickOpenAngles(occupied, miss);
-    const rA = ATOM_RADIUS[atom.element] || 18;
+    const disp = formatAtomDisplay(atom, adj, atomMap, 0);
+    const rA = disp.radius;
     const len = rA + 22;
     angles.forEach((ang) => {
       slots.push({
@@ -1548,6 +1690,8 @@
         const pEl = atomMap.get(pid)?.element || 'C';
         const occupied = [];
         (adj.get(pid) || []).forEach((e) => {
+          const nbEl = atomMap.get(e.to)?.element;
+          if (nbEl === 'H' && (!state.showH || state.collapsedHIds.has(e.to))) return;
           if (state.positions.has(e.to)) {
             const np = state.positions.get(e.to);
             occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
@@ -1606,12 +1750,18 @@
       if (!activeIds.has(id)) {
         state.positions.delete(id);
         state.draggedIds.delete(id);
+        state.collapsedHIds.delete(id);
       }
     });
+    Array.from(state.collapsedHIds).forEach((id) => {
+      if (!activeIds.has(id)) state.collapsedHIds.delete(id);
+    });
+    scene.mergePreviewId = null;
 
     if (!skipRelax) {
       state.positions = relaxLayout(graph, state.positions, {
         draggedIds: state.draggedIds,
+        collapsedHIds: state.collapsedHIds,
         iterations: 115,
         showH: state.showH
       });
@@ -1621,7 +1771,16 @@
     const targetVB =
       keepViewBox && scene.currentVB
         ? { ...scene.currentVB }
-        : computeTargetViewBox(state.positions, valenceSlots, atomMap, state.showH, state.zoom, state.panX, state.panY);
+        : computeTargetViewBox(
+            state.positions,
+            valenceSlots,
+            atomMap,
+            state.showH,
+            state.zoom,
+            state.panX,
+            state.panY,
+            state.collapsedHIds
+          );
 
     scene.svg.setAttribute('aria-label', result.isComplete ? result.commonName : d.incompleteTitle);
     scene.lastAtomMap = atomMap;
@@ -1630,7 +1789,9 @@
 
     const visibleAtomIds = new Set();
     graph.atoms.forEach((a) => {
-      if (state.showH || a.element !== 'H') visibleAtomIds.add(a.id);
+      if (a.element !== 'H' || (state.showH && !state.collapsedHIds.has(a.id))) {
+        visibleAtomIds.add(a.id);
+      }
     });
 
     Array.from(scene.atomNodes.keys()).forEach((id) => {
@@ -1664,19 +1825,11 @@
       let entry = scene.atomNodes.get(atom.id);
       const isSelected = atom.id === state.selectedId;
       const isConnectFirst = state.connectMode && atom.id === state.connectFirstId;
-      const r = ATOM_RADIUS[atom.element] || 16;
       const st = ATOM_STYLE[atom.element] || ATOM_STYLE.C;
       const usedVal = getBondSum(adj, atom.id);
       const maxVal = ELEMENT_VALENCE[atom.element] || 4;
-      const tip = d.atomTooltip(atom.element, usedVal, maxVal);
-
-      let displaySymbol = atom.element;
-      if (!state.showH && (atom.element === 'O' || atom.element === 'N')) {
-        const hBonded = (adj.get(atom.id) || []).filter((e) => atomMap.get(e.to)?.element === 'H').length;
-        if (atom.element === 'O' && hBonded === 1) displaySymbol = 'OH';
-        else if (atom.element === 'N' && hBonded === 1) displaySymbol = 'NH';
-        else if (atom.element === 'N' && hBonded === 2) displaySymbol = 'NH₂';
-      }
+      const disp = formatAtomDisplay(atom, adj, atomMap, 0);
+      const tip = d.atomTooltip(disp.label, usedVal, maxVal, disp.collapsedCount);
 
       if (!entry) {
         const g = createSvgEl('g', {
@@ -1695,7 +1848,7 @@
         const circleEl = createSvgEl('circle', {
           cx: 0,
           cy: 0,
-          r: r.toFixed(1),
+          r: disp.radius.toFixed(1),
           fill: st.fill,
           stroke: st.stroke,
           'stroke-width': '1.5',
@@ -1719,7 +1872,17 @@
         g.appendChild(shakeG);
         scene.layerAtoms.appendChild(g);
 
-        entry = { g, shakeG, innerG, circleEl, textEl, titleEl };
+        entry = {
+          g,
+          shakeG,
+          innerG,
+          circleEl,
+          textEl,
+          titleEl,
+          element: atom.element,
+          r: disp.radius,
+          baseDisplay: disp
+        };
         scene.atomNodes.set(atom.id, entry);
 
         if (!reduced) {
@@ -1728,22 +1891,21 @@
         }
       }
 
+      entry.element = atom.element;
+      entry.r = disp.radius;
+      entry.baseDisplay = disp;
       entry.g.classList.toggle('is-selected', isSelected);
       entry.g.classList.toggle('is-connect-anchor', isConnectFirst);
+      entry.g.classList.remove('is-merge-target', 'is-merge-blocked', 'is-merging-h');
       entry.g.setAttribute('aria-label', tip);
       entry.titleEl.textContent = tip;
 
+      entry.circleEl.setAttribute('r', disp.radius.toFixed(1));
       entry.circleEl.setAttribute('fill', st.fill);
       entry.circleEl.setAttribute('stroke', st.stroke);
       entry.textEl.setAttribute('fill', st.text);
-      const fSize =
-        displaySymbol.length >= 3
-          ? st.fontSize - 3
-          : displaySymbol.length === 2 && (atom.element === 'O' || atom.element === 'N')
-            ? st.fontSize - 2
-            : st.fontSize;
-      entry.textEl.setAttribute('font-size', String(fSize));
-      entry.textEl.textContent = displaySymbol;
+      entry.textEl.setAttribute('font-size', String(disp.fontSize));
+      entry.textEl.textContent = disp.label;
     });
 
     // Sync Bonds Layer
@@ -1879,6 +2041,7 @@
 
     if (reduced) {
       renderFrameAt(1);
+      startAmbientLoop();
       return;
     }
 
@@ -1894,6 +2057,7 @@
     }
     renderFrameAt(0);
     scene.rafId = requestAnimationFrame(tick);
+    startAmbientLoop();
   }
 
   function triggerShakeError(atomIds) {
@@ -1963,6 +2127,7 @@
     graph: null,
     positions: new Map(),
     draggedIds: new Set(),
+    collapsedHIds: new Set(),
     selectedId: 'c1',
     selectedBondKey: null,
     connectMode: false,
@@ -2009,6 +2174,7 @@
       graph: cloneGraph(state.graph),
       positions: clonePosMap(state.positions),
       draggedIds: new Set(state.draggedIds),
+      collapsedHIds: new Set(state.collapsedHIds),
       selectedId: state.selectedId,
       selectedBondKey: state.selectedBondKey
     });
@@ -2065,6 +2231,184 @@
 
   function hasExplicitHNeighbor(atomMap, adj, atomId) {
     return (adj.get(atomId) || []).some((e) => atomMap.get(e.to)?.element === 'H');
+  }
+
+  function triggerMergePop(atomId) {
+    const entry = scene.atomNodes.get(atomId);
+    if (!entry || prefersReducedMotion()) return;
+    entry.innerG.classList.remove('is-merge-pop');
+    void entry.innerG.getBoundingClientRect();
+    entry.innerG.classList.add('is-merge-pop');
+    setTimeout(() => entry.innerG.classList.remove('is-merge-pop'), 240);
+  }
+
+  function findMergeCandidate(svgX, svgY, draggedHId) {
+    if (!state.graph) return null;
+    const { atomMap, adj } = buildAdjacency(state.graph);
+    const now = performance.now();
+    let bestId = null;
+    let bestDist = Infinity;
+
+    scene.atomNodes.forEach((entry, id) => {
+      if (id === draggedHId) return;
+      const el = entry.element || atomMap.get(id)?.element;
+      if (el !== 'C' && el !== 'O' && el !== 'N') return;
+      const rp = getRenderedPos(id, now) || scene.currentPos.get(id) || state.positions.get(id);
+      if (!rp) return;
+      const dist = Math.hypot(svgX - rp.x, svgY - rp.y);
+      const hitRadius = (entry.r || ATOM_RADIUS[el] || 18) + ATOM_RADIUS.H + 6;
+      if (dist <= hitRadius && dist < bestDist) {
+        bestDist = dist;
+        bestId = id;
+      }
+    });
+
+    if (!bestId) return null;
+    const alreadyBonded = draggedHId
+      ? state.graph.bonds.some(
+          (b) =>
+            (b.from === draggedHId && b.to === bestId) ||
+            (b.to === draggedHId && b.from === bestId)
+        )
+      : false;
+    const canAccept = alreadyBonded || getMissingValence(atomMap, adj, bestId) >= 1;
+    return { targetId: bestId, canAccept, alreadyBonded };
+  }
+
+  function clearMergePreview() {
+    if (!scene.mergePreviewId) return;
+    const prev = scene.atomNodes.get(scene.mergePreviewId);
+    if (prev) {
+      prev.g.classList.remove('is-merge-target', 'is-merge-blocked');
+      if (prev.baseDisplay) {
+        prev.circleEl.setAttribute('r', prev.baseDisplay.radius.toFixed(1));
+        prev.textEl.setAttribute('font-size', String(prev.baseDisplay.fontSize));
+        prev.textEl.textContent = prev.baseDisplay.label;
+      }
+    }
+    scene.mergePreviewId = null;
+  }
+
+  function setMergePreview(targetId, canAccept, extraH = 1) {
+    if (scene.mergePreviewId && scene.mergePreviewId !== targetId) {
+      clearMergePreview();
+    }
+    if (!targetId) {
+      clearMergePreview();
+      return;
+    }
+    const entry = scene.atomNodes.get(targetId);
+    if (!entry) return;
+    scene.mergePreviewId = targetId;
+    entry.g.classList.toggle('is-merge-target', Boolean(canAccept));
+    entry.g.classList.toggle('is-merge-blocked', !canAccept);
+
+    if (canAccept && state.graph) {
+      const { atomMap, adj } = buildAdjacency(state.graph);
+      const atom = atomMap.get(targetId);
+      if (atom) {
+        const previewDisp = formatAtomDisplay(atom, adj, atomMap, extraH);
+        entry.circleEl.setAttribute('r', previewDisp.radius.toFixed(1));
+        entry.textEl.setAttribute('font-size', String(previewDisp.fontSize));
+        entry.textEl.textContent = previewDisp.label;
+      }
+    } else if (entry.baseDisplay) {
+      entry.circleEl.setAttribute('r', entry.baseDisplay.radius.toFixed(1));
+      entry.textEl.setAttribute('font-size', String(entry.baseDisplay.fontSize));
+      entry.textEl.textContent = entry.baseDisplay.label;
+    }
+  }
+
+  function collapseHydrogenIntoAtom(hId, targetId) {
+    if (state.isMutating || !state.graph) return false;
+    const { atomMap, adj } = buildAdjacency(state.graph);
+    const hAtom = atomMap.get(hId);
+    const tAtom = atomMap.get(targetId);
+    if (!hAtom || hAtom.element !== 'H' || !tAtom) return false;
+    if (tAtom.element !== 'C' && tAtom.element !== 'O' && tAtom.element !== 'N') return false;
+
+    const alreadyBonded = state.graph.bonds.some(
+      (b) => (b.from === hId && b.to === targetId) || (b.to === hId && b.from === targetId)
+    );
+    if (!alreadyBonded && getMissingValence(atomMap, adj, targetId) < 1) {
+      return false;
+    }
+
+    pushUndo();
+    if (!alreadyBonded) {
+      state.graph.bonds = state.graph.bonds.map((b) =>
+        b.from === hId || b.to === hId ? { from: targetId, to: hId, order: 1 } : b
+      );
+      if (!state.graph.bonds.some((b) => b.from === hId || b.to === hId)) {
+        state.graph.bonds.push({ from: targetId, to: hId, order: 1 });
+      }
+    }
+
+    state.collapsedHIds.add(hId);
+    state.draggedIds.delete(hId);
+    const tPos = state.positions.get(targetId);
+    if (tPos) state.positions.set(hId, { x: tPos.x, y: tPos.y });
+
+    state.selectedId = targetId;
+    state.selectedBondKey = null;
+    showToast('');
+    renderAll();
+    triggerMergePop(targetId);
+    return true;
+  }
+
+  function addAndCollapseHydrogen(targetId) {
+    if (state.isMutating || !state.graph) return false;
+    const { atomMap, adj } = buildAdjacency(state.graph);
+    const tAtom = atomMap.get(targetId);
+    const t = dict().toasts;
+    if (!tAtom || (tAtom.element !== 'C' && tAtom.element !== 'O' && tAtom.element !== 'N')) {
+      showToast(t.selectHeavy, 'warn');
+      return false;
+    }
+    if (getMissingValence(atomMap, adj, targetId) < 1) {
+      showToast(t.valenceFull(1, hasExplicitHNeighbor(atomMap, adj, targetId)), 'warn');
+      triggerShakeError(targetId);
+      return false;
+    }
+
+    pushUndo();
+    const id = genAtomId('h');
+    state.graph.atoms.push({ id, element: 'H' });
+    state.graph.bonds.push({ from: targetId, to: id, order: 1 });
+    const tPos = state.positions.get(targetId);
+    state.positions.set(id, tPos ? { x: tPos.x, y: tPos.y } : { x: 0, y: 0 });
+    state.collapsedHIds.add(id);
+
+    state.selectedId = targetId;
+    state.selectedBondKey = null;
+    showToast('');
+    renderAll();
+    triggerMergePop(targetId);
+    return true;
+  }
+
+  function expandCollapsedHydrogens(atomId) {
+    if (state.isMutating || !state.graph) return;
+    const { atomMap, adj } = buildAdjacency(state.graph);
+    const collapsedHs = (adj.get(atomId) || [])
+      .map((e) => e.to)
+      .filter((hid) => atomMap.get(hid)?.element === 'H' && state.collapsedHIds.has(hid));
+    if (collapsedHs.length === 0) return;
+
+    pushUndo();
+    const newAtomParents = new Map();
+    collapsedHs.forEach((hid) => {
+      state.collapsedHIds.delete(hid);
+      state.positions.delete(hid);
+      scene.currentPos.delete(hid);
+      newAtomParents.set(hid, atomId);
+    });
+    state.showH = true;
+    state.selectedId = atomId;
+    state.selectedBondKey = null;
+    showToast('');
+    renderAll({ newAtomParents });
   }
 
   function addCarbonAtom() {
@@ -2613,6 +2957,7 @@
     state.graph = prev.graph;
     state.positions = prev.positions;
     state.draggedIds = prev.draggedIds;
+    state.collapsedHIds = new Set(prev.collapsedHIds || []);
     state.selectedId = prev.selectedId;
     state.selectedBondKey = prev.selectedBondKey;
     showToast('');
@@ -2626,6 +2971,7 @@
     state.graph = { atoms: [{ id: 'c1', element: 'C' }], bonds: [] };
     state.positions = new Map([['c1', { x: 0, y: 0 }]]);
     state.draggedIds.clear();
+    state.collapsedHIds.clear();
     state.selectedId = 'c1';
     state.selectedBondKey = null;
     state.zoom = 1;
@@ -2847,10 +3193,17 @@
           scene.rafId = null;
         }
 
-        const cur = scene.currentPos.get(atomId);
+        const cur = getRenderedPos(atomId, performance.now()) || scene.currentPos.get(atomId);
+        const origPos = state.positions.get(atomId);
+        const atomObj = scene.lastAtomMap?.get(atomId);
         const startSvg = clientToSvgPoint(e.clientX, e.clientY);
         scene.drag = {
           atomId,
+          isH: Boolean(atomObj && atomObj.element === 'H'),
+          originPos: origPos ? { x: origPos.x, y: origPos.y } : { x: cur.x, y: cur.y },
+          wasDraggedBefore: state.draggedIds.has(atomId),
+          mergeTargetId: null,
+          mergeCanAccept: false,
           pointerId: e.pointerId,
           startClientX: e.clientX,
           startClientY: e.clientY,
@@ -2941,18 +3294,16 @@
       scene.currentPos.set(id, { x: nx, y: ny });
       state.draggedIds.add(id);
 
-      const entry = scene.atomNodes.get(id);
-      if (entry) entry.g.setAttribute('transform', `translate(${nx.toFixed(1)}, ${ny.toFixed(1)})`);
+      const now = performance.now();
+      applyRenderedPositions(now);
 
-      scene.bondNodes.forEach((bEntry) => {
-        if (bEntry.from === id || bEntry.to === id) {
-          const pa = scene.currentPos.get(bEntry.from);
-          const pb = scene.currentPos.get(bEntry.to);
-          if (pa && pb) updateBondGeometry(bEntry, pa, pb);
-        }
-      });
-      if (state.selectedId === id) {
-        updateSlotsGeometry();
+      const entry = scene.atomNodes.get(id);
+      if (scene.drag.isH) {
+        const cand = findMergeCandidate(nx, ny, id);
+        scene.drag.mergeTargetId = cand ? cand.targetId : null;
+        scene.drag.mergeCanAccept = Boolean(cand && cand.canAccept);
+        setMergePreview(scene.drag.mergeTargetId, scene.drag.mergeCanAccept, 1);
+        if (entry) entry.g.classList.toggle('is-merging-h', Boolean(cand && cand.canAccept));
       }
     });
 
@@ -2967,6 +3318,34 @@
       const drag = scene.drag;
       scene.drag = null;
       dom.svgHost.classList.remove('is-dragging');
+
+      const dragEntry = scene.atomNodes.get(drag.atomId);
+      if (dragEntry) dragEntry.g.classList.remove('is-merging-h');
+      clearMergePreview();
+
+      if (drag.moved && drag.isH) {
+        const curPt = scene.currentPos.get(drag.atomId);
+        const dropCand = curPt ? findMergeCandidate(curPt.x, curPt.y, drag.atomId) : null;
+        const targetId = dropCand ? dropCand.targetId : drag.mergeTargetId;
+        const canAccept = dropCand ? dropCand.canAccept : drag.mergeCanAccept;
+        if (targetId) {
+          if (canAccept) {
+            state.positions.set(drag.atomId, { x: drag.originPos.x, y: drag.originPos.y });
+            if (!drag.wasDraggedBefore) state.draggedIds.delete(drag.atomId);
+            if (collapseHydrogenIntoAtom(drag.atomId, targetId)) {
+              return;
+            }
+          }
+          state.positions.set(drag.atomId, { x: drag.originPos.x, y: drag.originPos.y });
+          scene.currentPos.set(drag.atomId, { x: drag.originPos.x, y: drag.originPos.y });
+          if (!drag.wasDraggedBefore) state.draggedIds.delete(drag.atomId);
+          triggerShakeError(targetId);
+          const { atomMap, adj } = buildAdjacency(state.graph);
+          showToast(dict().toasts.valenceFull(1, hasExplicitHNeighbor(atomMap, adj, targetId)), 'warn');
+          renderAll({ skipRelax: true, keepViewBox: true });
+          return;
+        }
+      }
 
       if (drag.moved) {
         renderAll({ skipRelax: true });
@@ -3014,6 +3393,99 @@
       },
       { passive: false }
     );
+  }
+
+  function bindToolbarHydrogenDrag() {
+    if (!dom.toolbar || scene.toolbarDragBound) return;
+    const addHBtn = dom.toolbar.querySelector('[data-org-action="add-h"]');
+    if (!addHBtn) return;
+    scene.toolbarDragBound = true;
+
+    addHBtn.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || addHBtn.disabled) return;
+      e.preventDefault();
+      scene.toolbarHDrag = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        active: false,
+        ghostEl: null,
+        targetId: null,
+        canAccept: false
+      };
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      const td = scene.toolbarHDrag;
+      if (!td || td.pointerId !== e.pointerId) return;
+
+      if (!td.active) {
+        if (Math.hypot(e.clientX - td.startX, e.clientY - td.startY) < 6) return;
+        td.active = true;
+        const ghost = document.createElement('div');
+        ghost.className = 'org-drag-ghost-h';
+        ghost.textContent = 'H';
+        document.body.appendChild(ghost);
+        td.ghostEl = ghost;
+      }
+
+      if (td.ghostEl) {
+        td.ghostEl.style.left = `${e.clientX}px`;
+        td.ghostEl.style.top = `${e.clientY}px`;
+      }
+
+      let cand = null;
+      if (dom.svgHost && scene.svg) {
+        const rect = dom.svgHost.getBoundingClientRect();
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          const svgPt = clientToSvgPoint(e.clientX, e.clientY);
+          cand = findMergeCandidate(svgPt.x, svgPt.y, null);
+        }
+      }
+
+      td.targetId = cand ? cand.targetId : null;
+      td.canAccept = Boolean(cand && cand.canAccept);
+      setMergePreview(td.targetId, td.canAccept, 1);
+    });
+
+    const endToolbarDrag = (e) => {
+      const td = scene.toolbarHDrag;
+      if (!td || td.pointerId !== e.pointerId) return;
+      scene.toolbarHDrag = null;
+
+      if (td.ghostEl && td.ghostEl.parentNode) {
+        td.ghostEl.parentNode.removeChild(td.ghostEl);
+      }
+      clearMergePreview();
+
+      if (!td.active) return;
+
+      scene.suppressAddHClick = true;
+      setTimeout(() => {
+        scene.suppressAddHClick = false;
+      }, 120);
+
+      if (e.type === 'pointerup' && td.targetId) {
+        if (td.canAccept) {
+          addAndCollapseHydrogen(td.targetId);
+        } else {
+          triggerShakeError(td.targetId);
+          const { atomMap, adj } = buildAdjacency(state.graph);
+          showToast(
+            dict().toasts.valenceFull(1, hasExplicitHNeighbor(atomMap, adj, td.targetId)),
+            'warn'
+          );
+        }
+      }
+    };
+
+    window.addEventListener('pointerup', endToolbarDrag);
+    window.addEventListener('pointercancel', endToolbarDrag);
   }
 
   function init(opts = {}) {
@@ -3069,6 +3541,7 @@
     state.graph = { atoms: [{ id: 'c1', element: 'C' }], bonds: [] };
     state.positions = new Map([['c1', { x: 0, y: 0 }]]);
     state.draggedIds = new Set();
+    state.collapsedHIds = new Set();
     state.selectedId = 'c1';
     state.selectedBondKey = null;
     state.connectMode = false;
@@ -3084,6 +3557,10 @@
         const btn = e.target.closest('[data-org-action]');
         if (!btn || btn.disabled) return;
         const action = btn.dataset.orgAction;
+        if (action === 'add-h' && scene.suppressAddHClick) {
+          scene.suppressAddHClick = false;
+          return;
+        }
         if (action === 'add-c') addCarbonAtom();
         else if (action === 'add-h') addHydrogenToAtom(state.selectedId);
         else if (action === 'add-o-bridge') addBridgeOxygen();
@@ -3118,13 +3595,34 @@
     if (dom.btnToggleH) {
       dom.btnToggleH.addEventListener('click', () => {
         state.showH = !state.showH;
+        if (state.showH && state.collapsedHIds.size > 0) {
+          const { atomMap, adj } = buildAdjacency(state.graph);
+          const newAtomParents = new Map();
+          Array.from(state.collapsedHIds).forEach((hid) => {
+            const parentId = (adj.get(hid) || []).find((e) => atomMap.get(e.to)?.element !== 'H')?.to;
+            state.positions.delete(hid);
+            scene.currentPos.delete(hid);
+            if (parentId) newAtomParents.set(hid, parentId);
+          });
+          state.collapsedHIds.clear();
+          renderAll({ newAtomParents });
+          return;
+        }
         renderAll();
       });
     }
 
     bindPointerDragging();
+    bindToolbarHydrogenDrag();
 
     if (dom.svgHost) {
+      dom.svgHost.addEventListener('dblclick', (e) => {
+        const atomEl = e.target.closest('.org-atom-node');
+        if (!atomEl || state.connectMode) return;
+        const atomId = atomEl.dataset.atomId;
+        if (atomId) expandCollapsedHydrogens(atomId);
+      });
+
       dom.svgHost.addEventListener('click', (e) => {
         const slotEl = e.target.closest('.org-valence-slot');
         if (slotEl) {
@@ -3169,6 +3667,30 @@
           handleBondClick(bondEl.dataset.bondKey);
         }
       });
+    }
+
+    if (scene.visibilityObserver) {
+      scene.visibilityObserver.disconnect();
+      scene.visibilityObserver = null;
+    }
+    const handleVis = () => {
+      if (isStageVisible()) {
+        startAmbientLoop();
+      } else {
+        stopAmbientLoop();
+      }
+    };
+    if (typeof MutationObserver !== 'undefined') {
+      scene.visibilityObserver = new MutationObserver(handleVis);
+      scene.visibilityObserver.observe(panel, { attributes: true, attributeFilter: ['class'] });
+      const modal = panel.closest('#lab-modal');
+      if (modal) {
+        scene.visibilityObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+      }
+    }
+    if (!scene.visibilityBound) {
+      scene.visibilityBound = true;
+      document.addEventListener('visibilitychange', handleVis);
     }
 
     applyLanguage();
