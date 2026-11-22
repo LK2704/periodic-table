@@ -78,7 +78,34 @@
       stageHintConnect1: 'Chế độ nối vòng: Chọn nguyên tử thứ nhất...',
       stageHintConnect2: 'Chọn nguyên tử thứ hai để tạo liên kết khép vòng...',
       mFormula: 'Công thức',
-      mMolarMass: 'Phân tử khối',
+      mMolarMass: 'M =',
+      mState: 'Trạng thái',
+      mSolubility: 'Độ tan',
+      secRealLife: 'Đời sống & Ứng dụng',
+      secReactions: 'Đặc trưng hóa học & Nhận biết',
+      secNote: 'Đồng phân / Lưu ý',
+      chainLabel: (isCyclic, ringCount, topoKey) =>
+        isCyclic
+          ? `Loại mạch: Mạch vòng (${ringCount} vòng)`
+          : topoKey === 'branched'
+            ? 'Loại mạch: Mạch hở (có nhánh)'
+            : 'Loại mạch: Mạch hở (không nhánh)',
+      groupsPrefix: 'Nhóm chức: ',
+      noFuncGroups: 'Không có nhóm chức (Hydrocarbon no)',
+      funcGroupNames: {
+        carboxyl: '-COOH (Carboxylic acid)',
+        ester: '-COO- (Ester)',
+        aldehyde: '-CHO (Aldehyde)',
+        ketone: '>C=O (Ketone)',
+        phenol: '-OH gắn vòng thơm (Phenol)',
+        alcohol: '-OH (Alcohol)',
+        ether: '-O- (Ether)',
+        amine: '-NH₂ / Amine',
+        halogen: '-X (Halogen derivative)',
+        arene: 'Vòng thơm (Arene)',
+        alkene: 'Liên kết đôi C=C (Alkene)',
+        alkyne: 'Liên kết ba C≡C (Alkyne)'
+      },
       incompleteTitle: 'Chưa hoàn thiện phân tử',
       incompleteTag: (n) => `Thiếu ${n} liên kết`,
       incompleteDesc: (n) =>
@@ -98,23 +125,29 @@
         linear: 'mạch thẳng'
       },
       categories: {
-        aromatic: 'Hợp chất thơm',
-        cycloalkane: 'Hiđrocacbon mạch vòng',
-        heterocycle: 'Hợp chất dị vòng',
-        hydrocarbon: 'Hiđrocacbon',
-        alcohol: 'Ancol',
+        arene: 'Arene',
+        aromatic: 'Arene',
+        cycloalkane: 'Cycloalkane',
+        cycloalkene: 'Cycloalkene',
+        heterocycle: 'Heterocycle',
+        hydrocarbon: 'Hydrocarbon',
+        alkane: 'Alkane',
+        alkene: 'Alkene',
+        alkyne: 'Alkyne',
+        alkadiene: 'Alkadiene',
+        alcohol: 'Alcohol',
         phenol: 'Phenol',
-        ether: 'Ete',
-        aldehyde: 'Anđehit',
-        ketone: 'Xeton',
-        carboxylic: 'Axit cacboxylic',
-        ester: 'Este',
-        anhydride: 'Anhiđrit axit',
-        carbohydrate: 'Cacbohiđrat',
-        aminoacid: 'Amino axit',
-        amine: 'Amin',
-        halogen: 'Dẫn xuất halogen',
-        amide: 'Amit / Hợp chất chứa N',
+        ether: 'Ether',
+        aldehyde: 'Aldehyde',
+        ketone: 'Ketone',
+        carboxylic: 'Carboxylic acid',
+        ester: 'Ester',
+        anhydride: 'Acid anhydride',
+        carbohydrate: 'Carbohydrate',
+        aminoacid: 'Amino acid',
+        amine: 'Amine',
+        amide: 'Amide',
+        halogen: 'Halogen derivative',
         pharma: 'Dược chất hữu cơ',
         custom: 'Hợp chất hữu cơ'
       },
@@ -163,7 +196,34 @@
       stageHintConnect1: 'Connect mode: Click the first atom...',
       stageHintConnect2: 'Click the second atom to form a ring bond...',
       mFormula: 'Formula',
-      mMolarMass: 'Molar Mass',
+      mMolarMass: 'M =',
+      mState: 'State',
+      mSolubility: 'Solubility',
+      secRealLife: 'Real-life & Applications',
+      secReactions: 'Chemical Properties & Tests',
+      secNote: 'Isomers / Note',
+      chainLabel: (isCyclic, ringCount, topoKey) =>
+        isCyclic
+          ? `Chain: Cyclic (${ringCount} ring${ringCount > 1 ? 's' : ''})`
+          : topoKey === 'branched'
+            ? 'Chain: Open-chain (branched)'
+            : 'Chain: Open-chain (linear)',
+      groupsPrefix: 'Functional groups: ',
+      noFuncGroups: 'None (Saturated hydrocarbon)',
+      funcGroupNames: {
+        carboxyl: '-COOH (Carboxylic acid)',
+        ester: '-COO- (Ester)',
+        aldehyde: '-CHO (Aldehyde)',
+        ketone: '>C=O (Ketone)',
+        phenol: '-OH on aromatic ring (Phenol)',
+        alcohol: '-OH (Alcohol)',
+        ether: '-O- (Ether)',
+        amine: '-NH₂ / Amine',
+        halogen: '-X (Halogen derivative)',
+        arene: 'Aromatic ring (Arene)',
+        alkene: 'C=C double bond (Alkene)',
+        alkyne: 'C≡C triple bond (Alkyne)'
+      },
       incompleteTitle: 'Incomplete molecule',
       incompleteTag: (n) => `${n} bond${n > 1 ? 's' : ''} needed`,
       incompleteDesc: (n) =>
@@ -183,10 +243,16 @@
         linear: 'Linear'
       },
       categories: {
-        aromatic: 'Aromatic',
-        cycloalkane: 'Cyclic hydrocarbon',
+        arene: 'Arene',
+        aromatic: 'Arene',
+        cycloalkane: 'Cycloalkane',
+        cycloalkene: 'Cycloalkene',
         heterocycle: 'Heterocycle',
         hydrocarbon: 'Hydrocarbon',
+        alkane: 'Alkane',
+        alkene: 'Alkene',
+        alkyne: 'Alkyne',
+        alkadiene: 'Alkadiene',
         alcohol: 'Alcohol',
         phenol: 'Phenol',
         ether: 'Ether',
@@ -198,8 +264,8 @@
         carbohydrate: 'Carbohydrate',
         aminoacid: 'Amino acid',
         amine: 'Amine',
+        amide: 'Amide',
         halogen: 'Halogen derivative',
-        amide: 'Amide / N-organic',
         pharma: 'Pharmaceutical',
         custom: 'Organic compound'
       },
@@ -248,6 +314,14 @@
         .join('');
       return `<sub>${ascii}</sub>`;
     });
+  }
+
+  function formatChemTextHTML(text) {
+    const escaped = String(text ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return toSubscriptHTML(escaped);
   }
 
   function getAtomicMass(sym) {
@@ -525,944 +599,26 @@
   }
 
   // =========================================================================
-  // EXPANDED DICTIONARY OF 112 FAMILIAR ORGANIC MOLECULES
-  // Covers ALL C6H12O6 forms (open & cyclic), sugars, aromatics, heterocycles,
-  // cycloalkanes, amino acids, hydroxy acids, esters, ethers, halides & more.
+  // ENRICHED DICTIONARY LOADER (Reads window.ORGANIC_COMPOUNDS from organic-data.js)
   // =========================================================================
 
-  function makeRefMol(id, viName, enName, viDesc, enDesc, catKey, elementsArr, bondsArr) {
-    const graph = {
-      atoms: elementsArr.map((el, i) => ({ id: `r${i}`, element: el })),
-      bonds: bondsArr.map(([u, v, ord]) => ({ from: `r${u}`, to: `r${v}`, order: ord || 1 }))
-    };
-    return {
-      id,
-      viName,
-      enName,
-      viDesc,
-      enDesc,
-      catKey,
-      norm: buildNormalizedHeavyGraph(graph)
-    };
+  function buildKnownMolecules(rawList) {
+    if (!Array.isArray(rawList)) return [];
+    return rawList.map((item) => {
+      const els = item.elements || [];
+      const bds = item.bonds || [];
+      const graph = {
+        atoms: els.map((el, i) => ({ id: `r${i}`, element: el })),
+        bonds: bds.map(([u, v, ord]) => ({ from: `r${u}`, to: `r${v}`, order: ord || 1 }))
+      };
+      return {
+        ...item,
+        norm: buildNormalizedHeavyGraph(graph)
+      };
+    });
   }
 
-  const C5_RING = [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,0,1]];
-  const C6_RING = [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1]];
-  const BENZENE = [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,5,2],[5,0,1]];
-  const C6_AROM = ['C','C','C','C','C','C'];
-
-  const KNOWN_MOLECULES = [
-    // =========================================================================
-    // 1. CARBOHYDRATES & ALL C6H12O6 FORMS (11)
-    // =========================================================================
-    makeRefMol(
-      'glucose-ring', 'Glucose (vòng pyranose)', 'Glucose (pyranose ring)',
-      'Dạng vòng 6 cạnh (5 C + 1 O) chủ yếu của đường nho (C₆H₁₂O₆) trong dung dịch nước.',
-      'Predominant 6-membered pyranose ring (5 C + 1 O) form of glucose in water.',
-      'carbohydrate',
-      ['C','C','C','C','C','O','C','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],[0,7,1],[1,8,1],[2,9,1],[3,10,1],[4,6,1],[6,11,1]]
-    ),
-    makeRefMol(
-      'fructose-furanose', 'Fructose (vòng furanose)', 'Fructose (furanose ring)',
-      'Dạng vòng 5 cạnh (4 C + 1 O) của đường trái cây Fructose (C₆H₁₂O₆), có trong đường mía saccarozơ.',
-      '5-membered furanose ring (4 C + 1 O) form of fruit sugar fructose found in sucrose.',
-      'carbohydrate',
-      // 0:C2, 1:C3, 2:C4, 3:C5, 4:O_ring, 5:C1, 6:C6, 7:O2, 8:O1, 9:O3, 10:O4, 11:O6
-      ['C','C','C','C','O','C','C','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,0,1],[0,7,1],[0,5,1],[5,8,1],[1,9,1],[2,10,1],[3,6,1],[6,11,1]]
-    ),
-    makeRefMol(
-      'fructose-pyranose', 'Fructose (vòng pyranose)', 'Fructose (pyranose ring)',
-      'Dạng vòng 6 cạnh (5 C + 1 O) bền nhất của Fructose (C₆H₁₂O₆) tự do trong dung dịch nước.',
-      'Predominant 6-membered pyranose ring (5 C + 1 O) form of free fructose in water.',
-      'carbohydrate',
-      // 0:C2, 1:C3, 2:C4, 3:C5, 4:C6, 5:O_ring, 6:C1, 7:O2, 8:O1, 9:O3, 10:O4, 11:O5
-      ['C','C','C','C','C','O','C','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],[0,7,1],[0,6,1],[6,8,1],[1,9,1],[2,10,1],[3,11,1]]
-    ),
-    makeRefMol(
-      'glucose-furanose', 'Glucose (vòng furanose)', 'Glucose (furanose ring)',
-      'Dạng vòng 5 cạnh (4 C + 1 O) ít phổ biến hơn của Glucose (C₆H₁₂O₆).',
-      'Minor 5-membered furanose ring (4 C + 1 O) form of glucose.',
-      'carbohydrate',
-      // 0:C1, 1:C2, 2:C3, 3:C4, 4:O_ring, 5:C5, 6:C6, 7:O1, 8:O2, 9:O3, 10:O5, 11:O6
-      ['C','C','C','C','O','C','C','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,0,1],[0,7,1],[1,8,1],[2,9,1],[3,5,1],[5,6,1],[5,10,1],[6,11,1]]
-    ),
-    makeRefMol(
-      'inositol', 'Inositol (vòng 6C-6OH)', 'Inositol',
-      'Đồng phân vòng 6 cạnh toàn carbon của C₆H₁₂O₆ (mỗi C gắn 1 nhóm -OH), quan trọng trong tín hiệu tế bào.',
-      'All-carbon 6-membered ring isomer of C₆H₁₂O₆ (cyclohexane-1,2,3,4,5,6-hexol) vital in cell signaling.',
-      'carbohydrate',
-      ['C','C','C','C','C','C','O','O','O','O','O','O'],
-      [...C6_RING, [0,6,1],[1,7,1],[2,8,1],[3,9,1],[4,10,1],[5,11,1]]
-    ),
-    makeRefMol(
-      'glucose-open', 'Glucose (mạch hở)', 'Glucose (open-chain)',
-      'Đường nho mạch hở (C₆H₁₂O₆) gồm 1 nhóm anđehit (-CHO) và 5 nhóm -OH kế tiếp nhau.',
-      'Open-chain aldohexose sugar (C₆H₁₂O₆) with 1 aldehyde (-CHO) and 5 hydroxyl (-OH) groups.',
-      'carbohydrate',
-      ['C','C','C','C','C','C','O','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[0,6,2],[1,7,1],[2,8,1],[3,9,1],[4,10,1],[5,11,1]]
-    ),
-    makeRefMol(
-      'fructose-open', 'Fructose (mạch hở)', 'Fructose (open-chain)',
-      'Đường mật ong mạch hở (C₆H₁₂O₆) gồm 1 nhóm xeton (>C=O) ở C2 và 5 nhóm -OH.',
-      'Open-chain ketohexose fruit sugar (C₆H₁₂O₆) with a C2 ketone (>C=O) and 5 -OH groups.',
-      'carbohydrate',
-      ['C','C','C','C','C','C','O','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[0,6,1],[1,7,2],[2,8,1],[3,9,1],[4,10,1],[5,11,1]]
-    ),
-    makeRefMol(
-      'ribose-ring', 'Ribose (vòng furanose)', 'Ribose (furanose ring)',
-      'Đường 5 carbon vòng furanose (C₅H₁₀O₅) tạo nên khung xương của phân tử ARN và ATP.',
-      '5-carbon furanose sugar (C₅H₁₀O₅) forming the structural backbone of RNA and ATP.',
-      'carbohydrate',
-      // 0:C1, 1:C2, 2:C3, 3:C4, 4:O_ring, 5:C5, 6:O1, 7:O2, 8:O3, 9:O5
-      ['C','C','C','C','O','C','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,0,1],[0,6,1],[1,7,1],[2,8,1],[3,5,1],[5,9,1]]
-    ),
-    makeRefMol(
-      'deoxyribose-ring', 'Deoxyribose (vòng furanose)', 'Deoxyribose (furanose ring)',
-      'Đường 5 carbon (C₅H₁₀O₄) thiếu 1 oxi ở C2, thành phần cốt lõi của phân tử ADN.',
-      '5-carbon sugar (C₅H₁₀O₄) lacking an oxygen at C2, forming the backbone of DNA.',
-      'carbohydrate',
-      // 0:C1, 1:C2, 2:C3, 3:C4, 4:O_ring, 5:C5, 6:O1, 7:O3, 8:O5
-      ['C','C','C','C','O','C','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,0,1],[0,6,1],[2,7,1],[3,5,1],[5,8,1]]
-    ),
-    makeRefMol(
-      'ribose-open', 'Ribose (mạch hở)', 'Ribose (open-chain)',
-      'Đường 5 carbon dạng mạch hở (C₅H₁₀O₅) gồm 1 nhóm -CHO và 4 nhóm -OH.',
-      'Open-chain 5-carbon aldopentose sugar (C₅H₁₀O₅).',
-      'carbohydrate',
-      ['C','C','C','C','C','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[0,5,2],[1,6,1],[2,7,1],[3,8,1],[4,9,1]]
-    ),
-    makeRefMol(
-      'sorbitol', 'Sorbitol', 'Sorbitol',
-      'Ancol 6 chức (C₆H₁₄O₆) tạo từ phản ứng cộng hiđro vào glucose, dùng làm chất tạo ngọt ít calo.',
-      '6-carbon sugar alcohol (C₆H₁₄O₆) obtained by hydrogenating glucose; common sweetener.',
-      'alcohol',
-      ['C','C','C','C','C','C','O','O','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[0,6,1],[1,7,1],[2,8,1],[3,9,1],[4,10,1],[5,11,1]]
-    ),
-
-    // =========================================================================
-    // 2. AROMATIC RINGS & BENZENE DERIVATIVES (22)
-    // =========================================================================
-    makeRefMol(
-      'benzene', 'Benzen', 'Benzene',
-      'Dung môi thơm cổ điển với vòng 6 carbon liên hợp, nền tảng của hóa dầu.',
-      'Classic aromatic 6-carbon ring solvent and petrochemical building block.',
-      'aromatic', C6_AROM, BENZENE
-    ),
-    makeRefMol(
-      'toluene', 'Toluen', 'Toluene',
-      'Dung môi pha sơn, keo dán phổ biến có một nhóm metyl gắn vòng benzen.',
-      'Common paint thinner and solvent with a methyl group on a benzene ring.',
-      'aromatic', [...C6_AROM,'C'], [...BENZENE, [0,6,1]]
-    ),
-    makeRefMol(
-      'ethylbenzene', 'Etylbenzen', 'Ethylbenzene',
-      'Hiđrocacbon thơm dùng làm nguyên liệu công nghiệp điều chế stiren.',
-      'Aromatic hydrocarbon dehydrogenated industrially to manufacture styrene.',
-      'aromatic', [...C6_AROM,'C','C'], [...BENZENE, [0,6,1],[6,7,1]]
-    ),
-    makeRefMol(
-      'cumene', 'Cumen (Isopropylbenzen)', 'Cumene',
-      'Nguyên liệu chủ lực sản xuất đồng thời phenol và axeton trong công nghiệp.',
-      'Industrial aromatic intermediate used to co-produce phenol and acetone.',
-      'aromatic', [...C6_AROM,'C','C','C'], [...BENZENE, [0,6,1],[6,7,1],[6,8,1]]
-    ),
-    makeRefMol(
-      'o-xylene', 'o-Xilen', 'o-Xylene',
-      'Đồng phân 1,2-đimetylbenzen, nguyên liệu tổng hợp anhiđrit phthalic và nhựa.',
-      '1,2-Dimethylbenzene isomer used to manufacture phthalic anhydride and plastics.',
-      'aromatic', [...C6_AROM,'C','C'], [...BENZENE, [0,6,1],[1,7,1]]
-    ),
-    makeRefMol(
-      'm-xylene', 'm-Xilen', 'm-Xylene',
-      'Đồng phân 1,3-đimetylbenzen dùng làm dung môi và tổng hợp axit isophthalic.',
-      '1,3-Dimethylbenzene isomer used as solvent and resin precursor.',
-      'aromatic', [...C6_AROM,'C','C'], [...BENZENE, [0,6,1],[2,7,1]]
-    ),
-    makeRefMol(
-      'p-xylene', 'p-Xilen', 'p-Xylene',
-      'Đồng phân 1,4-đimetylbenzen là nguyên liệu cốt lõi sản xuất chai nhựa PET.',
-      '1,4-Dimethylbenzene isomer essential for manufacturing PET plastic bottles.',
-      'aromatic', [...C6_AROM,'C','C'], [...BENZENE, [0,6,1],[3,7,1]]
-    ),
-    makeRefMol(
-      'styrene', 'Stiren', 'Styrene',
-      'Monome thơm dùng trùng hợp sản xuất nhựa polistiren (PS) và hộp xốp.',
-      'Aromatic monomer polymerized to produce polystyrene (PS) plastics and foam.',
-      'aromatic', [...C6_AROM,'C','C'], [...BENZENE, [0,6,1],[6,7,2]]
-    ),
-    makeRefMol(
-      'naphthalene', 'Naphtalen (Băng phiến)', 'Naphthalene',
-      'Hai vòng benzen chung cạnh (C₁₀H₈), chất rắn trắng dễ thăng hoa làm băng phiến đuổi côn trùng.',
-      'Fused bicyclic aromatic hydrocarbon (C₁₀H₈) famously used in mothballs.',
-      'aromatic',
-      ['C','C','C','C','C','C','C','C','C','C'],
-      [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,5,2],[5,0,1],[3,6,1],[6,7,2],[7,8,1],[8,9,2],[9,4,1]]
-    ),
-    makeRefMol(
-      'phenol', 'Phenol', 'Phenol',
-      'Hợp chất thơm có nhóm -OH gắn trực tiếp vòng benzen, dùng làm nhựa và sát trùng.',
-      'Aromatic compound with -OH directly on a benzene ring, used in resins and antiseptics.',
-      'phenol', [...C6_AROM,'O'], [...BENZENE, [0,6,1]]
-    ),
-    makeRefMol(
-      'catechol', 'Catechol', 'Catechol',
-      'Benzen-1,2-điol tự nhiên có mặt trong trái cây và là tiền chất của chất dẫn truyền thần kinh.',
-      '1,2-Dihydroxybenzene found in plants and precursor to key neurotransmitters.',
-      'phenol', [...C6_AROM,'O','O'], [...BENZENE, [0,6,1],[1,7,1]]
-    ),
-    makeRefMol(
-      'resorcinol', 'Resorcinol', 'Resorcinol',
-      'Benzen-1,3-điol dùng trong keo dán gỗ chịu nước và dược phẩm da liễu.',
-      '1,3-Dihydroxybenzene used in specialty adhesives and dermatology.',
-      'phenol', [...C6_AROM,'O','O'], [...BENZENE, [0,6,1],[2,7,1]]
-    ),
-    makeRefMol(
-      'hydroquinone', 'Hiđroquinon', 'Hydroquinone',
-      'Benzen-1,4-điol là chất khử mạnh từng dùng trong thuốc tráng phim ảnh.',
-      '1,4-Dihydroxybenzene reducing agent historically used as a photographic developer.',
-      'phenol', [...C6_AROM,'O','O'], [...BENZENE, [0,6,1],[3,7,1]]
-    ),
-    makeRefMol(
-      'benzyl-alcohol', 'Ancol benzylic', 'Benzyl alcohol',
-      'Ancol thơm có mùi hoa nhẹ (C₆H₅CH₂OH), dùng làm dung môi và chất bảo quản mỹ phẩm.',
-      'Aromatic alcohol (C₆H₅CH₂OH) with mild floral scent used in cosmetics and solvents.',
-      'alcohol', [...C6_AROM,'C','O'], [...BENZENE, [0,6,1],[6,7,1]]
-    ),
-    makeRefMol(
-      'anisole', 'Anisol', 'Anisole',
-      'Ete thơm (C₆H₅OCH₃) có mùi hồi ngọt dễ chịu, dùng trong nước hoa và tổng hợp hữu cơ.',
-      'Aromatic ether (C₆H₅OCH₃) with a sweet anise-like scent used in perfumery.',
-      'ether', [...C6_AROM,'O','C'], [...BENZENE, [0,6,1],[6,7,1]]
-    ),
-    makeRefMol(
-      'aniline', 'Anilin', 'Aniline',
-      'Amin thơm là nguyên liệu cốt lõi trong công nghiệp thuốc nhuộm và dược phẩm.',
-      'Aromatic amine serving as a key precursor for dyes and pharmaceuticals.',
-      'amine', [...C6_AROM,'N'], [...BENZENE, [0,6,1]]
-    ),
-    makeRefMol(
-      'chlorobenzene', 'Clobenzen', 'Chlorobenzene',
-      'Dẫn xuất halogen thơm dùng làm dung môi và trung gian tổng hợp hóa chất.',
-      'Aromatic halide used as a high-boiling solvent and chemical intermediate.',
-      'halogen', [...C6_AROM,'Cl'], [...BENZENE, [0,6,1]]
-    ),
-    makeRefMol(
-      'bromobenzene', 'Brombenzen', 'Bromobenzene',
-      'Chất lỏng thơm nặng tạo thành khi cho benzen phản ứng với brom có xúc tác bột sắt.',
-      'Dense aromatic liquid formed by brominating benzene with an iron catalyst.',
-      'halogen', [...C6_AROM,'Br'], [...BENZENE, [0,6,1]]
-    ),
-    makeRefMol(
-      'benzaldehyde', 'Benzanđehit', 'Benzaldehyde',
-      'Anđehit thơm tạo hương hạnh nhân đặc trưng trong thực phẩm và hương liệu.',
-      'Aromatic aldehyde responsible for the characteristic bitter-almond aroma.',
-      'aldehyde', [...C6_AROM,'C','O'], [...BENZENE, [0,6,1],[6,7,2]]
-    ),
-    makeRefMol(
-      'benzoic-acid', 'Axit benzoic', 'Benzoic acid',
-      'Axit cacboxylic thơm thường dùng làm chất bảo quản thực phẩm và đồ uống.',
-      'Aromatic carboxylic acid widely used as a food and beverage preservative.',
-      'carboxylic', [...C6_AROM,'C','O','O'], [...BENZENE, [0,6,1],[6,7,2],[6,8,1]]
-    ),
-    makeRefMol(
-      'salicylic-acid', 'Axit salixilic', 'Salicylic acid',
-      'Chiết xuất từ vỏ cây liễu, dùng trị mụn và làm nguyên liệu tổng hợp thuốc Aspirin.',
-      'Plant hormone from willow bark used in skincare and to synthesize Aspirin.',
-      'carboxylic', [...C6_AROM,'C','O','O','O'], [...BENZENE, [0,6,1],[6,7,2],[6,8,1],[1,9,1]]
-    ),
-    makeRefMol(
-      'aspirin', 'Aspirin', 'Aspirin',
-      'Axit axetylsalixilic (C₉H₈O₄) — thuốc giảm đau, hạ sốt và chống đông máu kinh điển.',
-      'Acetylsalicylic acid (C₉H₈O₄) — classic analgesic, antipyretic, and antiplatelet drug.',
-      'pharma',
-      // 0..5 benzene, 6:COOH_C, 7:=O, 8:-OH, 9:O_ester, 10:C_acetyl, 11:=O, 12:CH3
-      [...C6_AROM,'C','O','O','O','C','O','C'],
-      [...BENZENE, [0,6,1],[6,7,2],[6,8,1],[1,9,1],[9,10,1],[10,11,2],[10,12,1]]
-    ),
-    makeRefMol(
-      'paracetamol', 'Paracetamol', 'Paracetamol',
-      'Hoạt chất hạ sốt, giảm đau phổ biến nhất (C₈H₉NO₂), còn gọi là Acetaminophen.',
-      'Widely used fever reducer and pain reliever (C₈H₉NO₂), also called Acetaminophen.',
-      'pharma',
-      // 0..5 benzene, 6:OH at 0, 7:N at 3, 8:C=O, 9:=O, 10:CH3
-      [...C6_AROM,'O','N','C','O','C'],
-      [...BENZENE, [0,6,1],[3,7,1],[7,8,1],[8,9,2],[8,10,1]]
-    ),
-    makeRefMol(
-      'terephthalic-acid', 'Axit terephthalic', 'Terephthalic acid',
-      'Axit hai chức thơm (1,4-đicacboxylic) dùng trùng ngưng với etilen glicol tạo nhựa PET.',
-      'Para-dicarboxylic aromatic acid polymerized with ethylene glycol into PET plastic.',
-      'carboxylic',
-      [...C6_AROM,'C','O','O','C','O','O'],
-      [...BENZENE, [0,6,1],[6,7,2],[6,8,1],[3,9,1],[9,10,2],[9,11,1]]
-    ),
-
-    // =========================================================================
-    // 3. CYCLOALKANES, CYCLOALKENES & HETEROCYCLES (16)
-    // =========================================================================
-    makeRefMol(
-      'cyclopropane', 'Xiclopropan', 'Cyclopropane',
-      'Hiđrocacbon vòng 3 cạnh có sức căng vòng lớn, dễ mở vòng khi phản ứng.',
-      'Strained 3-membered carbon ring that readily undergoes ring-opening reactions.',
-      'cycloalkane', ['C','C','C'], [[0,1,1],[1,2,1],[2,0,1]]
-    ),
-    makeRefMol(
-      'cyclobutane', 'Xiclobutan', 'Cyclobutane',
-      'Xicloankan vòng 4 cạnh không màu, tồn tại ở thể khí ở điều kiện thường.',
-      'Colorless 4-membered cyclic alkane gas at room temperature.',
-      'cycloalkane', ['C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1],[3,0,1]]
-    ),
-    makeRefMol(
-      'cyclopentane', 'Xiclopentan', 'Cyclopentane',
-      'Chất lỏng dễ bay hơi dùng làm chất tạo bọt cách nhiệt thân thiện tầng ozon.',
-      'Volatile 5-membered ring liquid used as an eco-friendly insulating foam agent.',
-      'cycloalkane', ['C','C','C','C','C'], C5_RING
-    ),
-    makeRefMol(
-      'cyclopentene', 'Xiclopenten', 'Cyclopentene',
-      'Vòng 5 carbon chứa một liên kết đôi, dùng trong tổng hợp polime và hữu cơ.',
-      '5-carbon ring with one double bond used in polymer and organic synthesis.',
-      'cycloalkane', ['C','C','C','C','C'], [[0,1,2],[1,2,1],[2,3,1],[3,4,1],[4,0,1]]
-    ),
-    makeRefMol(
-      'cyclopentanol', 'Xiclopentanol', 'Cyclopentanol',
-      'Ancol vòng 5 cạnh dùng làm dung môi nước hoa và nguyên liệu tổng hợp dược phẩm.',
-      '5-membered cyclic alcohol used in perfumes and pharmaceutical synthesis.',
-      'alcohol', ['C','C','C','C','C','O'], [...C5_RING, [0,5,1]]
-    ),
-    makeRefMol(
-      'cyclohexane', 'Xiclohexan', 'Cyclohexane',
-      'Vòng 6 cạnh no rất bền, dùng làm dung môi không cực và tổng hợp sợi nilon.',
-      'Stable 6-membered saturated ring used as a nonpolar solvent and nylon precursor.',
-      'cycloalkane', C6_AROM, C6_RING
-    ),
-    makeRefMol(
-      'cyclohexene', 'Xiclohexen', 'Cyclohexene',
-      'Vòng 6 carbon có một nối đôi, làm mất màu dung dịch brom nhanh chóng.',
-      '6-carbon ring with one double bond, used widely in organic synthesis.',
-      'cycloalkane', C6_AROM, [[0,1,2],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1]]
-    ),
-    makeRefMol(
-      'cyclohexa-1,3-diene', 'Xiclohexa-1,3-đien', '1,3-Cyclohexadiene',
-      'Vòng 6 carbon chứa hai nối đôi liên hợp, dễ tham gia phản ứng cộng Diels-Alder.',
-      '6-carbon ring with two conjugated double bonds, reactive in Diels-Alder reactions.',
-      'cycloalkane', C6_AROM, [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,5,1],[5,0,1]]
-    ),
-    makeRefMol(
-      'cyclohexanol', 'Xiclohexanol', 'Cyclohexanol',
-      'Ancol vòng 6 cạnh dùng làm dung môi và nguyên liệu sản xuất sợi nilon-6,6.',
-      '6-membered cyclic alcohol serving as a major feedstock for nylon production.',
-      'alcohol', [...C6_AROM,'O'], [...C6_RING, [0,6,1]]
-    ),
-    makeRefMol(
-      'cyclohexanone', 'Xiclohexanon', 'Cyclohexanone',
-      'Xeton vòng 6 cạnh có mùi giống axeton và bạc hà, trung gian sản xuất caprolactam (nilon-6).',
-      '6-membered cyclic ketone key to producing caprolactam for nylon-6.',
-      'ketone', [...C6_AROM,'O'], [...C6_RING, [0,6,2]]
-    ),
-    makeRefMol(
-      'oxirane', 'Etilen oxit (Oxiran)', 'Ethylene oxide (Oxirane)',
-      'Vòng 3 cạnh chứa 1 oxi (C₂H₄O), dùng khử trùng dụng cụ y tế và sản xuất etilen glicol.',
-      '3-membered cyclic ether (C₂H₄O) used for medical sterilization and glycol synthesis.',
-      'heterocycle', ['C','C','O'], [[0,1,1],[1,2,1],[2,0,1]]
-    ),
-    makeRefMol(
-      'thf', 'Tetrahiđrofuran (THF)', 'Tetrahydrofuran (THF)',
-      'Ete vòng 5 cạnh (4 C + 1 O) là dung môi phòng thí nghiệm hữu cơ cực kỳ phổ biến.',
-      '5-membered cyclic ether (4 C + 1 O) widely used as a versatile polar aprotic solvent.',
-      'heterocycle', ['C','C','C','C','O'], C5_RING
-    ),
-    makeRefMol(
-      'furan', 'Furan', 'Furan',
-      'Dị vòng thơm 5 cạnh (4 C + 1 O, 2 nối đôi), khung cơ sở của nhiều hợp chất tự nhiên.',
-      '5-membered aromatic heterocycle (4 C + 1 O) forming the core of many natural compounds.',
-      'heterocycle', ['C','C','C','C','O'], [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,0,1]]
-    ),
-    makeRefMol(
-      'thp', 'Tetrahiđropyran (THP)', 'Tetrahydropyran (THP)',
-      'Vòng 6 cạnh chứa 1 oxi (5 C + 1 O), là khung vòng cơ sở của đường Glucose pyranose.',
-      '6-membered cyclic ether (5 C + 1 O) forming the core skeleton of pyranose sugars.',
-      'heterocycle', ['C','C','C','C','C','O'], C6_RING
-    ),
-    makeRefMol(
-      'pyridine', 'Pyridin', 'Pyridine',
-      'Vòng thơm 6 cạnh (5 C + 1 N) có tính bazơ yếu, dung môi và nguyên liệu dược phẩm.',
-      '6-membered aromatic heterocycle (5 C + 1 N) used as a basic solvent and drug scaffold.',
-      'heterocycle', ['C','C','C','C','C','N'], BENZENE
-    ),
-    makeRefMol(
-      'pyrrole', 'Pyrrol', 'Pyrrole',
-      'Dị vòng thơm 5 cạnh (4 C + 1 N), là tiểu đơn vị cấu tạo nên vòng heme của máu và diệp lục.',
-      '5-membered aromatic N-heterocycle forming the building block of heme and chlorophyll.',
-      'heterocycle', ['C','C','C','C','N'], [[0,1,2],[1,2,1],[2,3,2],[3,4,1],[4,0,1]]
-    ),
-
-    // =========================================================================
-    // 4. OPEN-CHAIN HYDROCARBONS (20)
-    // =========================================================================
-    makeRefMol(
-      'methane', 'Metan', 'Methane',
-      'Thành phần chính của khí thiên nhiên và khí biogas sinh học.',
-      'Primary component of natural gas and renewable biogas.',
-      'hydrocarbon', ['C'], []
-    ),
-    makeRefMol(
-      'ethane', 'Etan', 'Ethane',
-      'Khí hiđrocacbon no trong khí thiên nhiên, nguyên liệu tạo etilen.',
-      'Natural gas component cracked industrially to produce ethylene.',
-      'hydrocarbon', ['C','C'], [[0,1,1]]
-    ),
-    makeRefMol(
-      'propane', 'Propan', 'Propane',
-      'Khí hóa lỏng (LPG) quen thuộc trong bình gas đun nấu và sưởi ấm.',
-      'Clean-burning liquefied petroleum gas (LPG) used for cooking and heating.',
-      'hydrocarbon', ['C','C','C'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      'butane', 'Butan', 'Butane',
-      'Khí dễ hóa lỏng ở áp suất thấp, dùng trong bật lửa và bếp gas mini.',
-      'Easily liquefied gas used in lighters and portable camping stoves.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'isobutane', 'Isobutan', 'Isobutane',
-      'Đồng phân mạch nhánh của butan, dùng làm môi chất làm lạnh sạch (R-600a).',
-      'Branched isomer of butane widely used as an eco-friendly refrigerant (R-600a).',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,1],[1,2,1],[1,3,1]]
-    ),
-    makeRefMol(
-      'pentane', 'Pentan', 'Pentane',
-      'Chất lỏng rất dễ bay hơi có mặt trong xăng nhẹ và dung môi phòng thí nghiệm.',
-      'Highly volatile liquid hydrocarbon found in light petroleum fractions.',
-      'hydrocarbon', ['C','C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1]]
-    ),
-    makeRefMol(
-      'isopentane', 'Isopentan', 'Isopentane',
-      'Ankan mạch nhánh 5 carbon (2-metylbutan) có nhiệt độ sôi rất thấp (28°C).',
-      'Branched 5-carbon alkane (2-methylbutane) with a very low boiling point (28°C).',
-      'hydrocarbon', ['C','C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1],[1,4,1]]
-    ),
-    makeRefMol(
-      'neopentane', 'Neopentan', 'Neopentane',
-      'Ankan mạch nhánh đối xứng tứ diện gồm 1 nguyên tử C trung tâm gắn 4 nhóm metyl.',
-      'Highly symmetric branched alkane with four methyl groups around one carbon.',
-      'hydrocarbon', ['C','C','C','C','C'], [[0,1,1],[0,2,1],[0,3,1],[0,4,1]]
-    ),
-    makeRefMol(
-      'hexane', 'Hexan', 'Hexane',
-      'Dung môi không phân cực thông dụng để chiết tách dầu thực vật.',
-      'Common nonpolar solvent used for extracting vegetable oils.',
-      'hydrocarbon', C6_AROM, [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1]]
-    ),
-    makeRefMol(
-      'heptane', 'Heptan', 'Heptane',
-      'Ankan 7 carbon được quy ước chỉ số octan bằng 0 làm chuẩn đo chất lượng xăng.',
-      '7-carbon straight alkane defining the 0 point on the gasoline octane scale.',
-      'hydrocarbon', ['C','C','C','C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1]]
-    ),
-    makeRefMol(
-      'octane', 'Octan', 'Octane',
-      'Ankan mạch thẳng 8 carbon là thành phần quan trọng của nhiên liệu xăng.',
-      '8-carbon straight-chain alkane present in gasoline fuel.',
-      'hydrocarbon', ['C','C','C','C','C','C','C','C'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1],[6,7,1]]
-    ),
-    makeRefMol(
-      'isooctane', 'Isooctan', 'Isooctane',
-      '2,2,4-trimetylpentan — hợp chất chuẩn định nghĩa chỉ số chống kích nổ octan 100 cho xăng.',
-      '2,2,4-Trimethylpentane — standard benchmark defining 100 octane rating in gasoline.',
-      'hydrocarbon',
-      ['C','C','C','C','C','C','C','C'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[1,5,1],[1,6,1],[3,7,1]]
-    ),
-    makeRefMol(
-      'ethylene', 'Etilen', 'Ethylene',
-      'Hoocmôn thúc chín quả tự nhiên và monome sản xuất nhựa PE phổ biến nhất.',
-      'Plant ripening hormone and monomer for polyethylene (PE) plastics.',
-      'hydrocarbon', ['C','C'], [[0,1,2]]
-    ),
-    makeRefMol(
-      'propylene', 'Propilen', 'Propylene',
-      'Anken 3 carbon dùng trùng hợp tạo nhựa polipropilen (PP) chịu nhiệt.',
-      '3-carbon alkene polymerized into durable polypropylene (PP) plastic.',
-      'hydrocarbon', ['C','C','C'], [[0,1,2],[1,2,1]]
-    ),
-    makeRefMol(
-      'but-1-ene', 'But-1-en', '1-Butene',
-      'Anken 4 carbon đầu mạch dùng làm comonome tăng độ bền dẻo cho nhựa LLDPE.',
-      'Terminal 4-carbon alkene used as a comonomer in flexible polyethylene plastics.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,2],[1,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'but-2-ene', 'But-2-en', '2-Butene',
-      'Anken 4 carbon có nối đôi ở giữa mạch, tồn tại đồng phân hình học cis–trans.',
-      'Internal 4-carbon alkene exhibiting classic cis–trans geometric isomerism.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,1],[1,2,2],[2,3,1]]
-    ),
-    makeRefMol(
-      'isobutylene', 'Isobutilen', 'Isobutylene',
-      'Anken mạch nhánh 4 carbon dùng sản xuất cao su butil làm săm lốp giữ khí.',
-      'Branched 4-carbon alkene used to make airtight butyl rubber inner tubes.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,2],[1,2,1],[1,3,1]]
-    ),
-    makeRefMol(
-      'butadiene', 'Buta-1,3-đien', '1,3-Butadiene',
-      'Ankađien liên hợp là nguyên liệu chủ lực tổng hợp cao su nhân tạo Buna.',
-      'Conjugated diene essential for manufacturing synthetic rubber.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,2],[1,2,1],[2,3,2]]
-    ),
-    makeRefMol(
-      'isoprene', 'Isopren', 'Isoprene',
-      'Mắt xích cấu tạo nên cao su thiên nhiên và nhiều tinh dầu thực vật.',
-      'Fundamental building block of natural rubber and plant terpenes.',
-      'hydrocarbon', ['C','C','C','C','C'], [[0,1,2],[1,2,1],[2,3,2],[1,4,1]]
-    ),
-    makeRefMol(
-      'acetylene', 'Axetilen', 'Acetylene',
-      'Khí đất đèn có liên kết ba, cháy tỏa nhiệt rất lớn dùng để hàn cắt kim loại.',
-      'Triple-bonded gas producing intensely hot flames for oxy-acetylene welding.',
-      'hydrocarbon', ['C','C'], [[0,1,3]]
-    ),
-    makeRefMol(
-      'propyne', 'Propin', 'Propyne',
-      'Ankin mạch thẳng 3 carbon dùng trong hỗn hợp khí hàn và tổng hợp hữu cơ.',
-      '3-carbon alkyne used in specialty welding gases and synthesis.',
-      'hydrocarbon', ['C','C','C'], [[0,1,3],[1,2,1]]
-    ),
-    makeRefMol(
-      'vinylacetylene', 'Vinylaxetilen', 'Vinylacetylene',
-      'Sản phẩm đime hóa axetilen, dùng điều chế cao su cloropren chống dầu.',
-      'Acetylene dimer used as a precursor to oil-resistant chloroprene rubber.',
-      'hydrocarbon', ['C','C','C','C'], [[0,1,2],[1,2,1],[2,3,3]]
-    ),
-
-    // =========================================================================
-    // 5. ALCOHOLS & ETHERS (13)
-    // =========================================================================
-    makeRefMol(
-      'methanol', 'Metanol', 'Methanol',
-      'Cồn công nghiệp (rất độc), dùng làm dung môi, nhiên liệu và sản xuất fomon.',
-      'Industrial wood alcohol (toxic), used as solvent, fuel, and chemical feedstock.',
-      'alcohol', ['C','O'], [[0,1,1]]
-    ),
-    makeRefMol(
-      'ethanol', 'Etanol', 'Ethanol',
-      'Rượu etylic quen thuộc trong cồn sát khuẩn y tế, đồ uống lên men và xăng E5.',
-      'Common ethyl alcohol found in antiseptics, fermented beverages, and biofuels.',
-      'alcohol', ['C','C','O'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      'propan-1-ol', 'Propan-1-ol', 'Propan-1-ol',
-      'Ancol bậc một dùng làm dung môi trong mực in, nhựa và dược phẩm.',
-      'Primary alcohol used as a solvent in printing inks, resins, and pharmaceuticals.',
-      'alcohol', ['C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'isopropanol', 'Ancol isopropylic', 'Isopropyl alcohol',
-      'Cồn tẩy rửa linh kiện điện tử và dung dịch sát khuẩn bốc hơi nhanh.',
-      'Rubbing alcohol widely used for disinfection and electronics cleaning.',
-      'alcohol', ['C','C','C','O'], [[0,1,1],[1,2,1],[1,3,1]]
-    ),
-    makeRefMol(
-      'butan-1-ol', 'Butan-1-ol', '1-Butanol',
-      'Ancol 4 carbon mạch thẳng dùng làm dung môi sơn và sản xuất este hương liệu.',
-      'Straight-chain 4-carbon alcohol used in coatings and flavor esters.',
-      'alcohol', ['C','C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1]]
-    ),
-    makeRefMol(
-      'butan-2-ol', 'Butan-2-ol', '2-Butanol',
-      'Ancol bậc hai 4 carbon dùng làm nguyên liệu điều chế dung môi butanon (MEK).',
-      'Secondary 4-carbon alcohol converted industrially into butanone solvent.',
-      'alcohol', ['C','C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1],[1,4,1]]
-    ),
-    makeRefMol(
-      'isobutanol', 'Ancol isobutylic', 'Isobutanol',
-      'Ancol mạch nhánh 4 carbon dùng làm dung môi và phụ gia nhiên liệu sinh học.',
-      'Branched 4-carbon alcohol used as a solvent and drop-in biofuel.',
-      'alcohol', ['C','C','C','C','O'], [[0,1,1],[1,2,1],[1,3,1],[0,4,1]]
-    ),
-    makeRefMol(
-      'tert-butanol', 'Ancol tert-butylic', 'tert-Butanol',
-      'Ancol bậc ba đơn giản nhất, tồn tại ở thể rắn ngay dưới 25°C.',
-      'Simplest tertiary alcohol, freezing into crystals just below room temperature.',
-      'alcohol', ['C','C','C','C','O'], [[0,1,1],[0,2,1],[0,3,1],[0,4,1]]
-    ),
-    makeRefMol(
-      'allyl-alcohol', 'Ancol anlylic', 'Allyl alcohol',
-      'Ancol không no đơn giản nhất (CH₂=CH-CH₂OH), nguyên liệu tổng hợp glixerol.',
-      'Simplest stable unsaturated alcohol (CH₂=CH-CH₂OH) used to synthesize glycerol.',
-      'alcohol', ['C','C','C','O'], [[0,1,2],[1,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'ethylene-glycol', 'Etilen glicol', 'Ethylene glycol',
-      'Ancol hai chức làm dung dịch chống đông động cơ và nguyên liệu sợi polyester.',
-      'Diol used in automotive antifreeze and PET polyester production.',
-      'alcohol', ['C','C','O','O'], [[0,1,1],[0,2,1],[1,3,1]]
-    ),
-    makeRefMol(
-      'glycerol', 'Glixerol', 'Glycerol',
-      'Chất lỏng sánh vị ngọt, dùng giữ ẩm trong mỹ phẩm, dược phẩm và thực phẩm.',
-      'Sweet viscous triol widely used as a humectant in cosmetics and food.',
-      'alcohol', ['C','C','C','O','O','O'], [[0,1,1],[1,2,1],[0,3,1],[1,4,1],[2,5,1]]
-    ),
-    makeRefMol(
-      'dimethyl-ether', 'Đimetyl ete', 'Dimethyl ether',
-      'Khí đẩy bình xịt và nhiên liệu sạch, đồng phân nhóm chức với etanol.',
-      'Clean propellant and diesel alternative; functional isomer of ethanol.',
-      'ether', ['C','O','C'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      'diethyl-ether', 'Đietyl ete', 'Diethyl ether',
-      'Dung môi hữu cơ bay hơi mạnh, từng là thuốc gây mê kinh điển trong y học.',
-      'Highly volatile organic solvent historically used as a general anesthetic.',
-      'ether', ['C','C','O','C','C'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1]]
-    ),
-
-    // =========================================================================
-    // 6. ALDEHYDES & KETONES (9)
-    // =========================================================================
-    makeRefMol(
-      'formaldehyde', 'Fomanđehit', 'Formaldehyde',
-      'Dung dịch trong nước gọi là fomon, dùng sản xuất nhựa và bảo quản mẫu sinh học.',
-      'Simplest aldehyde; aqueous formalin is used in resins and specimen preservation.',
-      'aldehyde', ['C','O'], [[0,1,2]]
-    ),
-    makeRefMol(
-      'acetaldehyde', 'Axetanđehit', 'Acetaldehyde',
-      'Anđehit 2 carbon là chất trung gian tạo axit axetic và mùi hương trái cây chín.',
-      '2-carbon aldehyde intermediate in acetic acid production and fruit aroma.',
-      'aldehyde', ['C','C','O'], [[0,1,1],[1,2,2]]
-    ),
-    makeRefMol(
-      'propanal', 'Propanal', 'Propanal',
-      'Anđehit 3 carbon mạch thẳng có mùi trái cây hắc, đồng phân với axeton.',
-      '3-carbon straight aldehyde with a fruity odor; structural isomer of acetone.',
-      'aldehyde', ['C','C','C','O'], [[0,1,1],[1,2,1],[2,3,2]]
-    ),
-    makeRefMol(
-      'butanal', 'Butanal', 'Butanal',
-      'Anđehit 4 carbon dùng làm nguyên liệu tổng hợp chất hóa dẻo và hương liệu.',
-      '4-carbon aldehyde widely used to manufacture plasticizers and aromas.',
-      'aldehyde', ['C','C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1],[3,4,2]]
-    ),
-    makeRefMol(
-      'acrolein', 'Acrolein', 'Acrolein',
-      'Anđehit không no (CH₂=CH-CHO) mùi rất cay, sinh ra khi dầu ăn cháy quá nhiệt.',
-      'Pungent unsaturated aldehyde (CH₂=CH-CHO) formed when cooking oils overheat.',
-      'aldehyde', ['C','C','C','O'], [[0,1,2],[1,2,1],[2,3,2]]
-    ),
-    makeRefMol(
-      'glyoxal', 'Glioxal', 'Glyoxal',
-      'Anđehit hai chức đơn giản nhất (OHC-CHO), dùng xử lý chống nhăn vải và làm giấy.',
-      'Simplest dialdehyde (OHC-CHO) used in textile finishing and paper coatings.',
-      'aldehyde', ['C','C','O','O'], [[0,1,1],[0,2,2],[1,3,2]]
-    ),
-    makeRefMol(
-      'acetone', 'Axeton', 'Acetone',
-      'Dung môi tẩy sơn móng tay và rửa dụng cụ thí nghiệm rất quen thuộc.',
-      'Familiar fast-evaporating solvent used in nail polish remover and labs.',
-      'ketone', ['C','C','C','O'], [[0,1,1],[1,2,1],[1,3,2]]
-    ),
-    makeRefMol(
-      'butanone', 'Butanon (MEK)', 'Butanone (MEK)',
-      'Dung môi công nghiệp phổ biến trong sơn, keo dán và mực in.',
-      'Industrial ketone solvent widely used in coatings, adhesives, and inks.',
-      'ketone', ['C','C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1],[1,4,2]]
-    ),
-    makeRefMol(
-      'pentan-3-one', 'Pentan-3-on (Đietyl xeton)', '3-Pentanone',
-      'Xeton đối xứng 5 carbon dùng làm dung môi sơn và tiền chất tổng hợp vitamin E.',
-      'Symmetric 5-carbon ketone used as a paint solvent and vitamin E precursor.',
-      'ketone', ['C','C','C','C','C','O'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[2,5,2]]
-    ),
-
-    // =========================================================================
-    // 7. CARBOXYLIC ACIDS, HYDROXY ACIDS, ESTERS & ANHYDRIDES (20)
-    // =========================================================================
-    makeRefMol(
-      'formic-acid', 'Axit fomic', 'Formic acid',
-      'Axit kiến có trong nọc kiến và ong, mạnh nhất trong dãy axit no đơn chức.',
-      'Simplest carboxylic acid found naturally in ant and bee venom.',
-      'carboxylic', ['C','O','O'], [[0,1,2],[0,2,1]]
-    ),
-    makeRefMol(
-      'acetic-acid', 'Axit axetic', 'Acetic acid',
-      'Thành phần tạo vị chua quen thuộc của giấm ăn (nồng độ 2–5%).',
-      'Organic acid giving household vinegar its characteristic sour taste.',
-      'carboxylic', ['C','C','O','O'], [[0,1,1],[1,2,2],[1,3,1]]
-    ),
-    makeRefMol(
-      'propionic-acid', 'Axit propionic', 'Propionic acid',
-      'Axit hữu cơ dùng ức chế nấm mốc trong bánh mì và bảo quản ngũ cốc.',
-      'Carboxylic acid used to inhibit mold growth in baked goods and grain.',
-      'carboxylic', ['C','C','C','O','O'], [[0,1,1],[1,2,1],[2,3,2],[2,4,1]]
-    ),
-    makeRefMol(
-      'butyric-acid', 'Axit butiric', 'Butyric acid',
-      'Axit 4 carbon tạo mùi đặc trưng của bơ lên men và phô mai.',
-      '4-carbon fatty acid responsible for the pungent aroma of butter and cheese.',
-      'carboxylic', ['C','C','C','C','O','O'], [[0,1,1],[1,2,1],[2,3,1],[3,4,2],[3,5,1]]
-    ),
-    makeRefMol(
-      'oxalic-acid', 'Axit oxalic', 'Oxalic acid',
-      'Axit hai chức có trong khế chua và rau bina, dùng tẩy vết gỉ sắt.',
-      'Dicarboxylic acid found in starfruit and spinach, effective at rust removal.',
-      'carboxylic', ['C','C','O','O','O','O'], [[0,1,1],[0,2,2],[0,3,1],[1,4,2],[1,5,1]]
-    ),
-    makeRefMol(
-      'malonic-acid', 'Axit malonic', 'Malonic acid',
-      'Axit hai chức 3 carbon (HOOC-CH₂-COOH), có mặt trong củ cải đường và tổng hợp hữu cơ.',
-      '3-carbon dicarboxylic acid important in organic synthesis and biochemistry.',
-      'carboxylic', ['C','C','C','O','O','O','O'], [[0,1,1],[1,2,1],[0,3,2],[0,4,1],[2,5,2],[2,6,1]]
-    ),
-    makeRefMol(
-      'succinic-acid', 'Axit succinic', 'Succinic acid',
-      'Axit hai chức 4 carbon đóng vai trò trung tâm trong chu trình Krebs tạo năng lượng tế bào.',
-      '4-carbon dicarboxylic acid central to the cellular citric acid (Krebs) cycle.',
-      'carboxylic', ['C','C','C','C','O','O','O','O'], [[0,1,1],[1,2,1],[2,3,1],[0,4,2],[0,5,1],[3,6,2],[3,7,1]]
-    ),
-    makeRefMol(
-      'adipic-acid', 'Axit ađipic', 'Adipic acid',
-      'Axit hai chức 6 carbon là nguyên liệu chủ lực sản xuất sợi tổng hợp Nilon-6,6.',
-      '6-carbon dicarboxylic acid essential for manufacturing Nylon-6,6 fibers.',
-      'carboxylic', ['C','C','C','C','C','C','O','O','O','O'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[0,6,2],[0,7,1],[5,8,2],[5,9,1]]
-    ),
-    makeRefMol(
-      'fumaric-acid', 'Axit fumaric / maleic', 'Fumaric / Maleic acid',
-      'Axit hai chức không no (HOOC-CH=CH-COOH), dùng tạo vị chua thực phẩm và nhựa polyester.',
-      'Unsaturated dicarboxylic acid (HOOC-CH=CH-COOH) used in food acidulants and resins.',
-      'carboxylic', ['C','C','C','C','O','O','O','O'], [[0,1,1],[1,2,2],[2,3,1],[0,4,2],[0,5,1],[3,6,2],[3,7,1]]
-    ),
-    makeRefMol(
-      'lactic-acid', 'Axit lactic', 'Lactic acid',
-      'Axit tạo vị chua dịu của sữa chua, dưa muối và sinh ra trong cơ bắp khi vận động mạnh.',
-      'Hydroxy acid giving yogurt its tangy taste and produced in muscles during exercise.',
-      'carboxylic', ['C','C','C','O','O','O'], [[0,1,1],[1,2,1],[2,3,2],[2,4,1],[1,5,1]]
-    ),
-    makeRefMol(
-      'citric-acid', 'Axit xitric', 'Citric acid',
-      'Axit ba chức có nhiều trong quả chanh, cam (C₆H₈O₇), chất tạo vị chua và bảo quản tự nhiên.',
-      'Tricarboxylic acid abundant in lemons and limes (C₆H₈O₇), natural preservative and flavor.',
-      'carboxylic',
-      // 0:CH2, 1:C(OH)(COOH), 2:CH2, 3:COOH_L, 4:COOH_M, 5:COOH_R, 6:OH_M, 7..12 O's
-      ['C','C','C','C','C','C','O','O','O','O','O','O','O'],
-      [
-        [0,1,1],[1,2,1],[0,3,1],[1,4,1],[2,5,1],[1,6,1],
-        [3,7,2],[3,8,1],[4,9,2],[4,10,1],[5,11,2],[5,12,1]
-      ]
-    ),
-    makeRefMol(
-      'acrylic-acid', 'Axit acrylic', 'Acrylic acid',
-      'Axit không no là nguyên liệu sản xuất nhựa acrylic, sơn nước và keo dán.',
-      'Unsaturated acid used to manufacture acrylic plastics, paints, and adhesives.',
-      'carboxylic', ['C','C','C','O','O'], [[0,1,2],[1,2,1],[2,3,2],[2,4,1]]
-    ),
-    makeRefMol(
-      'methacrylic-acid', 'Axit metacrylic', 'Methacrylic acid',
-      'Axit không no nhánh dùng điều chế este metyl metacrylat làm thủy tinh hữu cơ.',
-      'Branched unsaturated acid used to synthesize Plexiglas monomer.',
-      'carboxylic', ['C','C','C','C','O','O'], [[0,1,2],[1,2,1],[1,3,1],[2,4,2],[2,5,1]]
-    ),
-    makeRefMol(
-      'methyl-formate', 'Metyl fomat', 'Methyl formate',
-      'Este đơn giản nhất mùi thơm nhẹ, đồng phân với axit axetic.',
-      'Simplest ester with a pleasant odor; structural isomer of acetic acid.',
-      'ester', ['C','O','O','C'], [[0,1,2],[0,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'ethyl-formate', 'Etyl fomat', 'Ethyl formate',
-      'Este có mùi thơm rượu rum và quả mâm xôi, từng được phát hiện trong tinh vân vũ trụ.',
-      'Ester with a rum and raspberry aroma, even detected in interstellar dust clouds.',
-      'ester', ['C','O','O','C','C'], [[0,1,2],[0,2,1],[2,3,1],[3,4,1]]
-    ),
-    makeRefMol(
-      'methyl-acetate', 'Metyl axetat', 'Methyl acetate',
-      'Este bay hơi nhanh có mùi dễ chịu, dùng làm dung môi keo dán và sơn.',
-      'Fast-evaporating fragrant ester used as a low-toxicity solvent in glues and paints.',
-      'ester', ['C','C','O','O','C'], [[0,1,1],[1,2,2],[1,3,1],[3,4,1]]
-    ),
-    makeRefMol(
-      'ethyl-acetate', 'Etyl axetat', 'Ethyl acetate',
-      'Este mùi thơm trái cây, dung môi tẩy sơn móng và chiết hương liệu phổ biến.',
-      'Fruity-smelling ester widely used in nail polish remover and flavor extraction.',
-      'ester', ['C','C','O','O','C','C'], [[0,1,1],[1,2,2],[1,3,1],[3,4,1],[4,5,1]]
-    ),
-    makeRefMol(
-      'vinyl-acetate', 'Vinyl axetat', 'Vinyl acetate',
-      'Monome trùng hợp tạo nhựa PVA dùng làm keo sữa dán gỗ và giấy.',
-      'Monomer polymerized into PVA used widely in white wood and craft glue.',
-      'ester', ['C','C','O','O','C','C'], [[0,1,1],[1,2,2],[1,3,1],[3,4,1],[4,5,2]]
-    ),
-    makeRefMol(
-      'methyl-methacrylate', 'Metyl metacrylat', 'Methyl methacrylate',
-      'Monome trùng hợp tạo thủy tinh hữu cơ Plexiglas (PMMA) trong suốt, siêu bền.',
-      'Monomer polymerized into crystal-clear Plexiglas (PMMA) acrylic glass.',
-      'ester', ['C','C','C','C','O','O','C'], [[0,1,2],[1,2,1],[1,3,1],[2,4,2],[2,5,1],[5,6,1]]
-    ),
-    makeRefMol(
-      'isoamyl-acetate', 'Isoamyl axetat (Dầu chuối)', 'Isoamyl acetate',
-      'Este nổi tiếng có mùi thơm đặc trưng của chuối chín, dùng tạo hương thực phẩm.',
-      'Classic ester with the unmistakable aroma of ripe bananas, used in food flavoring.',
-      'ester',
-      ['C','C','O','O','C','C','C','C','C'],
-      [[0,1,1],[1,2,2],[1,3,1],[3,4,1],[4,5,1],[5,6,1],[6,7,1],[6,8,1]]
-    ),
-    makeRefMol(
-      'acetic-anhydride', 'Anhiđrit axetic', 'Acetic anhydride',
-      'Tác nhân axetyl hóa quan trọng dùng tổng hợp Aspirin và tơ axetat.',
-      'Key acetylating reagent used to synthesize Aspirin and cellulose acetate fibers.',
-      'anhydride', ['C','C','O','O','C','O','C'], [[0,1,1],[1,2,2],[1,3,1],[3,4,1],[4,5,2],[4,6,1]]
-    ),
-
-    // =========================================================================
-    // 8. AMINO ACIDS, AMINES, AMIDES & HALIDES (20)
-    // =========================================================================
-    makeRefMol(
-      'glycine', 'Glyxin (Gly)', 'Glycine (Gly)',
-      'Amino axit đơn giản nhất (H₂N-CH₂-COOH), đơn vị cơ bản cấu tạo nên protein.',
-      'Simplest amino acid (H₂N-CH₂-COOH) and fundamental building block of proteins.',
-      'aminoacid', ['N','C','C','O','O'], [[0,1,1],[1,2,1],[2,3,2],[2,4,1]]
-    ),
-    makeRefMol(
-      'alanine', 'Alanin (Ala)', 'Alanine (Ala)',
-      'Amino axit phổ biến thứ hai trong protein, đóng vai trò chuyển hóa năng lượng đường.',
-      'Common proteinogenic amino acid important in glucose-energy metabolism.',
-      'aminoacid', ['C','C','N','C','O','O'], [[0,1,1],[1,2,1],[1,3,1],[3,4,2],[3,5,1]]
-    ),
-    makeRefMol(
-      'serine', 'Serin (Ser)', 'Serine (Ser)',
-      'Amino axit chứa nhóm -OH có nhiều trong tơ tằm và tâm hoạt động của nhiều enzim.',
-      'Hydroxyl-bearing amino acid abundant in silk fibroin and enzyme active sites.',
-      'aminoacid', ['O','C','C','N','C','O','O'], [[0,1,1],[1,2,1],[2,3,1],[2,4,1],[4,5,2],[4,6,1]]
-    ),
-    makeRefMol(
-      'valine', 'Valin (Val)', 'Valine (Val)',
-      'Amino axit thiết yếu mạch nhánh giúp phục hồi và phát triển mô cơ.',
-      'Essential branched-chain amino acid vital for muscle growth and tissue repair.',
-      'aminoacid', ['C','C','C','C','N','C','O','O'], [[0,1,1],[1,2,1],[1,3,1],[3,4,1],[3,5,1],[5,6,2],[5,7,1]]
-    ),
-    makeRefMol(
-      'glutamic-acid', 'Axit glutamic (Glu)', 'Glutamic acid (Glu)',
-      'Amino axit tạo vị ngọt umami tự nhiên; muối natri của nó chính là mì chính (bột ngọt).',
-      'Amino acid providing natural umami flavor; its sodium salt is MSG.',
-      'aminoacid',
-      ['C','C','C','C','C','N','O','O','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[1,5,1],[0,6,2],[0,7,1],[4,8,2],[4,9,1]]
-    ),
-    makeRefMol(
-      'lysine', 'Lysin (Lys)', 'Lysine (Lys)',
-      'Amino axit thiết yếu mang 2 nhóm -NH₂, hỗ trợ hấp thu canxi và tổng hợp collagen.',
-      'Essential basic amino acid with two -NH₂ groups supporting collagen synthesis.',
-      'aminoacid',
-      ['N','C','C','C','C','C','N','C','O','O'],
-      [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1],[5,7,1],[7,8,2],[7,9,1]]
-    ),
-    makeRefMol(
-      'methylamine', 'Metylamin', 'Methylamine',
-      'Khí có mùi khai giống cá tanh, nguyên liệu tổng hợp nhiều hợp chất hữu cơ.',
-      'Pungent fishy-smelling gas used as a building block in organic synthesis.',
-      'amine', ['C','N'], [[0,1,1]]
-    ),
-    makeRefMol(
-      'dimethylamine', 'Đimetylamin', 'Dimethylamine',
-      'Amin bậc hai dùng trong tổng hợp dung môi công nghiệp và dược phẩm.',
-      'Secondary amine used in industrial solvents and pharmaceutical synthesis.',
-      'amine', ['C','N','C'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      'trimethylamine', 'Trimetylamin', 'Trimethylamine',
-      'Amin bậc ba mùi tanh đặc trưng của cá biển, đồng phân với propylamin.',
-      'Tertiary amine responsible for the characteristic odor of marine fish.',
-      'amine', ['C','N','C','C'], [[0,1,1],[1,2,1],[1,3,1]]
-    ),
-    makeRefMol(
-      'ethylamine', 'Etylamin', 'Ethylamine',
-      'Amin bậc một mạch 2 carbon, dễ tan trong nước tạo dung dịch có tính bazơ.',
-      'Basic 2-carbon primary amine highly soluble in water.',
-      'amine', ['C','C','N'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      'ethylenediamine', 'Etylenđiamin', 'Ethylenediamine',
-      'Điamin 2 carbon dùng làm phối tử tạo phức càng cua mạnh (như EDTA).',
-      '2-carbon diamine famous as a bidentate chelating ligand in coordination chemistry.',
-      'amine', ['N','C','C','N'], [[0,1,1],[1,2,1],[2,3,1]]
-    ),
-    makeRefMol(
-      'hexamethylenediamine', 'Hexametylenđiamin', 'Hexamethylenediamine',
-      'Điamin 6 carbon dùng trùng ngưng với axit ađipic để kéo sợi Nilon-6,6.',
-      '6-carbon diamine copolymerized with adipic acid to manufacture Nylon-6,6.',
-      'amine', ['N','C','C','C','C','C','C','N'], [[0,1,1],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,6,1],[6,7,1]]
-    ),
-    makeRefMol(
-      'urea', 'Ure', 'Urea',
-      'Hợp chất hữu cơ giàu đạm (46% N), thành phần chính của phân đạm ure.',
-      'Nitrogen-rich organic compound widely used as agricultural fertilizer.',
-      'amide', ['C','O','N','N'], [[0,1,2],[0,2,1],[0,3,1]]
-    ),
-    makeRefMol(
-      'formamide', 'Fomamit', 'Formamide',
-      'Amit đơn giản nhất (HCONH₂), dung môi phân cực mạnh có hằng số điện môi rất cao.',
-      'Simplest amide (HCONH₂), an ultra-polar solvent used in molecular biology.',
-      'amide', ['C','O','N'], [[0,1,2],[0,2,1]]
-    ),
-    makeRefMol(
-      'acetamide', 'Axetamit', 'Acetamide',
-      'Amit của axit axetic (CH₃CONH₂), dùng làm chất hóa dẻo và dung môi công nghiệp.',
-      'Amide of acetic acid (CH₃CONH₂) used as a plasticizer and industrial solvent.',
-      'amide', ['C','C','O','N'], [[0,1,1],[1,2,2],[1,3,1]]
-    ),
-    makeRefMol(
-      'chloromethane', 'Metyl clorua', 'Chloromethane',
-      'Dẫn xuất halogen đơn giản nhất (CH₃Cl), dùng tổng hợp nhựa silicon.',
-      'Simplest chlorocarbon (CH₃Cl) used to manufacture silicone polymers.',
-      'halogen', ['C','Cl'], [[0,1,1]]
-    ),
-    makeRefMol(
-      'dichloromethane', 'Điclometan (DCM)', 'Dichloromethane (DCM)',
-      'Dung môi hữu cơ dễ bay hơi (CH₂Cl₂), dùng chiết tách cafein và tẩy sơn.',
-      'Volatile organic solvent (CH₂Cl₂) used in decaffeination and paint stripping.',
-      'halogen', ['C','Cl','Cl'], [[0,1,1],[0,2,1]]
-    ),
-    makeRefMol(
-      'chloroform', 'Clorofom', 'Chloroform',
-      'Dung môi hữu cơ nặng hơn nước (CHCl₃), từng nổi tiếng với vai trò thuốc gây mê.',
-      'Dense organic solvent (CHCl₃) historically famous as an early surgical anesthetic.',
-      'halogen', ['C','Cl','Cl','Cl'], [[0,1,1],[0,2,1],[0,3,1]]
-    ),
-    makeRefMol(
-      'carbon-tetrachloride', 'Cacbon tetraclorua', 'Carbon tetrachloride',
-      'Phân tử tứ diện đối xứng không cực (CCl₄), từng dùng làm dung môi giặt khô.',
-      'Symmetric nonpolar tetrahedral molecule (CCl₄) historically used in dry cleaning.',
-      'halogen', ['C','Cl','Cl','Cl','Cl'], [[0,1,1],[0,2,1],[0,3,1],[0,4,1]]
-    ),
-    makeRefMol(
-      'vinyl-chloride', 'Vinyl clorua', 'Vinyl chloride',
-      'Monome chứa clo dùng trùng hợp sản xuất ống nước và vật liệu nhựa PVC.',
-      'Chlorinated monomer polymerized worldwide into PVC pipes and construction materials.',
-      'halogen', ['C','C','Cl'], [[0,1,2],[1,2,1]]
-    ),
-    makeRefMol(
-      'ethyl-chloride', 'Etyl clorua', 'Ethyl chloride',
-      'Chất lỏng sôi thấp (12°C) dùng làm thuốc xịt gây tê lạnh giảm đau tức thời.',
-      'Low-boiling liquid (12°C) used as a topical cooling spray for sports injuries.',
-      'halogen', ['C','C','Cl'], [[0,1,1],[1,2,1]]
-    ),
-    makeRefMol(
-      '1,2-dibromoethane', '1,2-Đibrometan', '1,2-Dibromoethane',
-      'Sản phẩm cộng trực tiếp giữa khí etilen và dung dịch nước brom.',
-      'Direct addition product of ethylene gas reacting with bromine water.',
-      'halogen', ['C','C','Br','Br'], [[0,1,1],[0,2,1],[1,3,1]]
-    )
-  ];
+  let KNOWN_MOLECULES = buildKnownMolecules(global.ORGANIC_COMPOUNDS);
 
   // =========================================================================
   // MOLECULE IDENTIFICATION & CLASSIFICATION ENGINE (Exported for Unit Tests)
@@ -1484,14 +640,40 @@
     }
     const topologyKey = isCyclic ? 'cyclic' : hasBranch ? 'branched' : 'linear';
 
+    // Map heavy atom id -> aromatic status from normHeavy
+    const aromAtomIds = new Set();
+    let hIdx = 0;
+    (graph.atoms || []).forEach((a) => {
+      if (a.element !== 'H') {
+        if ((normHeavy.adjList[hIdx] || []).some((e) => e.order === 1.5)) {
+          aromAtomIds.add(a.id);
+        }
+        hIdx++;
+      }
+    });
+
     let hasCarboxyl = false;
     let hasEster = false;
     let hasAldehyde = false;
     let hasKetone = false;
+    let hasPhenol = false;
     let hasAlcohol = false;
     let hasEther = false;
     let hasAmine = false;
     let hasHalogen = false;
+    let hasCCDouble = false;
+    let hasCCTriple = false;
+
+    (graph.bonds || []).forEach((b) => {
+      const u = b.from ?? b.a ?? b.source;
+      const v = b.to ?? b.b ?? b.target;
+      const elU = atomMap.get(u)?.element;
+      const elV = atomMap.get(v)?.element;
+      if (elU === 'C' && elV === 'C') {
+        if (b.order === 3) hasCCTriple = true;
+        else if (b.order === 2 && (!aromAtomIds.has(u) || !aromAtomIds.has(v))) hasCCDouble = true;
+      }
+    });
 
     atomMap.forEach((atom, id) => {
       if (atom.element === 'Cl' || atom.element === 'Br' || atom.element === 'F' || atom.element === 'I') {
@@ -1515,31 +697,54 @@
           const oHeavy = (adj.get(e.to) || []).filter((oe) => atomMap.get(oe.to)?.element !== 'H');
           return oHeavy.length === 1;
         });
+        const hasORBridge = singleOList.some((e) => {
+          const oHeavy = (adj.get(e.to) || []).filter((oe) => atomMap.get(oe.to)?.element !== 'H');
+          return oHeavy.length === 2;
+        });
         const heavySum = getHeavyBondSum(atomMap, adj, id);
         if (dblO && hasOH) hasCarboxyl = true;
-        else if (dblO && !hasEster) {
+        else if (dblO && hasORBridge) hasEster = true;
+        else if (dblO) {
           if (4 - heavySum >= 1) hasAldehyde = true;
           else hasKetone = true;
         } else if (hasOH) {
-          hasAlcohol = true;
+          if (aromAtomIds.has(id)) hasPhenol = true;
+          else hasAlcohol = true;
         }
       }
     });
 
-    let catKey = 'hydrocarbon';
+    const functionalGroups = [];
+    if (hasCarboxyl) functionalGroups.push('carboxyl');
+    if (hasEster) functionalGroups.push('ester');
+    if (hasAldehyde) functionalGroups.push('aldehyde');
+    if (hasKetone) functionalGroups.push('ketone');
+    if (hasPhenol) functionalGroups.push('phenol');
+    if (hasAlcohol) functionalGroups.push('alcohol');
+    if (hasEther) functionalGroups.push('ether');
+    if (hasAmine) functionalGroups.push('amine');
+    if (hasHalogen) functionalGroups.push('halogen');
+    if (normHeavy.hasAromatic) functionalGroups.push('arene');
+    if (hasCCDouble) functionalGroups.push('alkene');
+    if (hasCCTriple) functionalGroups.push('alkyne');
+
+    let catKey = 'alkane';
     if (hasCarboxyl && hasAmine) catKey = 'aminoacid';
     else if (hasCarboxyl) catKey = 'carboxylic';
     else if (hasEster) catKey = 'ester';
     else if (hasAldehyde) catKey = 'aldehyde';
     else if (hasKetone) catKey = 'ketone';
+    else if (hasPhenol) catKey = 'phenol';
     else if (hasAlcohol) catKey = 'alcohol';
     else if (hasEther) catKey = 'ether';
     else if (hasAmine) catKey = 'amine';
     else if (hasHalogen) catKey = 'halogen';
-    else if (normHeavy.hasAromatic) catKey = 'aromatic';
+    else if (normHeavy.hasAromatic) catKey = 'arene';
+    else if (hasCCTriple) catKey = 'alkyne';
+    else if (hasCCDouble) catKey = isCyclic ? 'cycloalkene' : 'alkene';
     else if (isCyclic) catKey = 'cycloalkane';
 
-    return { topologyKey, catKey, isCyclic, ringCount };
+    return { topologyKey, catKey, isCyclic, ringCount, functionalGroups };
   }
 
   function formatCountsFormula(counts) {
@@ -1562,6 +767,10 @@
     const activeLang = lang === 'en' ? 'en' : 'vi';
     const d = ORG_I18N[activeLang] || ORG_I18N.vi;
     const { atomMap, adj } = buildAdjacency(graph);
+
+    if (KNOWN_MOLECULES.length === 0 && Array.isArray(global.ORGANIC_COMPOUNDS)) {
+      KNOWN_MOLECULES = buildKnownMolecules(global.ORGANIC_COMPOUNDS);
+    }
 
     // Saturated counts (including missing valence as H) AND actual explicit-only counts
     const satCounts = { C: 0, H: 0, Br: 0, Cl: 0, F: 0, I: 0, N: 0, O: 0 };
@@ -1586,7 +795,10 @@
     const actualMolarMass = computeCountsMass(actualCounts);
 
     const normHeavy = buildNormalizedHeavyGraph(graph);
-    const { topologyKey, catKey, isCyclic, ringCount } = classifyCustomMolecule(graph, normHeavy);
+    const { topologyKey, catKey, isCyclic, ringCount, functionalGroups } = classifyCustomMolecule(
+      graph,
+      normHeavy
+    );
 
     let matchedMol = null;
     for (let i = 0; i < KNOWN_MOLECULES.length; i++) {
@@ -1598,16 +810,30 @@
     }
 
     if (matchedMol) {
+      const realLife = activeLang === 'en' ? matchedMol.realLifeEn : matchedMol.realLife;
+      const reactions =
+        (activeLang === 'en' ? matchedMol.reactionsEn : matchedMol.reactions) || [];
+      const note = (activeLang === 'en' ? matchedMol.noteEn : matchedMol.note) || null;
+      const categoryLabel =
+        (activeLang === 'en' ? matchedMol.categoryEn : matchedMol.category) ||
+        d.categories[matchedMol.catKey] ||
+        d.categories.custom;
       return {
         matched: true,
         compoundId: matchedMol.id,
-        commonName: activeLang === 'en' ? matchedMol.enName : matchedMol.viName,
-        description: activeLang === 'en' ? matchedMol.enDesc : matchedMol.viDesc,
+        commonName: activeLang === 'en' ? matchedMol.nameEn : matchedMol.name,
         categoryKey: matchedMol.catKey,
-        categoryLabel: d.categories[matchedMol.catKey] || d.categories.custom,
+        categoryLabel,
+        state: activeLang === 'en' ? matchedMol.stateEn : matchedMol.state,
+        solubility: activeLang === 'en' ? matchedMol.solubilityEn : matchedMol.solubility,
+        realLife,
+        reactions,
+        note,
+        description: realLife,
         topologyKey,
         isCyclic,
         ringCount,
+        functionalGroups,
         molecularFormula,
         molarMass,
         actualFormula,
@@ -1623,12 +849,18 @@
       matched: false,
       compoundId: null,
       commonName: d.customTitle(molecularFormula || '—', topoLabel, famLabel, isCyclic),
-      description: d.customNote,
       categoryKey: catKey,
       categoryLabel: famLabel,
+      state: null,
+      solubility: null,
+      realLife: null,
+      reactions: [],
+      note: null,
+      description: d.customNote,
       topologyKey,
       isCyclic,
       ringCount,
+      functionalGroups,
       molecularFormula,
       molarMass,
       actualFormula,
@@ -3491,7 +2723,7 @@
       }
     }
 
-    // Strictly gate compound name reveal on complete valence!
+    // Strictly gate compound name & full Profile Card reveal on complete valence!
     if (dom.resultCard) {
       dom.resultCard.classList.toggle('is-incomplete', incomplete);
       dom.resultCard.classList.toggle('is-matched', !incomplete && result.matched);
@@ -3503,18 +2735,77 @@
         dom.molTag.textContent = d.incompleteTag(result.missingTotalValence);
         dom.molTag.dataset.orgCat = 'incomplete';
       }
-      if (dom.molDesc) dom.molDesc.textContent = d.incompleteDesc(result.missingTotalValence);
       if (dom.valFormula) dom.valFormula.innerHTML = toSubscriptHTML(result.actualFormula || '—');
       if (dom.valMass) dom.valMass.textContent = `${result.actualMolarMass.toFixed(3)} g/mol`;
-    } else {
-      if (dom.molName) dom.molName.textContent = result.commonName;
-      if (dom.molTag) {
-        dom.molTag.textContent = result.categoryLabel;
-        dom.molTag.dataset.orgCat = result.categoryKey;
+      if (dom.pillStateWrap) dom.pillStateWrap.classList.add('hidden');
+      if (dom.pillSolubilityWrap) dom.pillSolubilityWrap.classList.add('hidden');
+      if (dom.molDesc) {
+        dom.molDesc.textContent = d.incompleteDesc(result.missingTotalValence);
+        dom.molDesc.classList.remove('hidden');
       }
-      if (dom.molDesc) dom.molDesc.textContent = result.description;
-      if (dom.valFormula) dom.valFormula.innerHTML = toSubscriptHTML(result.molecularFormula || '—');
-      if (dom.valMass) dom.valMass.textContent = `${result.molarMass.toFixed(3)} g/mol`;
+      if (dom.customMeta) dom.customMeta.classList.add('hidden');
+      if (dom.profileBody) dom.profileBody.classList.add('hidden');
+      return;
+    }
+
+    if (dom.molName) dom.molName.textContent = result.commonName;
+    if (dom.molTag) {
+      dom.molTag.textContent = result.categoryLabel;
+      dom.molTag.dataset.orgCat = result.categoryKey;
+    }
+    if (dom.valFormula) dom.valFormula.innerHTML = toSubscriptHTML(result.molecularFormula || '—');
+    if (dom.valMass) dom.valMass.textContent = `${result.molarMass.toFixed(3)} g/mol`;
+
+    if (result.matched) {
+      if (dom.pillStateWrap && dom.valState) {
+        dom.valState.textContent = result.state || '—';
+        dom.pillStateWrap.classList.remove('hidden');
+      }
+      if (dom.pillSolubilityWrap && dom.valSolubility) {
+        dom.valSolubility.textContent = result.solubility || '—';
+        dom.pillSolubilityWrap.classList.remove('hidden');
+      }
+      if (dom.molDesc) {
+        dom.molDesc.textContent = '';
+        dom.molDesc.classList.add('hidden');
+      }
+      if (dom.customMeta) dom.customMeta.classList.add('hidden');
+      if (dom.profileBody) dom.profileBody.classList.remove('hidden');
+
+      if (dom.profileRealLife) {
+        dom.profileRealLife.innerHTML = formatChemTextHTML(result.realLife || '');
+      }
+      if (dom.profileReactions) {
+        dom.profileReactions.innerHTML = (result.reactions || [])
+          .map((item) => `<li>${formatChemTextHTML(item)}</li>`)
+          .join('');
+      }
+      if (dom.profileNoteWrap && dom.profileNote) {
+        const hasNote = Boolean(result.note);
+        dom.profileNoteWrap.classList.toggle('hidden', !hasNote);
+        dom.profileNote.innerHTML = hasNote ? formatChemTextHTML(result.note) : '';
+      }
+    } else {
+      if (dom.pillStateWrap) dom.pillStateWrap.classList.add('hidden');
+      if (dom.pillSolubilityWrap) dom.pillSolubilityWrap.classList.add('hidden');
+      if (dom.molDesc) {
+        dom.molDesc.textContent = result.description;
+        dom.molDesc.classList.remove('hidden');
+      }
+      if (dom.customMeta) {
+        dom.customMeta.classList.remove('hidden');
+        if (dom.customChain) {
+          dom.customChain.textContent = d.chainLabel(result.isCyclic, result.ringCount, result.topologyKey);
+        }
+        if (dom.customGroups) {
+          const gNames = (result.functionalGroups || [])
+            .map((k) => d.funcGroupNames[k])
+            .filter(Boolean);
+          dom.customGroups.textContent =
+            d.groupsPrefix + (gNames.length > 0 ? gNames.join(', ') : d.noFuncGroups);
+        }
+      }
+      if (dom.profileBody) dom.profileBody.classList.add('hidden');
     }
   }
 
@@ -3759,7 +3050,19 @@
       molTag: document.getElementById('org-mol-tag'),
       molDesc: document.getElementById('org-mol-desc'),
       valFormula: document.getElementById('org-val-formula'),
-      valMass: document.getElementById('org-val-mass')
+      valMass: document.getElementById('org-val-mass'),
+      pillStateWrap: document.getElementById('org-pill-state-wrap'),
+      valState: document.getElementById('org-val-state'),
+      pillSolubilityWrap: document.getElementById('org-pill-solubility-wrap'),
+      valSolubility: document.getElementById('org-val-solubility'),
+      customMeta: document.getElementById('org-custom-meta'),
+      customChain: document.getElementById('org-custom-chain'),
+      customGroups: document.getElementById('org-custom-groups'),
+      profileBody: document.getElementById('org-profile-body'),
+      profileRealLife: document.getElementById('org-profile-reallife'),
+      profileReactions: document.getElementById('org-profile-reactions'),
+      profileNoteWrap: document.getElementById('org-profile-note-wrap'),
+      profileNote: document.getElementById('org-profile-note')
     };
 
     state.lang = callbacks.getLang();

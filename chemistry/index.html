@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Periodic Table</title>
-  <link rel="stylesheet" href="style.css?v=20261122-1" />
+  <link rel="stylesheet" href="style.css?v=20261122-2" />
 </head>
 <body>
   <div class="app-shell">
@@ -974,21 +974,49 @@
             </div>
 
             <div class="org-result-card" id="org-result-card">
-              <div class="org-result-main">
-                <div class="org-result-head">
-                  <div class="org-mol-name" id="org-mol-name">Chưa hoàn thiện phân tử</div>
-                  <span class="org-mol-tag" id="org-mol-tag">Thiếu 4 liên kết</span>
-                </div>
-                <p class="org-mol-desc" id="org-mol-desc"></p>
+              <div class="org-profile-head">
+                <div class="org-mol-name" id="org-mol-name">Chưa hoàn thiện phân tử</div>
+                <span class="org-mol-tag" id="org-mol-tag">Thiếu 4 liên kết</span>
               </div>
-              <div class="org-result-stats">
-                <div class="org-stat-item">
-                  <span class="org-stat-lbl" data-i18n-org="mFormula">Công thức</span>
-                  <strong class="org-stat-val mono" id="org-val-formula">C</strong>
+
+              <div class="org-meta-pills">
+                <div class="org-meta-pill">
+                  <span class="org-pill-lbl" data-i18n-org="mFormula">Công thức</span>
+                  <strong class="org-pill-val mono" id="org-val-formula">C</strong>
                 </div>
-                <div class="org-stat-item">
-                  <span class="org-stat-lbl" data-i18n-org="mMolarMass">Phân tử khối</span>
-                  <strong class="org-stat-val mono" id="org-val-mass">12.011 g/mol</strong>
+                <div class="org-meta-pill">
+                  <span class="org-pill-lbl" data-i18n-org="mMolarMass">M =</span>
+                  <strong class="org-pill-val mono" id="org-val-mass">12.011 g/mol</strong>
+                </div>
+                <div class="org-meta-pill hidden" id="org-pill-state-wrap">
+                  <span class="org-pill-lbl" data-i18n-org="mState">Trạng thái</span>
+                  <strong class="org-pill-val" id="org-val-state">—</strong>
+                </div>
+                <div class="org-meta-pill hidden" id="org-pill-solubility-wrap">
+                  <span class="org-pill-lbl" data-i18n-org="mSolubility">Độ tan</span>
+                  <strong class="org-pill-val" id="org-val-solubility">—</strong>
+                </div>
+              </div>
+
+              <p class="org-mol-desc" id="org-mol-desc"></p>
+
+              <div class="org-custom-meta hidden" id="org-custom-meta">
+                <span class="org-custom-chip" id="org-custom-chain"></span>
+                <span class="org-custom-chip" id="org-custom-groups"></span>
+              </div>
+
+              <div class="org-profile-body hidden" id="org-profile-body">
+                <div class="org-profile-sec">
+                  <div class="org-profile-sec-title" data-i18n-org="secRealLife">Đời sống &amp; Ứng dụng</div>
+                  <p class="org-profile-text" id="org-profile-reallife"></p>
+                </div>
+                <div class="org-profile-sec">
+                  <div class="org-profile-sec-title" data-i18n-org="secReactions">Đặc trưng hóa học &amp; Nhận biết</div>
+                  <ul class="org-profile-list" id="org-profile-reactions"></ul>
+                </div>
+                <div class="org-profile-note hidden" id="org-profile-note-wrap">
+                  <span class="org-profile-note-lbl" data-i18n-org="secNote">Đồng phân / Lưu ý</span>
+                  <span class="org-profile-note-val" id="org-profile-note"></span>
                 </div>
               </div>
             </div>
@@ -1497,7 +1525,8 @@
   <script src="lab.js?v=20261122-1"></script>
   <script src="reactions-organic-data.js"></script>
   <script src="reactions.js"></script>
-  <script src="organic-builder.js?v=20261122-1"></script>
+  <script src="organic-data.js?v=20261122-2"></script>
+  <script src="organic-builder.js?v=20261122-2"></script>
   <script src="tools.js"></script>
   <script src="element-details.js"></script>
   <script src="atom3d.js"></script>
