@@ -5341,23 +5341,31 @@ body {
 }
 
 /* ==========================================================================
-   LAB MODAL 3-PANEL SPLIT HEADER & CHEMICAL REACTIONS TAB (Dark Slate Matte)
+   LAB MODAL MULTI-TAB SPLIT HEADER & CHEMICAL REACTIONS TAB (Dark Slate Matte)
    ========================================================================== */
 .lab-split-header {
   flex-shrink: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  display: flex;
   align-items: stretch;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   background: var(--bg-top);
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.lab-split-header::-webkit-scrollbar {
+  display: none;
+}
+
 .lab-tab-btn {
   position: relative;
+  flex: 1 0 165px;
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 11px 14px;
   border: none;
   border-right: 1px solid var(--border-subtle);
   background: transparent;
@@ -5365,7 +5373,7 @@ body {
   font-family: var(--font-sans);
   text-align: left;
   cursor: pointer;
-  min-width: 0;
+  min-width: 155px;
   transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -5443,8 +5451,12 @@ body {
 }
 
 .lab-split-close {
+  position: sticky;
+  right: 0;
+  flex-shrink: 0;
   align-self: center;
-  margin: 0 12px;
+  margin: 0 10px;
+  z-index: 2;
 }
 
 .lab-tab-panel {
@@ -10911,9 +10923,11 @@ body {
     display: none;
   }
   .lab-tab-btn {
+    flex: 1 0 auto;
+    min-width: max-content;
     justify-content: center;
     text-align: center;
-    padding: 9px 6px;
+    padding: 9px 10px;
   }
   .org-toolbar {
     padding: 7px 8px;
@@ -10926,6 +10940,633 @@ body {
   }
   .org-search-box {
     width: 260px;
+  }
+}
+
+/* ==========================================================================
+   TAB 4: ELECTROCHEMISTRY LAB — GALVANIC & ELECTROLYTIC CELLS (Dark Matte)
+   ========================================================================== */
+.echem-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-subtle);
+}
+
+.echem-mode-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 6px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.echem-mode-btn {
+  padding: 6px 13px;
+  border-radius: 4.5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.77rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.echem-mode-btn:hover {
+  color: var(--text-primary);
+}
+
+.echem-mode-btn.active {
+  background: var(--bg-card);
+  border-color: #6b5634;
+  color: #f3e6ce;
+}
+
+.echem-mode-badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #d4b47c;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: #252017;
+  border: 1px solid #57462b;
+}
+
+.echem-controls-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 8px;
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-subtle);
+}
+
+.echem-select-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.echem-slot-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.echem-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.81rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.14s ease;
+}
+
+.echem-select:focus {
+  border-color: #d4b47c;
+}
+
+.echem-swap-btn {
+  flex-shrink: 0;
+  padding: 8px 13px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-card);
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+}
+
+.echem-swap-btn:hover {
+  background: #2b3244;
+  border-color: #d4b47c;
+  color: #ffffff;
+}
+
+/* Pure-SVG Stage */
+.echem-visual-stage {
+  padding: 10px 12px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: radial-gradient(ellipse 78% 70% at 50% 50%, #1b202c 0%, #151922 70%, #11141c 100%);
+  overflow: hidden;
+}
+
+.echem-svg {
+  width: 100%;
+  height: auto;
+  max-height: 276px;
+  display: block;
+}
+
+.echem-svg-vm-lbl {
+  font-family: var(--font-sans);
+  font-size: 8.2px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  fill: #94a3b8;
+}
+
+.echem-svg-vm-val {
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  font-weight: 700;
+  fill: #e8cfa0;
+}
+
+.echem-svg-flow-hint {
+  font-family: var(--font-sans);
+  font-size: 9.8px;
+  font-weight: 500;
+  fill: #cbd5e1;
+}
+
+.echem-svg-rod-sym {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  fill: #0f141c;
+}
+
+.echem-svg-rod-sym.is-light {
+  fill: #f1f5f9;
+  font-size: 9.8px;
+}
+
+.echem-svg-mini-lbl {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
+  fill: #cbd5e1;
+}
+
+.echem-svg-molten-lbl {
+  font-family: var(--font-sans);
+  font-size: 9.2px;
+  font-weight: 700;
+  fill: #0f141c;
+}
+
+.echem-svg-ion-txt {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  fill: #e2e8f0;
+}
+
+.echem-svg-bridge-lbl {
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: #e5cda0;
+}
+
+.echem-svg-bridge-ion {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.echem-svg-bridge-ion.is-anion {
+  fill: #a9d1e6;
+}
+
+.echem-svg-bridge-ion.is-cation {
+  fill: #ebd2a4;
+}
+
+.echem-svg-e-txt {
+  font-family: var(--font-mono);
+  font-size: 7.8px;
+  font-weight: 700;
+  fill: #f3e2c3;
+}
+
+.echem-svg-role-pill.is-anode {
+  fill: #2c1e18;
+  stroke: #8f5c38;
+  stroke-width: 1.2;
+}
+
+.echem-svg-role-pill.is-cathode {
+  fill: #162633;
+  stroke: #3b6e8c;
+  stroke-width: 1.2;
+}
+
+.echem-svg-role-pill.is-neutral {
+  fill: #1e232e;
+  stroke: #475569;
+  stroke-width: 1.2;
+}
+
+.echem-svg-role-pill.is-el-anode {
+  fill: #2d1b1e;
+  stroke: #8c464e;
+  stroke-width: 1.2;
+}
+
+.echem-svg-role-pill.is-el-cathode {
+  fill: #172334;
+  stroke: #3d6599;
+  stroke-width: 1.2;
+}
+
+.echem-svg-role-txt {
+  font-family: var(--font-sans);
+  font-size: 9.6px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.echem-svg-role-txt.is-anode { fill: #e8be99; }
+.echem-svg-role-txt.is-cathode { fill: #a7d4ed; }
+.echem-svg-role-txt.is-neutral { fill: #cbd5e1; }
+.echem-svg-role-txt.is-el-anode { fill: #f0b1b6; }
+.echem-svg-role-txt.is-el-cathode { fill: #adc9f5; }
+
+.echem-svg-sub-caption {
+  font-family: var(--font-mono);
+  font-size: 9.6px;
+  font-weight: 500;
+  fill: #94a3b8;
+}
+
+.echem-svg-dc-pole {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.echem-svg-dc-pole.is-plus { fill: #ea9a96; }
+.echem-svg-dc-pole.is-minus { fill: #9ec0f7; }
+
+.echem-svg-prod-tag {
+  font-family: var(--font-sans);
+  font-size: 9.2px;
+  font-weight: 600;
+}
+
+.echem-svg-prod-tag.is-anode-pos { fill: #f2b9b6; }
+.echem-svg-prod-tag.is-cathode-neg { fill: #b7d1fa; }
+
+/* Animated Electron Flow & Bubbles */
+.echem-e-dot {
+  transform: translateX(var(--e-pos, 200px));
+}
+
+.echem-e-ltr .echem-e-dot {
+  animation: echemElectronLTR 2.2s linear var(--e-delay, 0s) infinite;
+}
+
+.echem-e-rtl .echem-e-dot {
+  animation: echemElectronRTL 2.2s linear var(--e-delay, 0s) infinite;
+}
+
+@keyframes echemElectronLTR {
+  0% { transform: translateX(calc(var(--e-pos) - 24px)); opacity: 0.25; }
+  50% { opacity: 1; }
+  100% { transform: translateX(calc(var(--e-pos) + 24px)); opacity: 0.25; }
+}
+
+@keyframes echemElectronRTL {
+  0% { transform: translateX(calc(var(--e-pos) + 24px)); opacity: 0.25; }
+  50% { opacity: 1; }
+  100% { transform: translateX(calc(var(--e-pos) - 24px)); opacity: 0.25; }
+}
+
+.echem-svg-bubble {
+  fill: rgba(226, 232, 240, 0.18);
+  stroke: #94a3b8;
+  stroke-width: 1.1;
+  animation: echemBubbleRise 2.1s ease-out var(--ec-delay, 0s) infinite;
+}
+
+@keyframes echemBubbleRise {
+  0% { transform: translateY(4px); opacity: 0; }
+  30% { opacity: 0.85; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+.echem-bridge-ion.is-drifting {
+  animation: echemIonPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes echemIonPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+/* Info Cards, Half-Reactions & Faraday Section */
+.echem-warn-banner {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 14px;
+  border-radius: 7px;
+  background: #2b2218;
+  border: 1px solid #755830;
+  color: #ebd6b2;
+  font-size: 0.8rem;
+  line-height: 1.48;
+}
+
+.echem-warn-icon {
+  font-size: 1rem;
+  color: #d4b47c;
+}
+
+.echem-summary-grid,
+.echem-rxn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.echem-info-card,
+.echem-rxn-box,
+.echem-overall-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-subtle);
+}
+
+.echem-rxn-box.is-anode { border-left: 3px solid #b57c4a; }
+.echem-rxn-box.is-cathode { border-left: 3px solid #4d8fb3; }
+.echem-rxn-box.is-el-anode { border-left: 3px solid #b85d66; }
+.echem-rxn-box.is-el-cathode { border-left: 3px solid #4e7bbd; }
+
+.echem-eyebrow {
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.echem-eyebrow.is-gold {
+  color: #d4b47c;
+}
+
+.echem-mono-formula {
+  font-family: var(--font-mono);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.echem-mono-formula.is-gold {
+  color: #ebd2a0;
+}
+
+.echem-bridge-note,
+.echem-intensive-note {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  line-height: 1.42;
+}
+
+.echem-rxn-head,
+.echem-overall-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.echem-mult-tag,
+.echem-lcm-badge {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: #d4b47c;
+}
+
+.echem-rxn-eq {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.echem-overall-box {
+  background: var(--bg-app);
+}
+
+.echem-overall-eq {
+  font-family: var(--font-serif);
+  font-size: 1.04rem;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: 0.01em;
+}
+
+/* Polarity Reversal Banner (Mode B) */
+.echem-polarity-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #171c26;
+  border: 1px solid var(--border-strong);
+}
+
+.echem-polarity-title {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #d4b47c;
+}
+
+.echem-polarity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.echem-pol-pill {
+  padding: 6px 10px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.38;
+}
+
+.echem-pol-pill.is-el-anode {
+  background: #2b1a1d;
+  border: 1px solid #7a3c44;
+  color: #f2bdc2;
+}
+
+.echem-pol-pill.is-el-cathode {
+  background: #172334;
+  border: 1px solid #385c8f;
+  color: #bad2f7;
+}
+
+/* Faraday Calculator Card */
+.echem-faraday-card {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--bg-card-alt);
+  border: 1px solid #59482e;
+}
+
+.echem-faraday-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.echem-faraday-formula {
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  color: var(--text-secondary);
+}
+
+.echem-sliders-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.echem-slider-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 11px;
+  border-radius: 6px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+}
+
+.echem-slider-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.echem-slider-top strong {
+  font-family: var(--font-mono);
+  font-size: 0.81rem;
+  color: #ebd2a0;
+}
+
+.echem-range {
+  width: 100%;
+  accent-color: #d4b47c;
+  cursor: pointer;
+}
+
+.echem-faraday-results {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.echem-f-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.echem-f-metric.is-highlight {
+  background: #1f2431;
+  border-color: rgba(212, 180, 124, 0.35);
+}
+
+.echem-f-lbl {
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.echem-f-val {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.echem-f-metric.is-highlight .echem-f-val {
+  color: #ebd2a0;
+}
+
+.echem-f-sub {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .echem-controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .echem-summary-grid,
+  .echem-rxn-grid,
+  .echem-polarity-grid,
+  .echem-sliders-grid {
+    grid-template-columns: 1fr;
+  }
+  .echem-faraday-results {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .echem-faraday-results {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -10942,7 +11583,11 @@ body {
   #detail-modal .detail-body,
   .org-atom-inner,
   .org-atom-inner.is-merge-pop,
-  .org-atom-shake {
+  .org-atom-shake,
+  .echem-e-ltr .echem-e-dot,
+  .echem-e-rtl .echem-e-dot,
+  .echem-svg-bubble,
+  .echem-bridge-ion.is-drifting {
     transition: none;
     animation: none;
   }

@@ -347,6 +347,8 @@
       tabReactionsSub: 'Dự đoán sản phẩm, cân bằng & minh họa phân tử',
       tabOrganic: 'Lắp ráp phân tử',
       tabOrganicSub: 'Xếp mạch thẳng, nhánh & mạch vòng 2D',
+      tabElectrochem: 'Pin điện & Điện phân',
+      tabElectrochemSub: 'Pin Galvanic, đảo cực điện phân & Faraday',
       presetsLabel: 'Cặp mẫu thú vị:',
       slotA: 'Nguyên tố A',
       slotB: 'Nguyên tố B',
@@ -439,6 +441,8 @@
       tabReactionsSub: 'Predict products, balance & animate molecules',
       tabOrganic: 'Molecule Builder',
       tabOrganicSub: 'Build 2D chains, branches & rings',
+      tabElectrochem: 'Electrochemistry',
+      tabElectrochemSub: 'Galvanic cells, electrolysis & Faraday’s Law',
       presetsLabel: 'Interesting pairs:',
       slotA: 'Element A',
       slotB: 'Element B',
@@ -1433,6 +1437,7 @@
     const isBonding = tab === 'bonding';
     const isRxn = tab === 'reactions';
     const isOrg = tab === 'organic';
+    const isElectro = tab === 'electrochem';
 
     if (dom.tabBonding) {
       dom.tabBonding.classList.toggle('active', isBonding);
@@ -1446,10 +1451,15 @@
       dom.tabOrganic.classList.toggle('active', isOrg);
       dom.tabOrganic.setAttribute('aria-selected', isOrg ? 'true' : 'false');
     }
+    if (dom.tabElectrochem) {
+      dom.tabElectrochem.classList.toggle('active', isElectro);
+      dom.tabElectrochem.setAttribute('aria-selected', isElectro ? 'true' : 'false');
+    }
 
     if (dom.panelBonding) dom.panelBonding.classList.toggle('hidden', !isBonding);
     if (dom.panelReactions) dom.panelReactions.classList.toggle('hidden', !isRxn);
     if (dom.panelOrganic) dom.panelOrganic.classList.toggle('hidden', !isOrg);
+    if (dom.panelElectrochem) dom.panelElectrochem.classList.toggle('hidden', !isElectro);
 
     let nextFooterHint = d.footerHint;
     if (isRxn && window.ReactionLab && typeof window.ReactionLab.getHeaderTexts === 'function') {
@@ -1458,6 +1468,9 @@
     } else if (isOrg && window.OrganicBuilder && typeof window.OrganicBuilder.getHeaderTexts === 'function') {
       const orgText = window.OrganicBuilder.getHeaderTexts(state.lang);
       nextFooterHint = orgText.footerHint;
+    } else if (isElectro && window.ElectrochemLab && typeof window.ElectrochemLab.getHeaderTexts === 'function') {
+      const ecText = window.ElectrochemLab.getHeaderTexts(state.lang);
+      nextFooterHint = ecText.footerHint;
     }
     if (dom.labFooter) {
       dom.labFooter.classList.toggle('hidden', isOrg);
@@ -1470,7 +1483,7 @@
   }
 
   function setTab(tab) {
-    const nextTab = tab === 'reactions' || tab === 'organic' ? tab : 'bonding';
+    const nextTab = tab === 'reactions' || tab === 'organic' || tab === 'electrochem' ? tab : 'bonding';
     const changed = state.activeTab !== nextTab;
     closeDropdowns();
     state.activeTab = nextTab;
@@ -1618,9 +1631,11 @@
       tabBonding: document.getElementById('lab-tab-bonding'),
       tabReactions: document.getElementById('lab-tab-reactions'),
       tabOrganic: document.getElementById('lab-tab-organic'),
+      tabElectrochem: document.getElementById('lab-tab-electrochem'),
       panelBonding: document.getElementById('lab-panel-bonding'),
       panelReactions: document.getElementById('lab-panel-reactions'),
       panelOrganic: document.getElementById('lab-panel-organic'),
+      panelElectrochem: document.getElementById('lab-panel-electrochem'),
       btnClose: document.getElementById('btn-close-lab'),
       btnCloseFooter: document.getElementById('btn-close-lab-footer'),
       presetsList: document.getElementById('lab-presets-list'),
@@ -1697,6 +1712,10 @@
       }
     });
 
+    if (window.ElectrochemLab && typeof window.ElectrochemLab.init === 'function') {
+      window.ElectrochemLab.init({ getLang: callbacks.getLang });
+    }
+
     applyLabLanguage();
   }
 
@@ -1711,6 +1730,9 @@
     }
     if (window.OrganicBuilder && typeof window.OrganicBuilder.setLang === 'function') {
       window.OrganicBuilder.setLang(state.lang);
+    }
+    if (window.ElectrochemLab && typeof window.ElectrochemLab.setLang === 'function') {
+      window.ElectrochemLab.setLang(state.lang);
     }
     dom.modal.classList.remove('hidden');
     callbacks.onOpen();
@@ -1756,6 +1778,9 @@
     }
     if (window.OrganicBuilder && typeof window.OrganicBuilder.setLang === 'function') {
       window.OrganicBuilder.setLang(lang);
+    }
+    if (window.ElectrochemLab && typeof window.ElectrochemLab.setLang === 'function') {
+      window.ElectrochemLab.setLang(lang);
     }
     applyLabLanguage();
   }
