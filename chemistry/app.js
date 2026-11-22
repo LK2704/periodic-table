@@ -104,6 +104,8 @@
       modeDensity: 'Khối lượng riêng',
       bondingLabBtn: 'Lab',
       bondingLabTitle: 'Mở Lab — Liên kết nguyên tử, Phản ứng hóa học & Lắp ráp phân tử',
+      vlabBtn: 'Thí nghiệm ảo',
+      vlabBtnTitle: 'Mở Thí nghiệm ảo — Pin điện & Điện phân, Cân bằng hóa học Le Chatelier',
       toolsBtn: 'Công cụ',
       toolsBtnTitle: 'Mở Công cụ — Tính khối lượng mol, So sánh nguyên tố & Máy đo pH',
       sendToLabBtn: 'Đưa vào Lab',
@@ -337,6 +339,8 @@
       modeDensity: 'Density',
       bondingLabBtn: 'Lab',
       bondingLabTitle: 'Open Lab — Atomic Bonding, Chemical Reactions & Molecule Builder',
+      vlabBtn: 'Virtual Labs',
+      vlabBtnTitle: 'Open Virtual Labs — Electrochemistry & Le Chatelier Chemical Equilibrium',
       toolsBtn: 'Tools',
       toolsBtnTitle: 'Open Tools — Molar Mass, Compare Elements & pH Meter',
       sendToLabBtn: 'Send to Lab',
@@ -551,6 +555,7 @@
   const btnOpenDetails = document.getElementById('btn-open-details');
   const btnSendToLab = document.getElementById('btn-send-to-lab');
   const btnOpenLab = document.getElementById('btn-open-lab');
+  const btnOpenVlab = document.getElementById('btn-open-vlab');
   const btnOpenTools = document.getElementById('btn-open-tools');
   const viewModeSelect = document.getElementById('view-mode-select');
 
@@ -3345,9 +3350,10 @@
 
   function syncAtomPause() {
     const labOpen = Boolean(window.BondingLab && window.BondingLab.isOpen());
+    const vlabOpen = Boolean(window.VirtualLab && window.VirtualLab.isOpen());
     const toolsOpen = Boolean(window.ChemTools && window.ChemTools.isOpen());
     const factsOpen = Boolean(window.ChemFacts && window.ChemFacts.isOpen());
-    atomRenderer.setPaused(Boolean(state.modalElement) || labOpen || toolsOpen || factsOpen);
+    atomRenderer.setPaused(Boolean(state.modalElement) || labOpen || vlabOpen || toolsOpen || factsOpen);
     updateMobileActionBar();
     syncRadiusPopover();
   }
@@ -3484,6 +3490,7 @@
     if (hudRadiusWrap) hudRadiusWrap.title = dict.hudRadiusTitle;
     hudShells.title = dict.shellsTitle;
     if (btnOpenLab) btnOpenLab.title = dict.bondingLabTitle;
+    if (btnOpenVlab) btnOpenVlab.title = dict.vlabBtnTitle;
     if (btnOpenTools) btnOpenTools.title = dict.toolsBtnTitle;
     if (btnResetIsotope) btnResetIsotope.title = dict.isoResetTitle;
     if (btnSendToLab) btnSendToLab.title = dict.sendToLabTitle;
@@ -3551,9 +3558,12 @@
       updateHeatmapView(state.viewMode);
     }
 
-    // Sync Bonding Lab & Chemistry Tools language
+    // Sync Bonding Lab, Virtual Labs & Chemistry Tools language
     if (window.BondingLab) {
       window.BondingLab.setLang(state.lang);
+    }
+    if (window.VirtualLab) {
+      window.VirtualLab.setLang(state.lang);
     }
     if (window.ChemTools) {
       window.ChemTools.setLang(state.lang);
@@ -3830,6 +3840,12 @@
         if (window.BondingLab) window.BondingLab.open();
       });
     }
+    if (btnOpenVlab) {
+      btnOpenVlab.addEventListener('click', () => {
+        if (state.atomExpanded) setAtomExpanded(false, true);
+        if (window.VirtualLab) window.VirtualLab.open();
+      });
+    }
     if (btnOpenTools) {
       btnOpenTools.addEventListener('click', () => {
         clearComparePick();
@@ -4072,6 +4088,7 @@
         tag === 'SELECT' ||
         (e.target && e.target.isContentEditable);
       const labOpen = Boolean(window.BondingLab && window.BondingLab.isOpen());
+      const vlabOpen = Boolean(window.VirtualLab && window.VirtualLab.isOpen());
       const toolsOpen = Boolean(window.ChemTools && window.ChemTools.isOpen());
       const factsOpen = Boolean(window.ChemFacts && window.ChemFacts.isOpen());
 
@@ -4082,6 +4099,8 @@
           } else {
             window.ChemTools.close();
           }
+        } else if (vlabOpen) {
+          window.VirtualLab.close();
         } else if (labOpen) {
           if (window.BondingLab.hasOpenDropdown()) {
             window.BondingLab.closeDropdowns();
@@ -4121,7 +4140,7 @@
         e.key === 'ArrowUp' ||
         e.key === 'ArrowDown';
 
-      if (!isTyping && !labOpen && !toolsOpen && !state.modalElement && factsOpen && isArrowKey) {
+      if (!isTyping && !labOpen && !vlabOpen && !toolsOpen && !state.modalElement && factsOpen && isArrowKey) {
         if (e.key === 'ArrowRight') {
           e.preventDefault();
           window.ChemFacts.next();
@@ -4129,7 +4148,7 @@
         return;
       }
 
-      if (!isTyping && !labOpen && !toolsOpen && isArrowKey) {
+      if (!isTyping && !labOpen && !vlabOpen && !toolsOpen && isArrowKey) {
         const current = state.locked || state.modalElement;
         if (!current) return;
         e.preventDefault();
@@ -4288,6 +4307,18 @@
   buildPeriodicTable();
   if (window.BondingLab) {
     window.BondingLab.init({
+      getLang: () => state.lang,
+      onOpen: () => {
+        if (state.atomExpanded) setAtomExpanded(false, true);
+        closeOrbitalPopover();
+        if (window.ChemFacts) window.ChemFacts.close();
+        syncAtomPause();
+      },
+      onClose: () => syncAtomPause()
+    });
+  }
+  if (window.VirtualLab) {
+    window.VirtualLab.init({
       getLang: () => state.lang,
       onOpen: () => {
         if (state.atomExpanded) setAtomExpanded(false, true);

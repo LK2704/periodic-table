@@ -45,6 +45,14 @@
           </svg>
           <span data-i18n="bondingLabBtn">Lab</span>
         </button>
+        <button type="button" class="lab-open-btn vlab-open-btn" id="btn-open-vlab">
+          <svg class="vlab-btn-svg" width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M5.75 2.25H10.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" />
+            <path d="M6.6 2.25V6.1L3.05 12.15C2.65 12.82 3.13 13.75 3.92 13.75H12.08C12.87 13.75 13.35 12.82 12.95 12.15L9.4 6.1V2.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4.55 10.1H11.45" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+          </svg>
+          <span data-i18n="vlabBtn">Thí nghiệm ảo</span>
+        </button>
         <div class="lang-switch" id="lang-switch" role="group" aria-label="Language switcher">
           <button type="button" class="lang-btn active" data-lang="vi">VI</button>
           <button type="button" class="lang-btn" data-lang="en">EN</button>
@@ -653,21 +661,6 @@
             <span class="lab-tab-sub" data-i18n-lab="tabOrganicSub">Xếp mạch thẳng, nhánh &amp; mạch vòng 2D</span>
           </span>
         </button>
-        <button
-          type="button"
-          class="lab-tab-btn"
-          id="lab-tab-electrochem"
-          data-lab-tab="electrochem"
-          role="tab"
-          aria-selected="false"
-          aria-controls="lab-panel-electrochem"
-        >
-          <span class="lab-tab-icon" aria-hidden="true">⚡</span>
-          <span class="lab-tab-copy">
-            <span class="lab-tab-title" data-i18n-lab="tabElectrochem">Pin điện &amp; Điện phân</span>
-            <span class="lab-tab-sub" data-i18n-lab="tabElectrochemSub">Pin Galvanic, đảo cực điện phân &amp; Faraday</span>
-          </span>
-        </button>
         <button type="button" class="detail-close-btn lab-split-close" id="btn-close-lab" aria-label="Đóng">✕</button>
       </div>
 
@@ -1067,14 +1060,64 @@
             </div>
           </div>
         </div>
-
-        <!-- TAB 4: ELECTROCHEMISTRY LAB (Galvanic & Electrolytic Cells) -->
-        <div class="lab-tab-panel hidden" id="lab-panel-electrochem" role="tabpanel" aria-labelledby="lab-tab-electrochem"></div>
       </div>
 
       <div class="detail-footer lab-footer">
         <span class="lab-footer-hint" id="lab-footer-hint" data-i18n-lab="footerHint">Mẹo: Nhập số hiệu (11), ký hiệu (Na) hoặc tên Việt/Anh không dấu để chọn nhanh nguyên tố.</span>
         <button type="button" class="detail-done-btn" id="btn-close-lab-footer" data-i18n-lab="close">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIRTUAL LABS MODAL (Electrochemistry & Chemical Equilibrium) -->
+  <div class="detail-modal lab-modal hidden" id="vlab-modal" role="dialog" aria-modal="true" aria-label="Phòng Thí Nghiệm Ảo">
+    <div class="detail-backdrop" id="vlab-backdrop"></div>
+    <div class="detail-dialog lab-dialog vlab-dialog" id="vlab-dialog">
+      <div class="lab-split-header" id="vlab-tabs" role="tablist" aria-label="Chế độ Thí nghiệm ảo">
+        <button
+          type="button"
+          class="lab-tab-btn active"
+          id="vlab-tab-electrochem"
+          data-vlab-tab="electrochem"
+          role="tab"
+          aria-selected="true"
+          aria-controls="lab-panel-electrochem"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">⚡</span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-vlab="tabElectrochem">Pin điện &amp; Điện phân</span>
+            <span class="lab-tab-sub" data-i18n-vlab="tabElectrochemSub">Pin Galvanic, đảo cực điện phân &amp; Faraday</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="lab-tab-btn"
+          id="vlab-tab-equilibrium"
+          data-vlab-tab="equilibrium"
+          role="tab"
+          aria-selected="false"
+          aria-controls="vlab-panel-equilibrium"
+        >
+          <span class="lab-tab-icon" aria-hidden="true">⚖</span>
+          <span class="lab-tab-copy">
+            <span class="lab-tab-title" data-i18n-vlab="tabEquilibrium">Cân bằng hóa học</span>
+            <span class="lab-tab-sub" data-i18n-vlab="tabEquilibriumSub">Nguyên lý Le Chatelier, Van ’t Hoff &amp; đồ thị C(t)</span>
+          </span>
+        </button>
+        <button type="button" class="detail-close-btn lab-split-close" id="btn-close-vlab" aria-label="Đóng">✕</button>
+      </div>
+
+      <div class="detail-body lab-body">
+        <!-- TAB 1: ELECTROCHEMISTRY LAB (Moved cleanly from #lab-modal with intact IDs) -->
+        <div class="lab-tab-panel" id="lab-panel-electrochem" role="tabpanel" aria-labelledby="vlab-tab-electrochem"></div>
+
+        <!-- TAB 2: CHEMICAL EQUILIBRIUM LAB (Le Chatelier) -->
+        <div class="lab-tab-panel hidden" id="vlab-panel-equilibrium" role="tabpanel" aria-labelledby="vlab-tab-equilibrium"></div>
+      </div>
+
+      <div class="detail-footer lab-footer">
+        <span class="lab-footer-hint" id="vlab-footer-hint"></span>
+        <button type="button" class="detail-done-btn" id="btn-close-vlab-footer" data-i18n-vlab="close">Đóng</button>
       </div>
     </div>
   </div>
@@ -1576,6 +1619,7 @@
   <script src="reactions.js"></script>
   <script src="organic-builder.js?v=20261122-2"></script>
   <script src="electrochem-lab.js"></script>
+  <script src="equilibrium-lab.js"></script>
   <script src="tools.js"></script>
   <script src="element-details.js"></script>
   <script src="atom3d.js"></script>
