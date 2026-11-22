@@ -56,7 +56,7 @@
     'H3PO4', 'H3PO3', 'H3PO2', 'H2CO3', 'H2SiO3', 'H3BO3',
     'HClO', 'HClO2', 'HClO3', 'HClO4', 'H2CrO4', 'H2Cr2O7', 'HMnO4',
     // Common oxosalts, acid salts, aluminates, zincates, complexes
-    'KMnO4', 'NaMnO4', 'K2MnO4', 'K2Cr2O7', 'Na2Cr2O7', 'K2CrO4', 'Na2CrO4',
+    'KMnO4', 'NaMnO4', 'K2MnO4', 'K2Cr2O7', 'Na2Cr2O7', 'K2CrO4', 'Na2CrO4', 'Cr2(SO4)3',
     'KClO3', 'NaClO3', 'KClO4', 'KClO', 'NaClO', 'Ca(ClO)2', 'CaOCl2',
     'Na2S2O3', 'Na2SiO3', 'K2SiO3', 'NaAlO2', 'KAlO2', 'Na2ZnO2', 'K2ZnO2', 'Na2PbO2',
     'Na2[Zn(OH)4]', 'K2[Zn(OH)4]', 'Na[Al(OH)4]', 'K[Al(OH)4]',
@@ -292,12 +292,46 @@
       if (!item || !item.formula) return;
       const existing = existingByFormula.get(item.formula);
       if (existing) {
+        if (item.vi) existing.vi = item.vi;
+        if (item.en) existing.en = item.en;
+        if (item.displayFormula) existing.displayFormula = item.displayFormula;
         if (item.aliases) {
           existing.aliases = existing.aliases ? `${existing.aliases} ${item.aliases}` : item.aliases;
         }
       } else {
         COMMON_SUBSTANCES.push(item);
         existingByFormula.set(item.formula, item);
+      }
+    });
+  }
+
+  // Named isomer resolution: maps special named isomer tokens to true molecular formula for parsing/balancing
+  const ISOMER_FORMULA_MAP = {
+    Fructose: 'C6H12O6'
+  };
+
+  function resolveChemicalFormula(formula) {
+    return ISOMER_FORMULA_MAP[formula] || formula;
+  }
+
+  // Case-insensitive & diacritic-free name/alias -> canonical formula lookup
+  const NAME_ALIAS_MAP = new Map();
+  if (ORGANIC_DATA.nameAliases && typeof ORGANIC_DATA.nameAliases === 'object') {
+    Object.keys(ORGANIC_DATA.nameAliases).forEach((aliasKey) => {
+      const target = ORGANIC_DATA.nameAliases[aliasKey];
+      const normKey = String(aliasKey || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase()
+        .trim();
+      if (normKey) {
+        NAME_ALIAS_MAP.set(normKey, target);
+        const compactKey = normKey.replace(/\s+/g, '');
+        if (compactKey.length >= 3 && !NAME_ALIAS_MAP.has(compactKey)) {
+          NAME_ALIAS_MAP.set(compactKey, target);
+        }
       }
     });
   }
@@ -311,6 +345,10 @@
     if (!LOWERCASE_CANONICAL_MAP.has(f.toLowerCase())) {
       LOWERCASE_CANONICAL_MAP.set(f.toLowerCase(), f);
     }
+  });
+  Object.keys(ISOMER_FORMULA_MAP).forEach((tok) => {
+    LOWERCASE_CANONICAL_MAP.set(tok.toLowerCase(), tok);
+    NAME_ALIAS_MAP.set(tok.toLowerCase(), tok);
   });
 
   // =========================================================================
@@ -1118,11 +1156,13 @@
         LOWERCASE_CANONICAL_MAP.set(f.toLowerCase(), f);
       }
     });
-    entry.products.forEach((p) => {
-      if (!LOWERCASE_CANONICAL_MAP.has(p.formula.toLowerCase())) {
-        LOWERCASE_CANONICAL_MAP.set(p.formula.toLowerCase(), p.formula);
-      }
-    });
+    if (Array.isArray(entry.products)) {
+      entry.products.forEach((p) => {
+        if (!LOWERCASE_CANONICAL_MAP.has(p.formula.toLowerCase())) {
+          LOWERCASE_CANONICAL_MAP.set(p.formula.toLowerCase(), p.formula);
+        }
+      });
+    }
   });
 
   // =========================================================================
@@ -1348,11 +1388,17 @@
   }
 
   function formatFormulaHTML(formula) {
+    if (formula === 'Fructose') {
+      return 'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> <span class="rxn-isomer-tag">(Fructose)</span>';
+    }
     const escaped = escapeHTML(formula);
     return escaped.replace(/([A-Za-z)\]])(\d+)/g, '$1<sub>$2</sub>');
   }
 
   function formatFormulaUnicode(formula) {
+    if (formula === 'Fructose') {
+      return 'C₆H₁₂O₆ (Fructose)';
+    }
     const map = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
     return String(formula || '').replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
       return pre + digits.replace(/\d/g, (d) => map[d] || d);
@@ -1574,15 +1620,34 @@
     };
   }
 
-  // Normalize user input: trim, remove whitespace, convert Unicode subscripts, auto-case common substances
+  // Normalize user input: trim, convert Unicode subscripts, resolve common substance names, auto-case formulas
   function normalizeInputFormula(raw) {
-    let cleaned = String(raw || '')
-      .replace(/[₀-₉]/g, (ch) => SUBSCRIPT_TO_ASCII[ch] || ch)
-      .replace(/\s+/g, '');
+    const asciiSub = String(raw || '').replace(/[₀-₉]/g, (ch) => SUBSCRIPT_TO_ASCII[ch] || ch);
+    const trimmed = asciiSub.trim();
+    if (!trimmed) return '';
 
+    const rawLower = trimmed.toLowerCase();
+    if (NAME_ALIAS_MAP.has(rawLower)) {
+      return NAME_ALIAS_MAP.get(rawLower);
+    }
+
+    const searchNorm = normalizeSearchText(trimmed);
+    if (NAME_ALIAS_MAP.has(searchNorm)) {
+      return NAME_ALIAS_MAP.get(searchNorm);
+    }
+
+    const compactNorm = searchNorm.replace(/\s+/g, '');
+    if (NAME_ALIAS_MAP.has(compactNorm)) {
+      return NAME_ALIAS_MAP.get(compactNorm);
+    }
+
+    const cleaned = asciiSub.replace(/\s+/g, '');
     if (!cleaned) return '';
 
     const lower = cleaned.toLowerCase();
+    if (NAME_ALIAS_MAP.has(lower)) {
+      return NAME_ALIAS_MAP.get(lower);
+    }
     // 1. If all lowercase and in common canonical map (e.g. "hcl" -> "HCl", "naoh" -> "NaOH", "fe(oh)2" -> "Fe(OH)2")
     if (cleaned === lower && LOWERCASE_CANONICAL_MAP.has(lower)) {
       return LOWERCASE_CANONICAL_MAP.get(lower);
@@ -1707,6 +1772,19 @@
 
     if (!formula) {
       return { ok: false, empty: true, step: 1, formula: '', error: d.errEmpty, suggestions: [] };
+    }
+
+    // Named isomer tokens (e.g. Fructose -> C6H12O6) validate directly via resolved formula
+    if (ISOMER_FORMULA_MAP[formula]) {
+      const resolvedParsed = parseFormulaSyntax(ISOMER_FORMULA_MAP[formula], { allowSquare: true });
+      if (resolvedParsed.ok) {
+        return {
+          ok: true,
+          formula,
+          atoms: resolvedParsed.counts || resolvedParsed.atoms,
+          elements: resolvedParsed.elements
+        };
+      }
     }
 
     // --- STEP 1: Syntax & Elements ---
@@ -2053,8 +2131,8 @@
   function balanceEquation(reactantFormulas, productFormulas) {
     if (!reactantFormulas.length || !productFormulas.length) return null;
 
-    const parsedR = reactantFormulas.map((f) => parseFormulaSyntax(f, { allowSquare: true }));
-    const parsedP = productFormulas.map((f) => parseFormulaSyntax(f, { allowSquare: true }));
+    const parsedR = reactantFormulas.map((f) => parseFormulaSyntax(resolveChemicalFormula(f), { allowSquare: true }));
+    const parsedP = productFormulas.map((f) => parseFormulaSyntax(resolveChemicalFormula(f), { allowSquare: true }));
     if (parsedR.some((p) => !p.ok) || parsedP.some((p) => !p.ok)) return null;
 
     // Collect distinct elements & verify LHS and RHS element sets match
@@ -2264,13 +2342,14 @@
 
   // Classify a validated formula into chemical role for Tier 2
   function classifySubstance(formula) {
-    const parsed = parseFormulaSyntax(formula, { allowSquare: true });
+    const resolved = resolveChemicalFormula(formula);
+    const parsed = parseFormulaSyntax(resolved, { allowSquare: true });
     if (!parsed.ok) return { kind: 'other', formula };
     const { atoms, elements } = parsed;
     const eMap = getElementMap();
 
     // Water
-    if (formula === 'H2O') {
+    if (resolved === 'H2O') {
       return { kind: 'water', formula };
     }
 
@@ -2424,17 +2503,24 @@
     const bal = balanceEquation(reactants, productsSpec.map((p) => p.formula));
     if (!bal) return null;
 
+    const displayReactants = meta.displayReactants || {};
     return {
       reacted: true,
       tier: meta.tier,
       source: meta.tier === 1 ? 'experimental' : 'rule',
       type: meta.type,
       reversible: Boolean(meta.reversible),
+      catalyst: meta.catalyst || null,
       condVi: meta.condVi || '',
       condEn: meta.condEn || '',
-      reactants: reactants.map((f, idx) => ({ formula: f, coeff: bal.reactantCoeffs[idx] })),
+      reactants: reactants.map((f, idx) => ({
+        formula: f,
+        displayFormula: displayReactants[f] || null,
+        coeff: bal.reactantCoeffs[idx]
+      })),
       products: productsSpec.map((p, idx) => ({
         formula: p.formula,
+        displayFormula: p.displayFormula || null,
         coeff: bal.productCoeffs[idx],
         state: p.state || null
       })),
@@ -2529,11 +2615,28 @@
     const entry = TIER1_MAP.get(key);
     if (!entry) return null;
 
+    if (entry.noReaction) {
+      return makeNoReactionResult(formulas, entry.phenVi, entry.phenEn, entry.expVi, entry.expEn, 1);
+    }
+
+    // Remove catalyst from LHS (moved onto reaction arrow) & append aqueous solvent reactants if needed
+    let lhsFormulas = entry.catalyst
+      ? formulas.filter((f) => f !== entry.catalyst)
+      : formulas.slice();
+
+    if (Array.isArray(entry.extraReactants)) {
+      entry.extraReactants.forEach((extra) => {
+        if (!lhsFormulas.includes(extra)) lhsFormulas.push(extra);
+      });
+    }
+
     // Preserve user input order on LHS
-    return makeBalancedResult(formulas, entry.products, {
+    return makeBalancedResult(lhsFormulas, entry.products, {
       tier: 1,
       type: entry.type,
       reversible: Boolean(entry.reversible),
+      catalyst: entry.catalyst || null,
+      displayReactants: entry.displayReactants || null,
       condVi: entry.condVi,
       condEn: entry.condEn,
       phenVi: entry.phenVi,
@@ -3489,8 +3592,9 @@
     // --- RULE 7: ORGANIC COMPLETE COMBUSTION (C,H or C,H,O + O2 -> CO2↑ + H2O) ---
     if (fA === 'O2' || fB === 'O2') {
       const orgFormula = fA === 'O2' ? fB : fA;
-      if (orgFormula !== 'H2CO3' && orgFormula !== 'O2') {
-        const parsedOrg = parseFormulaSyntax(orgFormula, { allowSquare: true });
+      const orgResolved = resolveChemicalFormula(orgFormula);
+      if (orgResolved !== 'H2CO3' && orgResolved !== 'O2') {
+        const parsedOrg = parseFormulaSyntax(orgResolved, { allowSquare: true });
         if (
           parsedOrg.ok &&
           parsedOrg.atoms.C > 0 &&
@@ -3601,7 +3705,9 @@
   // =========================================================================
   // MAIN 3-TIER PREDICTION ENTRYPOINT
   // =========================================================================
-  function predictReaction(canonicalFormulas) {
+  function predictReaction(rawFormulas) {
+    const canonicalFormulas = (rawFormulas || []).map((f) => normalizeInputFormula(f));
+
     // 1. Check Tier 1 Dictionary first (works for both 2 and 3 reactants, order-independent)
     const tier1 = lookupTier1(canonicalFormulas);
     if (tier1) return tier1;
@@ -3838,6 +3944,35 @@
     if (ionFormula === 'NH4') return buildStarUnit('N', ['H', 'H', 'H', 'H'], [1, 1, 1, 1], -90, 7);
     if (ionFormula === 'MnO4') return buildStarUnit('Mn', ['O', 'O', 'O', 'O'], [2, 2, 2, 1], -90, 7);
     if (ionFormula === 'CrO4') return buildStarUnit('Cr', ['O', 'O', 'O', 'O'], [2, 1, 2, 1], -90, 7);
+    if (ionFormula === 'Cr2O7') {
+      const d = bondDist('Cr', 'O', 5.5);
+      const rad65 = (65 * Math.PI) / 180;
+      const rad115 = (115 * Math.PI) / 180;
+      return {
+        atoms: [
+          { sym: 'O', x: 0, y: 0 },
+          { sym: 'Cr', x: -d, y: 0 },
+          { sym: 'Cr', x: d, y: 0 },
+          { sym: 'O', x: Number((-2 * d).toFixed(1)), y: 0 },
+          { sym: 'O', x: Number((-d + Math.cos(rad115) * d).toFixed(1)), y: Number((-Math.sin(rad115) * d).toFixed(1)) },
+          { sym: 'O', x: Number((-d + Math.cos(rad115) * d).toFixed(1)), y: Number((Math.sin(rad115) * d).toFixed(1)) },
+          { sym: 'O', x: Number((2 * d).toFixed(1)), y: 0 },
+          { sym: 'O', x: Number((d + Math.cos(rad65) * d).toFixed(1)), y: Number((-Math.sin(rad65) * d).toFixed(1)) },
+          { sym: 'O', x: Number((d + Math.cos(rad65) * d).toFixed(1)), y: Number((Math.sin(rad65) * d).toFixed(1)) }
+        ],
+        bonds: [
+          { a: 0, b: 1, order: 1, kind: 'covalent' },
+          { a: 0, b: 2, order: 1, kind: 'covalent' },
+          { a: 1, b: 3, order: 1, kind: 'covalent' },
+          { a: 1, b: 4, order: 2, kind: 'covalent' },
+          { a: 1, b: 5, order: 2, kind: 'covalent' },
+          { a: 2, b: 6, order: 1, kind: 'covalent' },
+          { a: 2, b: 7, order: 2, kind: 'covalent' },
+          { a: 2, b: 8, order: 2, kind: 'covalent' }
+        ],
+        badges: []
+      };
+    }
     if (ionFormula === 'ClO4') return buildStarUnit('Cl', ['O', 'O', 'O', 'O'], [2, 2, 2, 1], -90, 7);
     if (ionFormula === 'AlO2') {
       const d = bondDist('Al', 'O', 7.5);
@@ -4632,7 +4767,7 @@
         badges: []
       });
     }
-    if (formula === 'C2Ag2') {
+    if (formula === 'C2Ag2' || formula === 'Ag2C2') {
       const dCC = bondDist('C', 'C', 9.5);
       const dCAg = bondDist('C', 'Ag', 9.5);
       return centerGraph({
@@ -4646,6 +4781,55 @@
           { a: 0, b: 1, order: 1, kind: 'ionic' },
           { a: 1, b: 2, order: 3, kind: 'covalent' },
           { a: 2, b: 3, order: 1, kind: 'ionic' }
+        ],
+        badges: []
+      });
+    }
+    if (formula === 'C3H4') {
+      const dCC = bondDist('C', 'C', 8.5);
+      const dCH = bondDist('C', 'H', 6.5);
+      return centerGraph({
+        atoms: [
+          { sym: 'C', x: -dCC, y: 0 },
+          { sym: 'C', x: 0, y: 0 },
+          { sym: 'C', x: dCC, y: 0 },
+          { sym: 'H', x: dCC + dCH, y: 0 },
+          { sym: 'H', x: -dCC - dCH * 0.85, y: 0 },
+          { sym: 'H', x: -dCC, y: -dCH },
+          { sym: 'H', x: -dCC, y: dCH }
+        ],
+        bonds: [
+          { a: 0, b: 1, order: 1, kind: 'covalent' },
+          { a: 1, b: 2, order: 3, kind: 'covalent' },
+          { a: 2, b: 3, order: 1, kind: 'covalent' },
+          { a: 0, b: 4, order: 1, kind: 'covalent' },
+          { a: 0, b: 5, order: 1, kind: 'covalent' },
+          { a: 0, b: 6, order: 1, kind: 'covalent' }
+        ],
+        badges: []
+      });
+    }
+    if (formula === 'CH3CCAg') {
+      const dCC = bondDist('C', 'C', 8.5);
+      const dCAg = bondDist('C', 'Ag', 8.5);
+      const dCH = bondDist('C', 'H', 6.5);
+      return centerGraph({
+        atoms: [
+          { sym: 'C', x: -dCC, y: 0 },
+          { sym: 'C', x: 0, y: 0 },
+          { sym: 'C', x: dCC, y: 0 },
+          { sym: 'Ag', x: dCC + dCAg, y: 0 },
+          { sym: 'H', x: -dCC - dCH * 0.85, y: 0 },
+          { sym: 'H', x: -dCC, y: -dCH },
+          { sym: 'H', x: -dCC, y: dCH }
+        ],
+        bonds: [
+          { a: 0, b: 1, order: 1, kind: 'covalent' },
+          { a: 1, b: 2, order: 3, kind: 'covalent' },
+          { a: 2, b: 3, order: 1, kind: 'ionic' },
+          { a: 0, b: 4, order: 1, kind: 'covalent' },
+          { a: 0, b: 5, order: 1, kind: 'covalent' },
+          { a: 0, b: 6, order: 1, kind: 'covalent' }
         ],
         badges: []
       });
@@ -4996,7 +5180,7 @@
           : { atoms: [{ sym: cation, x: 0, y: 0 }], bonds: [], badges: [] };
 
         const anUnitBase = anion.polyatomic
-          ? (buildPolyatomicIonUnit(anion.formula) || buildStarUnit(anion.formula[0], ['O'], [1]))
+          ? (buildPolyatomicIonUnit(anion.formula) || buildStarUnit((anion.formula.match(/^[A-Z][a-z]?/) || ['O'])[0], ['O'], [1]))
           : { atoms: [{ sym: anion.formula, x: 0, y: 0 }], bonds: [], badges: [] };
 
         const catChargeStr = formatChargeBadge(cationVal);
@@ -5126,11 +5310,13 @@
   }
 
   function buildMoleculeGraph(formula) {
-    return buildLayer1Molecule(formula) || buildLayer2Molecule(formula);
+    const resolved = resolveChemicalFormula(formula);
+    return buildLayer1Molecule(resolved) || buildLayer2Molecule(resolved);
   }
 
   // Render SVG formula text with clean subscript <tspan>s
   function formatSVGFormulaText(formula) {
+    if (formula === 'Fructose') return 'Fructose';
     const escaped = escapeHTML(formula);
     return escaped.replace(/([A-Za-z)\]])(\d+)/g, (_, pre, digits) => {
       const subDigits = digits.replace(/\d/g, (d) => SVG_SUBSCRIPT_DIGITS[d] || d);
@@ -5346,7 +5532,7 @@
           const cx = positions[idx];
           const m = measureGraph(item.graph);
           const scale = Math.min(1.12, 130 / m.width, 86 / m.height);
-          const labelStr = formatSVGFormulaText(item.formula);
+          const labelStr = formatSVGFormulaText(item.displayFormula || item.formula);
           return `
             <g class="rxn-no-rxn-item">
               ${renderSingleGraphSVG(item.graph, cx, centerY, scale, lang, uidPrefix)}
@@ -5422,7 +5608,7 @@
     lhsItems.forEach((item, idx) => {
       const w = lhsWidths[idx];
       const { molSVG, coeffBadgeSVG } = renderSpeciesClusterSVG(item, curX, w, centerY, maxMolH, expandedMode, lang, uidPrefix);
-      const labelStr = formatSVGFormulaText(item.formula);
+      const labelStr = formatSVGFormulaText(item.displayFormula || item.formula);
       lhsParts.push(`
         <g class="rxn-anim-lhs" style="--lhs-delay: ${(idx * 0.08).toFixed(2)}s">
           ${molSVG}
@@ -5469,7 +5655,7 @@
       const w = rhsWidths[idx];
       const midX = curX + w / 2;
       const { molSVG, coeffBadgeSVG } = renderSpeciesClusterSVG(item, curX, w, centerY, maxMolH, expandedMode, lang, uidPrefix);
-      const labelStr = formatSVGFormulaText(item.formula);
+      const labelStr = formatSVGFormulaText(item.displayFormula || item.formula);
       const isGas = item.state === 'gas';
       const isPpt = item.state === 'precipitate';
       const stateClass = isGas ? 'rxn-anim-gas' : isPpt ? 'rxn-anim-ppt' : '';
@@ -5566,21 +5752,23 @@
 
     COMMON_SUBSTANCES.forEach((item) => {
       const f = item.formula.toLowerCase();
+      const df = (item.displayFormula || '').toLowerCase();
       const vi = normalizeSearchText(item.vi);
       const en = normalizeSearchText(item.en);
       const al = normalizeSearchText(item.aliases || '');
 
-      if (f === q || vi === q || en === q) {
+      if (f === q || df === q || vi === q || en === q) {
         exact.push(item);
       } else if (
         f.startsWith(q) ||
+        (df && df.startsWith(q)) ||
         vi.startsWith(q) ||
         en.startsWith(q) ||
         vi.split(/\s+/).some((w) => w.startsWith(q)) ||
         en.split(/\s+/).some((w) => w.startsWith(q))
       ) {
         prefix.push(item);
-      } else if (f.includes(q) || vi.includes(q) || en.includes(q) || al.includes(q)) {
+      } else if (f.includes(q) || (df && df.includes(q)) || vi.includes(q) || en.includes(q) || al.includes(q)) {
         sub.push(item);
       }
     });
@@ -5718,7 +5906,7 @@
             role="option"
             aria-selected="${isSel ? 'true' : 'false'}"
           >
-            <span class="rxn-opt-formula">${formatFormulaHTML(item.formula)}</span>
+            <span class="rxn-opt-formula">${formatFormulaHTML(item.displayFormula || item.formula)}</span>
             <span class="rxn-opt-name">${escapeHTML(name)}</span>
             <span class="rxn-opt-cat cat-${item.cat}">${escapeHTML(catLabel)}</span>
           </button>
@@ -5773,7 +5961,7 @@
   function renderEquationHTML(result) {
     const renderTerm = (term) => {
       const coeffHTML = term.coeff > 1 ? `<span class="rxn-coeff">${term.coeff}</span>` : '';
-      const formulaHTML = `<span class="rxn-formula">${formatFormulaHTML(term.formula)}</span>`;
+      const formulaHTML = `<span class="rxn-formula">${formatFormulaHTML(term.displayFormula || term.formula)}</span>`;
       const stateHTML =
         term.state === 'precipitate'
           ? `<span class="rxn-state rxn-state-ppt" title="${state.lang === 'en' ? 'Precipitate' : 'Kết tủa'}">↓</span>`

@@ -32,38 +32,42 @@
     // Esters
     'HCOOCH3', 'HCOOC2H5', 'CH3COOCH3', 'CH3COOC2H5', 'C2H5COOCH3', 'C2H5COOC2H5',
     // Carbohydrates & Derivatives
-    'C6H12O6', 'C6H14O6', 'C6H12O7', 'C5H11O5COONH4', 'C5H11O5COONa', '[C6H11O6]2Cu', 'C12H22O11',
+    'C6H12O6', 'Fructose', 'C6H14O6', 'C6H12O7', 'C5H11O5COONH4', 'C5H11O5COONa',
+    'C6H11O7NH4', 'C6H11O7Na', '[C6H11O6]2Cu', 'C12H22O11',
     // Amines & Derivatives
     'CH3NH2', 'C2H5NH2', 'CH3NH3Cl', 'C2H5NH3Cl',
     'C6H5NH2', 'C6H5NH3Cl', 'C6H2Br3NH2',
     // Reagents & Products for Organic Reactions
-    '[Ag(NH3)2]OH', 'Ag2O', '(NH4)2CO3', 'Cu2O'
+    'C2Ag2', 'Ag2C2', 'CH3CCAg', '[Ag(NH3)2]OH', 'Ag2O', '(NH4)2CO3', 'Cu2O', 'Cr2(SO4)3'
   ];
 
   const ORGANIC_SUBSTANCES = [
     // Hydrocarbons
-    { formula: 'CH4', vi: 'Methane (Metan)', en: 'Methane', cat: 'organic', aliases: 'metan methane alkane ankan khi bùn ao' },
-    { formula: 'C2H6', vi: 'Ethane (Etan)', en: 'Ethane', cat: 'organic', aliases: 'etan ethane alkane ankan' },
-    { formula: 'C3H8', vi: 'Propane (Propan)', en: 'Propane', cat: 'organic', aliases: 'propan propane alkane ankan' },
-    { formula: 'C4H10', vi: 'Butane (Butan)', en: 'Butane', cat: 'organic', aliases: 'butan butane alkane ankan' },
+    { formula: 'CH4', vi: 'Methane', en: 'Methane', cat: 'organic', aliases: 'metan methane alkane ankan khi bun ao' },
+    { formula: 'C2H6', vi: 'Ethane', en: 'Ethane', cat: 'organic', aliases: 'etan ethane alkane ankan' },
+    { formula: 'C3H8', vi: 'Propane', en: 'Propane', cat: 'organic', aliases: 'propan propane alkane ankan' },
+    { formula: 'C4H10', vi: 'Butane', en: 'Butane', cat: 'organic', aliases: 'butan butane alkane ankan' },
     { formula: 'C2H4', vi: 'Ethylene (Ethene)', en: 'Ethylene (Ethene)', cat: 'organic', aliases: 'etilen eten ethene ethylene alkene anken' },
     { formula: 'C3H6', vi: 'Propene (Propylene)', en: 'Propene (Propylene)', cat: 'organic', aliases: 'propen propilen propene propylene alkene anken' },
     { formula: 'C2H2', vi: 'Acetylene (Ethyne)', en: 'Acetylene (Ethyne)', cat: 'organic', aliases: 'axetilen etin ethyne acetylene alkyne ankin dat den' },
-    { formula: 'C6H6', vi: 'Benzene (Benzen)', en: 'Benzene', cat: 'organic', aliases: 'benzen benzene arene aren' },
+    { formula: 'C3H4', displayFormula: 'CH3C≡CH', vi: 'Propyne (CH₃C≡CH)', en: 'Propyne (CH₃C≡CH)', cat: 'organic', aliases: 'propin propyne ch3cch ch3c≡ch alkyne dau mach' },
+    { formula: 'C6H6', vi: 'Benzene', en: 'Benzene', cat: 'organic', aliases: 'benzen benzene arene aren' },
     { formula: 'C7H8', vi: 'Toluene (Methylbenzene)', en: 'Toluene (Methylbenzene)', cat: 'organic', aliases: 'toluen toluene metylbenzen methylbenzene arene' },
+    { formula: 'C8H8', vi: 'Styrene', en: 'Styrene', cat: 'organic', aliases: 'stiren styrene phenylethylene' },
     { formula: 'C6H12', vi: 'Cyclohexane', en: 'Cyclohexane', cat: 'organic', aliases: 'xiclohexan cyclohexane' },
 
     // Alcohols & Phenol
-    { formula: 'CH3OH', vi: 'Methanol (Ancol metylic)', en: 'Methanol (Methyl alcohol)', cat: 'organic', aliases: 'metanol ancol metylic ruou metylic methanol methyl alcohol' },
-    { formula: 'C2H5OH', vi: 'Ethanol (Ancol etylic)', en: 'Ethanol (Ethyl alcohol)', cat: 'organic', aliases: 'etanol ruou etylic ancol etylic con ethanol ethyl alcohol' },
+    { formula: 'CH3OH', vi: 'Methanol', en: 'Methanol', cat: 'organic', aliases: 'metanol ancol metylic methanol methyl alcohol' },
+    { formula: 'C2H5OH', vi: 'Ethanol (Rượu etylic)', en: 'Ethanol (Ethyl alcohol)', cat: 'organic', aliases: 'etanol ruou etylic ancol etylic con ethanol ethyl alcohol' },
     { formula: 'C2H4(OH)2', vi: 'Ethylene glycol (Ethane-1,2-diol)', en: 'Ethylene glycol', cat: 'organic', aliases: 'etilen glicol ethylene glycol diol' },
-    { formula: 'C3H5(OH)3', vi: 'Glycerol (Glixerol)', en: 'Glycerol (Propane-1,2,3-triol)', cat: 'organic', aliases: 'glixerol glixerin glycerol glycerin triol' },
+    { formula: 'C3H5(OH)3', vi: 'Glycerol (Propane-1,2,3-triol)', en: 'Glycerol (Propane-1,2,3-triol)', cat: 'organic', aliases: 'glixerol glixerin glycerol glycerin triol' },
     { formula: 'C6H5OH', vi: 'Phenol', en: 'Phenol', cat: 'organic', aliases: 'phenol fenol axit phenic hydroxybenzene' },
-    { formula: 'C6H5ONa', vi: 'Sodium phenolate (Natri phenolat)', en: 'Sodium phenolate', cat: 'organic', aliases: 'natri phenolat sodium phenolate phenoxide' },
+    { formula: 'C6H5ONa', vi: 'Sodium phenolate', en: 'Sodium phenolate', cat: 'organic', aliases: 'natri phenolat sodium phenolate phenoxide' },
 
-    // Aldehydes & Carboxylic Acids
-    { formula: 'HCHO', vi: 'Methanal (Formaldehyde)', en: 'Methanal (Formaldehyde)', cat: 'organic', aliases: 'fomandehit andehit fomic metanal fomon formalin methanal formaldehyde' },
+    // Aldehydes, Ketones & Carboxylic Acids
+    { formula: 'HCHO', vi: 'Methanal (Formaldehyde)', en: 'Methanal (Formaldehyde)', cat: 'organic', aliases: 'fomandehit andehit fomic metanal formalin methanal formaldehyde' },
     { formula: 'CH3CHO', vi: 'Ethanal (Acetaldehyde)', en: 'Ethanal (Acetaldehyde)', cat: 'organic', aliases: 'axetandehit andehit axetic etanal ethanal acetaldehyde' },
+    { formula: 'CH3COCH3', vi: 'Acetone (Propanone)', en: 'Acetone (Propanone)', cat: 'organic', aliases: 'axeton acetone propanone ketone' },
     { formula: 'HCOOH', vi: 'Formic acid (Methanoic acid)', en: 'Formic acid (Methanoic acid)', cat: 'organic', aliases: 'axit fomic acid fomic metanoic methanoic formic' },
     { formula: 'CH3COOH', vi: 'Acetic acid (Ethanoic acid)', en: 'Acetic acid (Ethanoic acid)', cat: 'organic', aliases: 'axit axetic acid axetic etanoic giam an vinegar ethanoic acetic' },
 
@@ -74,7 +78,8 @@
     { formula: 'CH3COOC2H5', vi: 'Ethyl acetate (Ethyl ethanoate)', en: 'Ethyl acetate', cat: 'organic', aliases: 'etyl axetat ethyl acetate ethanoate ester este' },
 
     // Carbohydrates
-    { formula: 'C6H12O6', vi: 'Glucose (Glucozơ)', en: 'Glucose', cat: 'organic', aliases: 'glucozo duong nho glucose fructose fructozo monosaccharide' },
+    { formula: 'C6H12O6', vi: 'Glucose (Đường nho)', en: 'Glucose', cat: 'organic', aliases: 'glucozo duong nho glucose monosaccharide' },
+    { formula: 'Fructose', displayFormula: 'C6H12O6', vi: 'Fructose (Đường trái cây)', en: 'Fructose', cat: 'organic', aliases: 'fructose fructozo duong trai cay mat ong monosaccharide' },
     { formula: 'C12H22O11', vi: 'Saccharose (Sucrose)', en: 'Sucrose (Saccharose)', cat: 'organic', aliases: 'saccarozo duong mia saccharose sucrose disaccharide' },
 
     // Amines & Ammonium Salts
@@ -84,8 +89,137 @@
 
     // Organic Reaction Reagents
     { formula: '[Ag(NH3)2]OH', vi: 'Thuốc thử Tollens (Phức bạc amoniac)', en: "Tollens' reagent", cat: 'base', aliases: 'thuoc thu tollens trang bac trang guong bac nitrat trong nh3 diamminesilver' },
-    { formula: 'Ag2O', vi: 'Silver(I) oxide (Bạc oxit)', en: 'Silver(I) oxide', cat: 'oxide', aliases: 'bac oxit silver oxide trang bac' }
+    { formula: 'Ag2O', vi: 'Silver(I) oxide', en: 'Silver(I) oxide', cat: 'oxide', aliases: 'bac oxit silver oxide trang bac' }
   ];
+
+  // Case-insensitive & diacritic-free common names -> canonical formula/isomer token
+  const ORGANIC_NAME_ALIASES = {
+    'glucose': 'C6H12O6',
+    'glucozo': 'C6H12O6',
+    'duong nho': 'C6H12O6',
+    'fructose': 'Fructose',
+    'fructozo': 'Fructose',
+    'duong trai cay': 'Fructose',
+    'duong mat ong': 'Fructose',
+    'sucrose': 'C12H22O11',
+    'saccharose': 'C12H22O11',
+    'saccarozo': 'C12H22O11',
+    'duong mia': 'C12H22O11',
+    'methane': 'CH4',
+    'metan': 'CH4',
+    'ethane': 'C2H6',
+    'etan': 'C2H6',
+    'propane': 'C3H8',
+    'propan': 'C3H8',
+    'butane': 'C4H10',
+    'butan': 'C4H10',
+    'ethylene': 'C2H4',
+    'ethene': 'C2H4',
+    'etilen': 'C2H4',
+    'eten': 'C2H4',
+    'propene': 'C3H6',
+    'propylene': 'C3H6',
+    'propen': 'C3H6',
+    'propilen': 'C3H6',
+    'acetylene': 'C2H2',
+    'ethyne': 'C2H2',
+    'axetilen': 'C2H2',
+    'etin': 'C2H2',
+    'khi dat den': 'C2H2',
+    'propyne': 'C3H4',
+    'propin': 'C3H4',
+    'ch3cch': 'C3H4',
+    'ch3c≡ch': 'C3H4',
+    'ch3-c≡ch': 'C3H4',
+    'benzene': 'C6H6',
+    'benzen': 'C6H6',
+    'toluene': 'C7H8',
+    'toluen': 'C7H8',
+    'methylbenzene': 'C7H8',
+    'styrene': 'C8H8',
+    'stiren': 'C8H8',
+    'cyclohexane': 'C6H12',
+    'xiclohexan': 'C6H12',
+    'methanol': 'CH3OH',
+    'metanol': 'CH3OH',
+    'methyl alcohol': 'CH3OH',
+    'ethanol': 'C2H5OH',
+    'etanol': 'C2H5OH',
+    'ethyl alcohol': 'C2H5OH',
+    'ruou etylic': 'C2H5OH',
+    'con': 'C2H5OH',
+    'ethylene glycol': 'C2H4(OH)2',
+    'etilen glicol': 'C2H4(OH)2',
+    'glycerol': 'C3H5(OH)3',
+    'glixerol': 'C3H5(OH)3',
+    'glycerin': 'C3H5(OH)3',
+    'phenol': 'C6H5OH',
+    'sodium phenolate': 'C6H5ONa',
+    'natri phenolat': 'C6H5ONa',
+    'formaldehyde': 'HCHO',
+    'methanal': 'HCHO',
+    'fomandehit': 'HCHO',
+    'formalin': 'HCHO',
+    'acetaldehyde': 'CH3CHO',
+    'ethanal': 'CH3CHO',
+    'axetandehit': 'CH3CHO',
+    'acetone': 'CH3COCH3',
+    'propanone': 'CH3COCH3',
+    'axeton': 'CH3COCH3',
+    'formic acid': 'HCOOH',
+    'methanoic acid': 'HCOOH',
+    'acid fomic': 'HCOOH',
+    'axit fomic': 'HCOOH',
+    'acetic acid': 'CH3COOH',
+    'ethanoic acid': 'CH3COOH',
+    'acid axetic': 'CH3COOH',
+    'axit axetic': 'CH3COOH',
+    'giam an': 'CH3COOH',
+    'vinegar': 'CH3COOH',
+    'ethyl acetate': 'CH3COOC2H5',
+    'etyl axetat': 'CH3COOC2H5',
+    'methyl acetate': 'CH3COOCH3',
+    'metyl axetat': 'CH3COOCH3',
+    'methyl formate': 'HCOOCH3',
+    'metyl fomat': 'HCOOCH3',
+    'ethyl formate': 'HCOOC2H5',
+    'etyl fomat': 'HCOOC2H5',
+    'methylamine': 'CH3NH2',
+    'metylamin': 'CH3NH2',
+    'methanamine': 'CH3NH2',
+    'aniline': 'C6H5NH2',
+    'anilin': 'C6H5NH2',
+    'phenylamine': 'C6H5NH2',
+    'tollens': '[Ag(NH3)2]OH',
+    'thuoc thu tollens': '[Ag(NH3)2]OH',
+    'tollens reagent': '[Ag(NH3)2]OH',
+    'ammonia': 'NH3',
+    'amoniac': 'NH3',
+    'water': 'H2O',
+    'nuoc': 'H2O',
+    'bromine': 'Br2',
+    'brom': 'Br2',
+    'nuoc brom': 'Br2',
+    'silver nitrate': 'AgNO3',
+    'bac nitrat': 'AgNO3',
+    'potassium permanganate': 'KMnO4',
+    'thuoc tim': 'KMnO4',
+    'potassium dichromate': 'K2Cr2O7',
+    'sulfuric acid': 'H2SO4',
+    'acid sulfuric': 'H2SO4',
+    'axit sunfuric': 'H2SO4',
+    'nitric acid': 'HNO3',
+    'acid nitric': 'HNO3',
+    'axit nitric': 'HNO3',
+    'hydrochloric acid': 'HCl',
+    'acid clohidric': 'HCl',
+    'axit clohidric': 'HCl',
+    'sodium hydroxide': 'NaOH',
+    'xut': 'NaOH',
+    'copper hydroxide': 'Cu(OH)2',
+    'copper(ii) hydroxide': 'Cu(OH)2',
+    'carbon dioxide': 'CO2'
+  };
 
   const ORGANIC_PRESETS = [
     ['C2H4', 'Br2'],
@@ -271,6 +405,22 @@
       expVi: 'Phản ứng oxi hóa không hoàn toàn alkene (phản ứng Baeyer): liên kết π của C₂H₄ bị oxi hóa tạo diol ethylene glycol C₂H₄(OH)₂, còn Mn(+7) bị khử xuống Mn(+4) trong MnO₂↓. Dùng để nhận biết alkene/alkyne.',
       expEn: 'The classic Baeyer test (mild oxidation of alkenes): KMnO₄ oxidizes the C=C double bond into ethylene glycol C₂H₄(OH)₂ while Mn(+7) is reduced to brown solid MnO₂.'
     },
+    {
+      reactants: ['C2H4', 'KMnO4'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'C2H4(OH)2', state: null },
+        { formula: 'MnO2', state: 'precipitate' },
+        { formula: 'KOH', state: null }
+      ],
+      type: 'redox',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Dung dịch thuốc tím KMnO₄ mất màu tím hồng nhanh chóng và xuất hiện kết tủa màu nâu đen MnO₂.',
+      phenEn: 'Purple KMnO₄ solution rapidly decolorizes while a dark brown precipitate of MnO₂ forms.',
+      expVi: 'Khi sục ethylene qua dung dịch KMnO₄ loãng (có nước dung môi), phản ứng Baeyer tạo ethylene glycol và kết tủa nâu đen MnO₂↓.',
+      expEn: 'Passing ethylene through aqueous KMnO₄ (Baeyer oxidation in solvent water) yields ethylene glycol and brown MnO₂↓.'
+    },
 
     // --- ALKYNE (C2H2) ---
     {
@@ -346,6 +496,66 @@
       expVi: 'Hai nguyên tử H gắn trực tiếp với nguyên tử C mang nối ba C≡C của acetylene có tính linh động nên bị ion Ag⁺ trong phức [Ag(NH₃)₂]⁺ thế chỗ tạo kết tủa silver acetylide C₂Ag₂↓.',
       expEn: 'Both terminal ≡C–H protons in acetylene are weakly acidic and are substituted by Ag⁺ from [Ag(NH₃)₂]OH to precipitate pale yellow silver acetylide (C₂Ag₂↓).'
     },
+    {
+      reactants: ['C2H2', 'AgNO3', 'NH3'],
+      products: [
+        { formula: 'Ag2C2', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'substitution',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Xuất hiện ngay kết tủa màu vàng nhạt bạc acetylide (Ag₂C₂↓) — phản ứng nhận biết alkyne đầu mạch.',
+      phenEn: 'A pale yellow precipitate of silver acetylide (Ag₂C₂↓) forms immediately — diagnostic test for terminal alkynes.',
+      expVi: 'Nguyên tử H linh động ở liên kết ba đầu mạch (≡C–H) của acetylene bị ion Ag⁺ (trong hỗn hợp AgNO₃/NH₃) thế chỗ tạo kết tủa vàng nhạt Ag₂C₂↓ và muối NH₄NO₃.',
+      expEn: 'Acidic terminal alkyne protons (≡C–H) in ethyne are displaced by Ag⁺ in AgNO₃/NH₃ to precipitate pale yellow silver acetylide (Ag₂C₂↓) and ammonium nitrate.'
+    },
+    {
+      reactants: ['C3H4', 'AgNO3', 'NH3'],
+      displayReactants: { C3H4: 'CH3C≡CH' },
+      products: [
+        { formula: 'CH3CCAg', displayFormula: 'CH3C≡CAg', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'substitution',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Xuất hiện kết tủa màu vàng nhạt CH₃C≡CAg↓ — dấu hiệu nhận biết propyne (alk-1-yne).',
+      phenEn: 'A pale yellow precipitate of CH₃C≡CAg↓ appears immediately, identifying propyne as a terminal alkyne.',
+      expVi: 'Propyne (CH₃C≡CH) là alkyne có liên kết ba ở đầu mạch nên nguyên tử H linh động gắn với C(sp) tham gia phản ứng thế ion Ag⁺ trong dung dịch AgNO₃/NH₃ tạo kết tủa vàng nhạt.',
+      expEn: 'Propyne (CH₃C≡CH) retains one terminal ≡C–H proton that undergoes Ag⁺ substitution in AgNO₃/NH₃ to precipitate pale yellow silver propynide (CH₃C≡CAg↓).'
+    },
+    {
+      reactants: ['C3H4', '[Ag(NH3)2]OH'],
+      displayReactants: { C3H4: 'CH3C≡CH' },
+      products: [
+        { formula: 'CH3CCAg', displayFormula: 'CH3C≡CAg', state: 'precipitate' },
+        { formula: 'NH3', state: 'gas' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'substitution',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Xuất hiện kết tủa màu vàng nhạt CH₃C≡CAg↓ và có mùi khai của NH₃.',
+      phenEn: 'Pale yellow CH₃C≡CAg↓ precipitates immediately accompanied by ammonia odor.',
+      expVi: 'Tương tự acetylene, alkyne đầu mạch propyne tác dụng với thuốc thử Tollens thế một nguyên tử H đầu mạch bằng ion Ag⁺.',
+      expEn: 'Terminal alkyne propyne replaces its single acidic ≡C–H hydrogen with Ag⁺ from Tollens’ reagent.'
+    },
+    {
+      reactants: ['C3H4', 'Ag2O'],
+      displayReactants: { C3H4: 'CH3C≡CH' },
+      products: [
+        { formula: 'CH3CCAg', displayFormula: 'CH3C≡CAg', state: 'precipitate' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'substitution',
+      condVi: 'NH₃',
+      condEn: 'NH₃',
+      phenVi: 'Xuất hiện kết tủa màu vàng nhạt CH₃C≡CAg↓ (dạng viết gọn với Ag₂O trong NH₃).',
+      phenEn: 'Pale yellow CH₃C≡CAg↓ precipitate forms (compact Ag₂O/NH₃ representation).',
+      expVi: 'Alkyne đầu mạch CH₃C≡CH thế ion Ag⁺ trong dung dịch NH₃ (viết gọn với Ag₂O) tạo kết tủa vàng nhạt.',
+      expEn: 'Compact Ag₂O representation of propyne silver substitution in ammonia.'
+    },
 
     // --- ARENE (C6H6, C7H8) ---
     {
@@ -391,6 +601,21 @@
       expEn: 'Electrophilic nitration of benzene: concentrated H₂SO₄ generates the nitronium ion (NO₂⁺) electrophile to substitute onto the aromatic ring, forming nitrobenzene.'
     },
     {
+      reactants: ['C6H6', 'HNO3', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'C6H5NO2', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'substitution',
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo chất lỏng màu vàng nhạt, sánh như dầu, nặng hơn nước và có mùi hạnh nhân — nitrobenzene (C₆H₅NO₂).',
+      phenEn: 'Forms a pale yellow, dense oily liquid heavier than water with a bitter-almond odor — nitrobenzene (C₆H₅NO₂).',
+      expVi: 'H₂SO₄ đặc đóng vai trò chất xúc tác (và chất hút nước) sinh ra cation nitroni NO₂⁺ để thế nguyên tử H trên vòng thơm benzene.',
+      expEn: 'Concentrated H₂SO₄ acts as acid catalyst and dehydrating medium (shown on the reaction arrow), generating NO₂⁺ for aromatic nitration to nitrobenzene.'
+    },
+    {
       reactants: ['C6H6', 'H2'],
       products: [{ formula: 'C6H12', state: null }],
       type: 'addition',
@@ -428,6 +653,21 @@
       phenEn: 'Vigorous nitration of toluene with concentrated HNO₃/H₂SO₄ produces pale yellow crystalline 2,4,6-trinitrotoluene (TNT).',
       expVi: 'Nhờ nhóm -CH₃ hoạt hóa vòng thơm theo định hướng ortho/para, phản ứng thế 3 nhóm -NO₂ vào các vị trí 2, 4, 6 tạo thuốc nổ TNT (C₆H₂(NO₂)₃CH₃).',
       expEn: 'Guided by the ortho/para-directing -CH₃ substituent, exhaustive nitration installs three -NO₂ groups at positions 2, 4, and 6 to yield TNT.'
+    },
+    {
+      reactants: ['C7H8', 'HNO3', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'C7H5N3O6', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'substitution',
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo tinh thể màu vàng nhạt 2,4,6-trinitrotoluene (thuốc nổ TNT).',
+      phenEn: 'Produces pale yellow crystalline 2,4,6-trinitrotoluene (TNT).',
+      expVi: 'H₂SO₄ đặc làm chất xúc tác và hút nước sinh ra tác nhân NO₂⁺ thế 3 nguyên tử H ở vị trí 2, 4, 6 trên vòng thơm của toluene.',
+      expEn: 'Concentrated H₂SO₄ acts as catalyst and dehydrating agent (on the arrow) to promote trisubstitution into TNT.'
     },
 
     // =========================================================================
@@ -519,6 +759,22 @@
       phenEn: 'A blackened oxidized copper wire immediately turns bright reddish metallic copper when dipped into ethanol, releasing acetaldehyde vapor.',
       expVi: 'Alcohol bậc I (ethanol) bị CuO oxi hóa không hoàn toàn thành aldehyde ethanal (CH₃CHO), CuO bị khử thành Cu kim loại.',
       expEn: 'Mild oxidation of primary alcohol ethanol by hot CuO produces ethanal (CH₃CHO) and regenerates metallic copper.'
+    },
+    {
+      reactants: ['C2H5OH', 'K2Cr2O7', 'H2SO4'],
+      products: [
+        { formula: 'CH3COOH', state: null },
+        { formula: 'Cr2(SO4)3', state: null },
+        { formula: 'K2SO4', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Dung dịch chuyển màu rõ rệt từ da cam (Cr₂O₇²⁻) sang xanh lục (Cr³⁺) — nguyên lý ống thổi đo nồng độ cồn trong hơi thở.',
+      phenEn: 'The solution shifts dramatically from orange-red (Cr₂O₇²⁻) to deep green (Cr³⁺) — the classic breathalyzer alcohol test principle.',
+      expVi: 'Ethanol bị oxi hóa mạnh bởi K₂Cr₂O₇ trong môi trường H₂SO₄ loãng lên carboxylic acid (CH₃COOH), đồng thời Cr(+6) màu da cam bị khử về ion Cr³⁺ màu xanh lục.',
+      expEn: 'Dichromate in sulfuric acid strongly oxidizes ethanol to acetic acid while orange Cr(+6) is reduced to green Cr³⁺ ions.'
     },
     {
       reactants: ['C3H5(OH)3', 'Cu(OH)2'],
@@ -613,10 +869,25 @@
       type: 'substitution',
       condVi: 'H₂SO₄ đặc, t°',
       condEn: 'conc. H₂SO₄, Δ',
-      phenVi: 'Phenol phản ứng mạnh với HNO₃ đặc có H₂SO₄ đặc xúc tác tạo kết tủa tinh thể màu vàng của 2,4,6-trinitrophenol (axit picric).',
+      phenVi: 'Phenol phản ứng mạnh với HNO₃ đặc có H₂SO₄ đặc xúc tác tạo kết tủa tinh thể màu vàng của 2,4,6-trinitrophenol (picric acid).',
       phenEn: 'Phenol undergoes vigorous nitration to yield bright yellow crystals of 2,4,6-trinitrophenol (picric acid).',
       expVi: 'Ảnh hưởng hoạt hóa mạnh của nhóm -OH làm phản ứng nitro hóa phenol diễn ra dễ dàng hơn nhiều so với benzene, thế đồng thời 3 nhóm -NO₂ vào vị trí 2, 4, 6.',
       expEn: 'Strongly activated by the -OH substituent, phenol undergoes trisubstitution at the 2, 4, and 6 positions to synthesize yellow picric acid.'
+    },
+    {
+      reactants: ['C6H5OH', 'HNO3', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'C6H2(NO2)3OH', state: 'precipitate' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'substitution',
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Xuất hiện kết tủa tinh thể màu vàng rực của 2,4,6-trinitrophenol (picric acid).',
+      phenEn: 'Bright yellow crystals of 2,4,6-trinitrophenol (picric acid) precipitate.',
+      expVi: 'H₂SO₄ đặc xúc tác và hút nước giúp HNO₃ thế nhanh 3 nhóm -NO₂ vào vòng thơm của phenol.',
+      expEn: 'Concentrated H₂SO₄ serves as catalyst and dehydrating medium for rapid trisubstitution to picric acid.'
     },
     {
       reactants: ['C6H5ONa', 'CO2', 'H2O'],
@@ -627,9 +898,9 @@
       type: 'exchange',
       condVi: '',
       condEn: '',
-      phenVi: 'Dung dịch sodium phenolate trong suốt bị vẩn đục trắng trở lại do phenol ít tan tách ra.',
+      phenVi: 'Dung dịch sodium phenolate trong suốt bị vẩn đục trắng trở lại do phenol ít tan trong nước lạnh tách ra.',
       phenEn: 'The clear sodium phenolate solution turns cloudy white as poorly soluble phenol precipitates out.',
-      expVi: 'Axit cacbonic (CO₂ + H₂O) đẩy được phenol ra khỏi muối phenolate (tạo NaHCO₃), chứng minh tính axit của phenol rất yếu (yếu hơn cả nấc 1 của H₂CO₃).',
+      expVi: 'Carbonic acid (CO₂ + H₂O) đẩy được phenol ra khỏi muối phenolate (tạo NaHCO₃), chứng minh tính acid của phenol rất yếu (yếu hơn cả nấc 1 của H₂CO₃).',
       expEn: 'Carbonic acid (CO₂ + H₂O) displaces phenol from sodium phenolate (yielding NaHCO₃), proving phenol is a weaker acid than H₂CO₃.'
     },
 
@@ -722,6 +993,67 @@
       phenEn: 'A reflective silver metal coating deposits on the glass surface.',
       expVi: 'Phương trình dạng rút gọn của phản ứng tráng bạc ethanal (CH₃CHO) trong môi trường NH₃: nhóm -CHO bị oxi hóa thành -COOH (trong dung dịch NH₃ thực tế chuyển thành muối CH₃COONH₄) và giải phóng 2 mol Ag↓.',
       expEn: 'Compact Ag₂O notation for the silver-mirror oxidation of acetaldehyde to acetic acid (which forms CH₃COONH₄ in aqueous NH₃), depositing 2 moles of Ag per mole of aldehyde.'
+    },
+    {
+      reactants: ['CH3CHO', 'AgNO3', 'NH3'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'CH3COONH4', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Khi đun nhẹ, một lớp bạc kim loại (Ag↓) sáng bóng bám đều lên thành ống nghiệm như gương.',
+      phenEn: 'Gentle heating produces a gleaming silver mirror coating (Ag↓) along the glass wall.',
+      expVi: 'Aldehyde ethanal (CH₃CHO) bị phức [Ag(NH₃)₂]⁺ (tạo từ AgNO₃ + NH₃ + dung môi H₂O) oxi hóa thành CH₃COONH₄ và giải phóng 2 mol Ag↓.',
+      expEn: 'Ethanal (CH₃CHO) is oxidized by [Ag(NH₃)₂]⁺ (formed from AgNO₃ + NH₃ in aqueous solvent H₂O) into CH₃COONH₄ while depositing 2 moles of metallic silver.'
+    },
+    {
+      reactants: ['HCHO', 'AgNO3', 'NH3'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: '(NH4)2CO3', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Lớp bạc sáng bóng bám lên thành ống nghiệm với lượng lớn (tỉ lệ đặc biệt 1 mol HCHO : 4 mol Ag↓).',
+      phenEn: 'A bright metallic silver mirror forms in a special 1:4 aldehyde-to-silver molar stoichiometry.',
+      expVi: 'Methanal (HCHO) có hai nguyên tử H gắn trực tiếp vào nhóm C=O nên bị AgNO₃/NH₃ dư trong dung dịch nước oxi hóa hoàn toàn tạo (NH₄)₂CO₃ và tới 4 mol Ag↓.',
+      expEn: 'Because formaldehyde has two hydrogens directly attached to the carbonyl carbon, excess AgNO₃/NH₃/H₂O oxidizes it completely to (NH₄)₂CO₃, depositing 4 moles of silver.'
+    },
+    {
+      reactants: ['CH3CHO', 'Br2', 'H2O'],
+      products: [
+        { formula: 'CH3COOH', state: null },
+        { formula: 'HBr', state: null }
+      ],
+      type: 'redox',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Màu vàng nâu của nước bromine nhạt dần và mất màu hoàn toàn, thu được dung dịch acid không màu.',
+      phenEn: 'The orange-brown color of aqueous bromine fades completely to yield a clear acidic solution.',
+      expVi: 'Aldehyde thể hiện tính khử: nước bromine (Br₂ + H₂O) oxi hóa nhóm -CHO của ethanal thành carboxylic acid CH₃COOH và tạo HBr.',
+      expEn: 'Acetaldehyde displays reducing properties: bromine water oxidizes the -CHO group cleanly to acetic acid (CH₃COOH) and HBr.'
+    },
+    {
+      reactants: ['CH3CHO', 'Br2'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'CH3COOH', state: null },
+        { formula: 'HBr', state: null }
+      ],
+      type: 'redox',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Dung dịch nước bromine màu vàng nâu bị mất màu hoàn toàn tạo dung dịch acetic acid không màu.',
+      phenEn: 'Orange-brown bromine water is completely decolorized into a clear acetic acid solution.',
+      expVi: 'Trong dung dịch nước (có mặt dung môi H₂O), Br₂ oxi hóa aldehyde CH₃CHO thành carboxylic acid CH₃COOH và 2 HBr.',
+      expEn: 'In aqueous solution (H₂O present as solvent/reactant), Br₂ oxidizes ethanal cleanly to acetic acid and HBr.'
     },
 
     // --- Oxi hóa aldehyde bằng Cu(OH)2 trong kiềm (3 chất) ---
@@ -901,6 +1233,37 @@
       expVi: 'Đặc điểm riêng của formic acid (HO-CH=O): trong phân tử có chứa nhóm cấu trúc tương tự aldehyde (-CHO) nên HCOOH là carboxylic acid đơn chức duy nhất tham gia phản ứng tráng bạc với thuốc thử Tollens.',
       expEn: 'Unique feature of formic acid (HO-CH=O): its structure incorporates an aldehyde-like -CHO moiety, making it the only simple carboxylic acid that gives a positive Tollens’ silver-mirror test.'
     },
+    {
+      reactants: ['HCOOH', 'AgNO3', 'NH3'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: '(NH4)2CO3', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Xuất hiện lớp bạc kim loại (Ag↓) sáng bóng bám lên thành ống nghiệm.',
+      phenEn: 'A bright metallic silver mirror (Ag↓) deposits on the glass surface.',
+      expVi: 'Do formic acid (HO–CH=O) có chứa nhóm -CHO nên vẫn tham gia phản ứng tráng bạc với AgNO₃ trong dung dịch NH₃ tạo muối (NH₄)₂CO₃ và 2 mol Ag↓.',
+      expEn: 'Because formic acid (HO–CH=O) retains a formyl -CHO group, it undergoes the silver-mirror reaction in AgNO₃/NH₃/H₂O to give (NH₄)₂CO₃ and 2 mol Ag↓.'
+    },
+    {
+      reactants: ['HCOOH', 'Ag2O'],
+      products: [
+        { formula: 'CO2', state: 'gas' },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'redox',
+      condVi: 'NH₃, t°',
+      condEn: 'NH₃, Δ',
+      phenVi: 'Có lớp bạc sáng bóng bám lên thành bình và sủi bọt khí (nếu thiếu kiềm NH₃ dư).',
+      phenEn: 'Metallic silver mirror forms on the glass wall.',
+      expVi: 'Phương trình viết gọn của phản ứng tráng bạc formic acid trong NH₃ tạo 2 mol Ag↓ (CO₂ + H₂O thực tế kết hợp NH₃ dư thành (NH₄)₂CO₃).',
+      expEn: 'Compact Ag₂O representation of formic acid silver-mirror oxidation yielding 2 mol Ag↓.'
+    },
 
     // --- Tính acid của CH3COOH (Acetic acid / Ethanoic acid) ---
     {
@@ -1045,8 +1408,24 @@
       condEn: 'conc. H₂SO₄, Δ',
       phenVi: 'Tạo lớp chất lỏng không màu nhẹ hơn nước, không tan nổi lên trên và có mùi thơm dễ chịu đặc trưng (mùi sơn móng tay / trái cây chín) của ethyl acetate.',
       phenEn: 'A colorless, pleasant fruity-smelling liquid layer of ethyl acetate floats atop the aqueous mixture.',
-      expVi: 'Phản ứng ester hóa thuận nghịch giữa acetic acid và ethanol: nhóm -OH của axit kết hợp với H của nhóm -OH alcohol tạo H₂O. H₂SO₄ đặc vừa làm xúc tác vừa hút nước giúp chuyển dịch cân bằng theo chiều thuận.',
+      expVi: 'Phản ứng ester hóa thuận nghịch giữa acetic acid và ethanol: nhóm -OH của carboxylic acid kết hợp với H của nhóm -OH alcohol tạo H₂O. H₂SO₄ đặc vừa làm xúc tác vừa hút nước giúp chuyển dịch cân bằng theo chiều thuận.',
       expEn: 'Reversible Fischer esterification between acetic acid and ethanol yielding ethyl acetate and water; concentrated H₂SO₄ serves as both acid catalyst and dehydrating agent to shift equilibrium forward.'
+    },
+    {
+      reactants: ['CH3COOH', 'C2H5OH', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'CH3COOC2H5', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'esterification',
+      reversible: true,
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo lớp chất lỏng không màu ethyl acetate nổi lên trên, có mùi thơm nhẹ đặc trưng của trái cây chín.',
+      phenEn: 'Forms a colorless upper liquid layer of ethyl acetate with a pleasant fruity aroma.',
+      expVi: 'H₂SO₄ đặc đóng vai trò chất xúc tác và chất hút nước (được đặt trên mũi tên phản ứng thuận nghịch) thúc đẩy cân bằng tạo ester ethyl acetate.',
+      expEn: 'Concentrated H₂SO₄ acts as catalyst and dehydrating agent (placed on the reversible arrow), shifting equilibrium toward fragrant ethyl acetate.'
     },
     {
       reactants: ['CH3COOH', 'CH3OH'],
@@ -1064,6 +1443,22 @@
       expEn: 'Reversible Fischer esterification of acetic acid with methanol under hot concentrated H₂SO₄ produces methyl acetate (CH₃COOCH₃) and water.'
     },
     {
+      reactants: ['CH3COOH', 'CH3OH', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'CH3COOCH3', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'esterification',
+      reversible: true,
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo chất lỏng không màu methyl acetate nhẹ hơn nước và có mùi thơm nhẹ.',
+      phenEn: 'Forms pleasant-smelling colorless liquid methyl acetate floating atop the aqueous layer.',
+      expVi: 'H₂SO₄ đặc vừa làm xúc tác vừa hút H₂O (nằm trên mũi tên phản ứng thuận nghịch) tạo ester methyl acetate.',
+      expEn: 'Concentrated H₂SO₄ serves as catalyst and dehydrating agent on the arrow for reversible esterification to methyl acetate.'
+    },
+    {
       reactants: ['HCOOH', 'C2H5OH'],
       products: [
         { formula: 'HCOOC2H5', state: null },
@@ -1079,6 +1474,22 @@
       expEn: 'Reversible esterification between formic acid and ethanol catalyzed by hot conc. H₂SO₄ yields ethyl formate (HCOOC₂H₅) and water.'
     },
     {
+      reactants: ['HCOOH', 'C2H5OH', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'HCOOC2H5', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'esterification',
+      reversible: true,
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo lớp ester ethyl formate có mùi thơm rượu rum / quả mâm xôi.',
+      phenEn: 'Forms a layer of ethyl formate with a rum and raspberry aroma.',
+      expVi: 'H₂SO₄ đặc làm chất xúc tác và hút nước (hiển thị trên mũi tên thuận nghịch) tạo ester ethyl formate.',
+      expEn: 'Concentrated H₂SO₄ serves as catalyst and dehydrating agent for reversible esterification to ethyl formate.'
+    },
+    {
       reactants: ['HCOOH', 'CH3OH'],
       products: [
         { formula: 'HCOOCH3', state: null },
@@ -1092,6 +1503,22 @@
       phenEn: 'Forms volatile, pleasant-smelling colorless liquid methyl formate.',
       expVi: 'Phản ứng ester hóa thuận nghịch tạo ester đơn giản nhất là methyl formate (HCOOCH₃) và nước dưới xúc tác H₂SO₄ đặc, đun nóng.',
       expEn: 'Reversible Fischer esterification yielding the simplest ester, methyl formate (HCOOCH₃), and water under hot conc. H₂SO₄.'
+    },
+    {
+      reactants: ['HCOOH', 'CH3OH', 'H2SO4'],
+      catalyst: 'H2SO4',
+      products: [
+        { formula: 'HCOOCH3', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'esterification',
+      reversible: true,
+      condVi: 'H₂SO₄ đặc, t°',
+      condEn: 'conc. H₂SO₄, Δ',
+      phenVi: 'Tạo chất lỏng không màu methyl formate có mùi thơm nhẹ.',
+      phenEn: 'Forms pleasant-smelling volatile liquid methyl formate.',
+      expVi: 'H₂SO₄ đặc làm xúc tác và hút nước trên mũi tên phản ứng thuận nghịch tạo methyl formate.',
+      expEn: 'Concentrated H₂SO₄ catalyzes and dehydrates the reversible esterification to methyl formate.'
     },
 
     // =========================================================================
@@ -1331,17 +1758,33 @@
     {
       reactants: ['C6H12O6', 'Cu(OH)2', 'NaOH'],
       products: [
-        { formula: 'C5H11O5COONa', state: null },
+        { formula: 'C6H11O7Na', state: null },
         { formula: 'Cu2O', state: 'precipitate' },
         { formula: 'H2O', state: null }
       ],
       type: 'redox',
       condVi: 't°',
       condEn: 'Δ',
-      phenVi: 'Khi đun nóng, dung dịch xanh lam chuyển nhanh sang xuất hiện kết tủa màu đỏ gạch đặc trưng của Cu₂O↓.',
-      phenEn: 'Upon heating, the deep blue solution rapidly forms a characteristic brick-red precipitate of Cu₂O↓.',
-      expVi: 'Trong môi trường kiềm nóng, nhóm aldehyde -CHO của glucose khử Cu(+2) thành Cu(+1) trong kết tủa đỏ gạch Cu₂O↓ và bị oxi hóa thành muối sodium gluconate (CH₂OH[CHOH]₄COONa).',
-      expEn: 'In hot alkaline medium, glucose’s -CHO group reduces Cu(+2) to brick-red Cu₂O↓ while oxidizing to sodium gluconate (C₅H₁₁O₅COONa).'
+      phenVi: 'Khi đun nóng trong môi trường kiềm, dung dịch xanh lam chuyển nhanh sang xuất hiện kết tủa màu đỏ gạch đặc trưng của Cu₂O↓.',
+      phenEn: 'Upon heating in alkaline solution, the deep blue solution rapidly yields a brick-red precipitate of Cu₂O↓.',
+      expVi: 'Khác với phản ứng hòa tan tạo phức xanh lam ở nhiệt độ thường, khi đun nóng trong môi trường kiềm NaOH, nhóm aldehyde -CHO của glucose khử Cu(+2) thành Cu(+1) trong kết tủa đỏ gạch Cu₂O↓ và tạo sodium gluconate (C₆H₁₁O₇Na).',
+      expEn: 'In contrast to forming a blue polyalcohol complex at room temperature, hot alkaline Cu(OH)₂ oxidizes glucose’s -CHO group to sodium gluconate (C₆H₁₁O₇Na) and precipitates brick-red Cu₂O↓.'
+    },
+    {
+      reactants: ['C6H12O6', 'AgNO3', 'NH3'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'C6H11O7NH4', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Lớp bạc kim loại (Ag↓) sáng bóng bám đều lên thành ống nghiệm như gương.',
+      phenEn: 'A brilliant reflective silver metal mirror (Ag↓) deposits evenly on the glass wall.',
+      expVi: 'Glucose có nhóm chức aldehyde (-CHO ở dạng cân bằng mạch hở) bị AgNO₃ trong dung dịch NH₃/H₂O oxi hóa tạo muối ammonium gluconate (C₆H₁₁O₇NH₄) và giải phóng 2 mol Ag↓.',
+      expEn: 'Through its open-chain -CHO group, glucose reduces AgNO₃/NH₃/H₂O to metallic silver (Ag↓) while oxidizing to ammonium gluconate (C₆H₁₁O₇NH₄).'
     },
     {
       reactants: ['C6H12O6', 'Br2', 'H2O'],
@@ -1352,10 +1795,128 @@
       type: 'redox',
       condVi: '',
       condEn: '',
-      phenVi: 'Dung dịch nước brom màu vàng nâu bị mất màu dần khi nhỏ vào dung dịch glucose.',
+      phenVi: 'Dung dịch nước bromine màu vàng nâu bị mất màu dần khi nhỏ vào dung dịch glucose.',
       phenEn: 'Orange-brown bromine water gradually loses its color when mixed with aqueous glucose.',
-      expVi: 'Nước brom oxi hóa chọn lọc nhóm -CHO của glucose thành nhóm -COOH tạo gluconic acid (C₆H₁₂O₇) và HBr. Phản ứng này dùng để phân biệt glucose với fructose (fructose không làm mất màu nước brom).',
+      expVi: 'Nước bromine oxi hóa chọn lọc nhóm -CHO của glucose thành nhóm -COOH tạo gluconic acid (C₆H₁₂O₇) và HBr. Phản ứng này dùng để phân biệt glucose với fructose (fructose không làm mất màu nước bromine).',
       expEn: 'Aqueous bromine selectively oxidizes glucose’s aldehyde group to gluconic acid (C₆H₁₂O₇) and HBr—a key test distinguishing glucose from fructose (which does not decolorize bromine water).'
+    },
+    {
+      reactants: ['C6H12O6', 'Br2'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'C6H12O7', state: null },
+        { formula: 'HBr', state: null }
+      ],
+      type: 'redox',
+      condVi: '',
+      condEn: '',
+      phenVi: 'Dung dịch nước bromine màu vàng nâu bị mất màu khi tác dụng với dung dịch glucose.',
+      phenEn: 'Orange-brown bromine water decolorizes upon reaction with glucose solution.',
+      expVi: 'Nước bromine (Br₂ trong H₂O) oxi hóa nhóm aldehyde -CHO của glucose tạo gluconic acid (C₆H₁₂O₇) và 2 HBr — dấu hiệu phân biệt glucose với fructose.',
+      expEn: 'Aqueous bromine oxidizes the -CHO group of glucose to gluconic acid (C₆H₁₂O₇) and HBr, distinguishing glucose from fructose.'
+    },
+    // --- Fructose (đồng phân C₆H₁₂O₆ của Glucose) ---
+    {
+      reactants: ['Fructose', 'Br2'],
+      noReaction: true,
+      phenVi: 'Nước bromine giữ nguyên màu vàng nâu, KHÔNG xảy ra phản ứng với fructose.',
+      phenEn: 'Orange-brown bromine water retains its color — NO reaction occurs with fructose.',
+      expVi: 'Fructose không có nhóm aldehyde (-CHO) và trong nước Brom không có môi trường kiềm để chuyển hóa sang Glucose, nên không làm mất màu nước Brom — đây là dấu hiệu phân biệt Fructose với Glucose.',
+      expEn: 'Fructose lacks an aldehyde (-CHO) group, and aqueous bromine has no alkaline medium to isomerize fructose into glucose, so bromine water stays colored — the classic test distinguishing Fructose from Glucose.'
+    },
+    {
+      reactants: ['Fructose', 'Br2', 'H2O'],
+      noReaction: true,
+      phenVi: 'Nước bromine giữ nguyên màu vàng nâu, KHÔNG xảy ra phản ứng với fructose.',
+      phenEn: 'Orange-brown bromine water stays colored — NO reaction occurs with fructose.',
+      expVi: 'Fructose không có nhóm aldehyde (-CHO) và trong nước Brom không có môi trường kiềm để chuyển hóa sang Glucose, nên không làm mất màu nước Brom — đây là dấu hiệu phân biệt Fructose với Glucose.',
+      expEn: 'Fructose lacks an aldehyde (-CHO) group, and aqueous bromine provides no alkaline medium to convert fructose into glucose — key test distinguishing Fructose from Glucose.'
+    },
+    {
+      reactants: ['Fructose', 'Cu(OH)2'],
+      products: [
+        { formula: '[C6H11O6]2Cu', state: null },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'exchange',
+      condVi: 'nhiệt độ thường',
+      condEn: 'room temp.',
+      phenVi: 'Ở nhiệt độ thường, kết tủa xanh lam Cu(OH)₂ tan hoàn toàn trong dung dịch fructose tạo phức đồng(II) màu xanh lam đậm trong suốt.',
+      phenEn: 'At room temperature, blue Cu(OH)₂ precipitate dissolves completely in fructose solution to form a clear deep blue complex.',
+      expVi: 'Phân tử fructose có nhiều nhóm -OH liền kề (tính chất polyalcohol) nên hòa tan Cu(OH)₂ ở nhiệt độ thường tạo phức chất màu xanh lam đậm [C₆H₁₁O₆]₂Cu.',
+      expEn: 'Possessing adjacent hydroxyl groups (polyalcohol property), fructose dissolves Cu(OH)₂ at room temperature to form a deep blue [C₆H₁₁O₆]₂Cu complex.'
+    },
+    {
+      reactants: ['Fructose', 'Cu(OH)2', 'NaOH'],
+      products: [
+        { formula: 'C6H11O7Na', state: null },
+        { formula: 'Cu2O', state: 'precipitate' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Khi đun nóng trong môi trường kiềm, fructose chuyển hóa cân bằng sang glucose và tạo kết tủa đỏ gạch Cu₂O↓.',
+      phenEn: 'Upon heating in alkaline solution, fructose isomerizes partly into glucose and precipitates brick-red Cu₂O↓.',
+      expVi: 'Tuy fructose không có nhóm -CHO, nhưng trong môi trường kiềm NaOH đun nóng fructose tự chuyển hóa cân bằng sang glucose rồi khử Cu(OH)₂ tạo kết tủa đỏ gạch Cu₂O↓.',
+      expEn: 'Although fructose lacks an aldehyde group, base-catalyzed isomerization in hot aqueous NaOH partially converts it into glucose, reducing Cu(OH)₂ to brick-red Cu₂O↓.'
+    },
+    {
+      reactants: ['Fructose', 'AgNO3', 'NH3'],
+      extraReactants: ['H2O'],
+      products: [
+        { formula: 'C6H11O7NH4', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH4NO3', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Xuất hiện lớp bạc kim loại (Ag↓) sáng bóng bám lên thành ống nghiệm (phản ứng tráng bạc).',
+      phenEn: 'A bright metallic silver mirror (Ag↓) deposits cleanly onto the glass wall.',
+      expVi: 'Fructose không có nhóm -CHO nhưng trong môi trường kiềm NH₃ (có dung môi H₂O), fructose tự chuyển hóa cân bằng một phần thành glucose nên vẫn tham gia phản ứng tráng bạc tạo 2 mol Ag↓.',
+      expEn: 'Even without an aldehyde group, fructose undergoes base-catalyzed isomerization partially into glucose in alkaline NH₃/H₂O, giving a positive Tollens silver-mirror reaction (2 mol Ag↓).'
+    },
+    {
+      reactants: ['Fructose', '[Ag(NH3)2]OH'],
+      products: [
+        { formula: 'C6H11O7NH4', state: null },
+        { formula: 'Ag', state: 'precipitate' },
+        { formula: 'NH3', state: 'gas' },
+        { formula: 'H2O', state: null }
+      ],
+      type: 'redox',
+      condVi: 't°',
+      condEn: 'Δ',
+      phenVi: 'Đun nóng nhẹ với thuốc thử Tollens tạo lớp bạc sáng bóng bám lên thành ống nghiệm và có mùi khai NH₃.',
+      phenEn: 'Gentle warming with Tollens’ reagent yields a reflective silver mirror and ammonia odor.',
+      expVi: 'Trong môi trường kiềm của phức [Ag(NH₃)₂]OH, fructose chuyển hóa cân bằng một phần thành glucose nên có phản ứng tráng bạc (không dùng được tráng bạc để phân biệt glucose với fructose).',
+      expEn: 'In alkaline Tollens’ medium, fructose partially isomerizes into glucose and gives the exact same silver-mirror test as glucose.'
+    },
+    {
+      reactants: ['Fructose', 'Ag2O'],
+      products: [
+        { formula: 'C6H12O7', state: null },
+        { formula: 'Ag', state: 'precipitate' }
+      ],
+      type: 'redox',
+      condVi: 'NH₃, t°',
+      condEn: 'NH₃, Δ',
+      phenVi: 'Lớp bạc kim loại (Ag↓) tráng sáng bóng lên thành bình.',
+      phenEn: 'A gleaming metallic silver mirror coats the vessel wall.',
+      expVi: 'Trong môi trường kiềm NH₃, fructose chuyển hóa một phần sang glucose nên vẫn phản ứng tráng bạc với Ag₂O giải phóng 2 mol Ag↓.',
+      expEn: 'Alkaline NH₃ medium promotes partial conversion of fructose into glucose, yielding a silver mirror with Ag₂O.'
+    },
+    {
+      reactants: ['Fructose', 'H2'],
+      products: [{ formula: 'C6H14O6', state: null }],
+      type: 'addition',
+      condVi: 'Ni, t°',
+      condEn: 'Ni, Δ',
+      phenVi: 'Fructose cộng hợp với H₂ (Ni, t°) tạo hỗn hợp đồng phân polyalcohol C₆H₁₄O₆ (sorbitol và mannitol) vị ngọt mát.',
+      phenEn: 'Catalytic hydrogenation of fructose over heated Ni yields sweet crystalline polyalcohols C₆H₁₄O₆ (sorbitol and mannitol).',
+      expVi: 'Nhóm ketone (>C=O) ở C2 của fructose dạng mạch hở cộng hợp H₂ chuyển thành alcohol 6 chức C₆H₁₄O₆.',
+      expEn: 'Hydrogenation reduces fructose’s open-chain ketone carbonyl into the hexahydric polyalcohols sorbitol and mannitol (C₆H₁₄O₆).'
     },
     {
       reactants: ['C12H22O11', 'H2O'],
@@ -1426,6 +1987,7 @@
   window.ORGANIC_REACTION_DATA = {
     whitelist: ORGANIC_WHITELIST,
     substances: ORGANIC_SUBSTANCES,
+    nameAliases: ORGANIC_NAME_ALIASES,
     reactions: ORGANIC_REACTIONS,
     presets: ORGANIC_PRESETS
   };
