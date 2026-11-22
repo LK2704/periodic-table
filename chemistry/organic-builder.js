@@ -3703,6 +3703,8 @@
     reset,
     identifyMolecule,
     analyzeAndNameMolecule: identifyMolecule,
+    buildNormalizedHeavyGraph,
+    areHeavyGraphsIsomorphic,
     KNOWN_MOLECULES
   };
 

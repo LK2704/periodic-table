@@ -3904,6 +3904,234 @@
       ],
       note: 'Thí nghiệm Ethylene làm mất màu nước Brom tạo 1,2-dibromoethane không màu lắng xuống đáy là phản ứng nhận biết Alkene cơ bản nhất.',
       noteEn: 'Textbook product explaining why orange bromine water turns colorless and leaves tiny dense droplets on Alkene bubbling.'
+    },
+
+    // =========================================================================
+    // 10. BIOMEDICAL, FLAVOR & SPECIAL GEOMETRY PACK v2 (+8 = 25 v2 TARGETS)
+    // =========================================================================
+    {
+      id: 'dopamine',
+      catKey: 'amine',
+      elements: [...C6_AROM, 'O', 'O', 'C', 'C', 'N'],
+      bonds: [...BENZENE, [0,6,1], [1,7,1], [3,8,1], [8,9,1], [9,10,1]],
+      name: 'Dopamine',
+      nameEn: 'Dopamine',
+      category: 'Amine (Chất dẫn truyền)',
+      categoryEn: 'Amine (Neurotransmitter)',
+      state: 'Rắn (tinh thể trắng, dễ bị oxi hóa ngoài không khí)',
+      stateEn: 'Solid (white crystalline powder, air-sensitive)',
+      solubility: 'Tan tốt dưới dạng muối hydrochloride',
+      solubilityEn: 'Water-soluble as hydrochloride salt',
+      realLife: 'Chất dẫn truyền thần kinh quan trọng trong não bộ điều phối cảm giác hứng thú, động lực và vận động; dạng thuốc tiêm còn dùng cấp cứu nâng huyết áp tại bệnh viện.',
+      realLifeEn: 'Key brain neurotransmitter regulating reward, motivation, and motor control; administered intravenously in critical care to support blood pressure.',
+      reactions: [
+        'Hai nhóm -OH phenol ở vị trí ortho dễ bị oxi hóa ngoài không khí tạo quinone màu sẫm và tạo phức đặc trưng với FeCl₃.',
+        'Nhóm -NH₂ amine bậc 1 thể hiện tính base yếu, tác dụng với HCl tạo muối dopamine hydrochloride tan tốt trong nước.',
+        'Vòng thơm giàu electron nhờ 2 nhóm -OH hoạt hóa mạnh nên dễ tham gia phản ứng thế Bromine.'
+      ],
+      reactionsEn: [
+        'Catechol -OH pair on the ring easily oxidizes in air to dark quinones and gives a colored complex with FeCl₃.',
+        'The primary -NH₂ amine reacts readily with HCl to yield water-soluble dopamine hydrochloride salt.',
+        'Electron-rich aromatic ring undergoes rapid electrophilic substitution with bromine.'
+      ],
+      note: 'Là một catecholamine (vòng catechol gắn đuôi ethylamine C₈H₁₁NO₂); tiền chất sinh tổng hợp nên adrenaline.',
+      noteEn: 'A catecholamine combining a 1,2-dihydroxybenzene ring with an ethylamine chain (C₈H₁₁NO₂).'
+    },
+    {
+      id: 'vitamin-c',
+      catKey: 'pharma',
+      elements: ['C','C','C','C','O','C','C','O','O','O','O','O'],
+      bonds: [[0,1,1],[1,2,2],[2,3,1],[3,4,1],[4,0,1],[0,7,2],[1,8,1],[2,9,1],[3,5,1],[5,6,1],[5,10,1],[6,11,1]],
+      name: 'Vitamin C (Ascorbic acid)',
+      nameEn: 'Vitamin C (Ascorbic acid)',
+      category: 'Vitamin / Lactone',
+      categoryEn: 'Vitamin / Lactone',
+      state: 'Rắn (tinh thể trắng vị chua thanh)',
+      stateEn: 'Solid (white sour crystals)',
+      solubility: 'Tan rất tốt trong nước (~33 g/100 mL)',
+      solubilityEn: 'Highly soluble in water (~33 g/100 mL)',
+      realLife: 'Vitamin thiết yếu có nhiều trong cam, chanh, ổi, giúp tổng hợp collagen và tăng cường miễn dịch; thực phẩm còn dùng làm chất chống oxi hóa tự nhiên giữ trái cây không bị thâm nâu.',
+      realLifeEn: 'Essential vitamin abundant in citrus, guava, and bell peppers that drives collagen synthesis and serves as a natural food antioxidant.',
+      reactions: [
+        'Làm mất màu dung dịch I₂ hoặc KMnO₄ nhanh chóng nhờ tính khử mạnh của cụm enediol (-C(OH)=C(OH)-).',
+        'Thể hiện tính acid rõ rệt dù không có nhóm -COOH: làm đỏ quỳ tím và sủi bọt khí CO₂ với NaHCO₃.',
+        'Dễ bị phân hủy bởi nhiệt độ cao và ánh sáng khi đun nấu lâu hoặc để dung dịch tiếp xúc lâu với không khí.'
+      ],
+      reactionsEn: [
+        'Rapidly decolorizes aqueous I₂ and KMnO₄ due to its strongly reducing enediol (-C(OH)=C(OH)-) motif.',
+        'Displays clear acidity (turns litmus red and fizzes with NaHCO₃) even without a -COOH group.',
+        'Degrades progressively under prolonged heating or oxygen exposure during cooking.'
+      ],
+      note: 'Dạng vòng lactone 5 cạnh (ester nội phân tử C₆H₈O₆); tên Ascorbic acid nghĩa là "chống bệnh scorbut" ở thủy thủ xưa.',
+      noteEn: 'A 5-membered cyclic lactone (C₆H₈O₆); named "anti-scorbutic" for preventing scurvy in sailors.'
+    },
+    {
+      id: 'vanillin',
+      catKey: 'aldehyde',
+      elements: [...C6_AROM, 'C', 'O', 'O', 'C', 'O'],
+      bonds: [...BENZENE, [0,6,1], [6,7,2], [2,8,1], [8,9,1], [3,10,1]],
+      name: 'Vanillin',
+      nameEn: 'Vanillin',
+      category: 'Aldehyde thơm',
+      categoryEn: 'Aromatic aldehyde',
+      state: 'Rắn (tinh thể kim trắng mùi vani ngọt dịu)',
+      stateEn: 'Solid (white needles, signature vanilla aroma)',
+      solubility: 'Ít tan trong nước lạnh, tan tốt trong Ethanol',
+      solubilityEn: 'Slightly soluble in cold water; soluble in Ethanol',
+      realLife: 'Thành phần tạo hương chủ đạo của quả vani tự nhiên trong kem, bánh ngọt và chocolate; phần lớn hương vani thực phẩm hiện đại được tổng hợp sạch từ lignin gỗ hoặc guaiacol.',
+      realLifeEn: 'Primary flavor molecule giving vanilla pods their signature sweet aroma in ice cream, pastries, and chocolate.',
+      reactions: [
+        'Nhóm -CHO tham gia phản ứng tráng bạc với thuốc thử Tollens (AgNO₃/NH₃) tạo lớp bạc sáng.',
+        'Nhóm -OH phenol tác dụng với dung dịch NaOH tạo muối phenolate tan tốt và cho màu đặc trưng với FeCl₃.',
+        'Có thể bị khử bằng NaBH₄ hoặc H₂/Ni tạo vanillyl alcohol.'
+      ],
+      reactionsEn: [
+        'Aldehyde -CHO group gives a positive silver-mirror test with Tollens reagent (AgNO₃/NH₃).',
+        'Phenolic -OH dissolves in aqueous NaOH as a salt and complexes characteristically with FeCl₃.',
+        'Undergoes aldehyde reduction with NaBH₄ or catalytic hydrogenation to vanillyl alcohol.'
+      ],
+      note: 'Phân tử đa chức gồm vòng benzene gắn đồng thời aldehyde (-CHO), ether (-OCH₃) và phenol (-OH) với công thức C₈H₈O₃.',
+      noteEn: 'Multifunctional 4-hydroxy-3-methoxybenzaldehyde (C₈H₈O₃) bearing aldehyde, ether, and phenol groups.'
+    },
+    {
+      id: 'menthol',
+      catKey: 'alcohol',
+      elements: ['C','C','C','C','C','C','O','C','C','C','C'],
+      bonds: [...C6_RING, [0,6,1], [1,7,1], [7,8,1], [7,9,1], [4,10,1]],
+      name: 'Menthol',
+      nameEn: 'Menthol',
+      category: 'Alcohol mạch vòng (Terpenoid)',
+      categoryEn: 'Cyclic alcohol (Terpenoid)',
+      state: 'Rắn (tinh thể trong suốt mùi bạc hà mát lạnh)',
+      stateEn: 'Solid (translucent cooling mint crystals)',
+      solubility: 'Rất ít tan trong nước, tan tốt trong Ethanol và dầu thực vật',
+      solubilityEn: 'Very slightly soluble in water; soluble in Ethanol and oils',
+      realLife: 'Tinh thể bạc hà tự nhiên trong dầu gió, kẹo ngậm thông cổ, kem đánh răng và dầu gội; tạo cảm giác mát lạnh nhờ kích hoạt trực tiếp thụ thể cảm nhận nhiệt lạnh TRPM8 trên da và niêm mạc.',
+      realLifeEn: 'Main constituent of peppermint oil in balms, lozenges, and toothpaste; triggers skin TRPM8 cold receptors without lowering actual temperature.',
+      reactions: [
+        'Tác dụng với kim loại Na giải phóng khí H₂ tạo muối alkoxide (nhờ nhóm -OH alcohol bậc 2).',
+        'Oxi hóa nhẹ nhóm -OH alcohol bậc 2 tạo ketone vòng tương ứng là menthone.',
+        'Tách nước khi đun với acid mạnh (như H₂SO₄ đặc) tạo hỗn hợp alkene vòng menthene.'
+      ],
+      reactionsEn: [
+        'Secondary -OH group reacts with metallic Na to evolve H₂ gas and form the alkoxide.',
+        'Mild oxidation converts the secondary alcohol smoothly into the cyclic ketone menthone.',
+        'Acid-catalyzed dehydration yields cyclic alkenes known as menthenes.'
+      ],
+      note: 'Một monoterpenoid C₁₀H₂₀O dạng vòng cyclohexane gắn 3 nhóm thế ở vị trí 1, 2, 5; không phản ứng với NaOH như phenol.',
+      noteEn: 'A saturated cyclic monoterpenoid (C₁₀H₂₀O) that behaves strictly as a secondary alcohol rather than an acidic phenol.'
+    },
+    {
+      id: 'limonene',
+      catKey: 'cycloalkene',
+      elements: ['C','C','C','C','C','C','C','C','C','C'],
+      bonds: [[0,1,2],[1,2,1],[2,3,1],[3,4,1],[4,5,1],[5,0,1],[0,6,1],[3,7,1],[7,8,2],[7,9,1]],
+      name: 'Limonene',
+      nameEn: 'Limonene',
+      category: 'Cycloalkene (Terpene)',
+      categoryEn: 'Cycloalkene (Terpene)',
+      state: 'Lỏng không màu (hương vỏ cam chanh tươi mát)',
+      stateEn: 'Colorless liquid (fresh citrus-peel scent)',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ',
+      solubilityEn: 'Insoluble in water; miscible with organic solvents',
+      realLife: 'Chiếm hơn 90% tinh dầu trong vỏ cam, chanh, bưởi; được ứng dụng rộng rãi làm hương liệu thực phẩm và dung môi tẩy rửa sinh học thân thiện môi trường (làm sạch dầu mỡ, keo dán).',
+      realLifeEn: 'Makes up over 90% of citrus peel essential oil; widely used in food flavoring and as a biodegradable green degreasing solvent.',
+      reactions: [
+        'Làm mất màu nhanh dung dịch nước Brom (Br₂) và dung dịch KMnO₄ ở điều kiện thường do có tới 2 liên kết đôi C=C.',
+        'Cộng hợp với H₂ (xúc tác Ni, đun nóng) theo tỉ lệ mol 1:2 tạo thành hydrocarbon no p-menthane (C₁₀H₂₀).',
+        'Cháy hoàn toàn tỏa nhiều nhiệt (tinh dầu vỏ cam bắt lửa mạnh khi vắt gần ngọn nến).'
+      ],
+      reactionsEn: [
+        'Rapidly decolorizes bromine water and aqueous KMnO₄ via its two C=C double bonds.',
+        'Hydrogenates completely with 2 equivalents of H₂ over Ni catalyst into saturated p-menthane (C₁₀H₂₀).',
+        'Combusts vigorously as a volatile terpene hydrocarbon.'
+      ],
+      note: 'Thuộc nhóm terpene kinh điển C₁₀H₁₆ (gồm 2 đơn vị isoprene ghép lại); đối quang D-limonene có mùi cam còn L-limonene gợi mùi thông chanh.',
+      noteEn: 'Classic monoterpene (C₁₀H₁₆, two isoprene units); its D-enantiomer smells of oranges while L-limonene has a piney lemon scent.'
+    },
+    {
+      id: 'cubane',
+      catKey: 'cycloalkane',
+      elements: ['C','C','C','C','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,1],[2,3,1],[3,0,1],[4,5,1],[5,6,1],[6,7,1],[7,4,1],[0,4,1],[1,5,1],[2,6,1],[3,7,1]],
+      name: 'Cubane',
+      nameEn: 'Cubane',
+      category: 'Hydrocarbon đa vòng',
+      categoryEn: 'Polycyclic hydrocarbon',
+      state: 'Rắn (tinh thể trắng, nhiệt độ nóng chảy cao bất thường ~131 °C)',
+      stateEn: 'Solid (white crystals, unusually high mp ~131 °C)',
+      solubility: 'Không tan trong nước, tan trong dung môi hữu cơ không phân cực',
+      solubilityEn: 'Insoluble in water; soluble in nonpolar organic solvents',
+      realLife: 'Phân tử hydrocarbon nổi tiếng với hình khối lập phương hoàn hảo (8 đỉnh Carbon, góc liên kết bị ép còn 90°); nhờ mật độ năng lượng cực cao và khối lượng riêng lớn, các dẫn xuất của Cubane được nghiên cứu làm nhiên liệu tên lửa và khung phân tử trong thiết kế thuốc.',
+      realLifeEn: 'Iconic Platonic-cube hydrocarbon (C₈H₈) with compressed 90° C–C–C bond angles; its derivatives are prized in high-energy propellants and rigid 3D medicinal scaffolds.',
+      reactions: [
+        'Bền động học đáng kinh ngạc ở nhiệt độ thường dù sức căng góc cực lớn (~165 kcal/mol), chỉ phân hủy/đồng phân hóa khi đun trên ~200 °C.',
+        'Tham gia phản ứng thế gốc tự do (như thế Chlorine hoặc Bromine chiếu sáng) mà vẫn giữ nguyên khung khối lập phương.',
+        'Cháy hoàn toàn trong Oxygen giải phóng nguồn năng lượng lớn hơn hẳn nhiều hydrocarbon cùng công thức.'
+      ],
+      reactionsEn: [
+        'Surprisingly kinetically stable up to ~200 °C despite massive ~90° angle strain.',
+        'Undergoes radical halogenation cleanly without rupturing its cubic carbon cage.',
+        'Releases exceptionally high heat of combustion driven by internal ring strain.'
+      ],
+      note: 'Cùng công thức C₈H₈ với Styrene (C₆H₅-CH=CH₂) nhưng hoàn toàn chỉ chứa liên kết đơn (k = 5 với 5 mặt lập phương độc lập / cạnh vòng).',
+      noteEn: 'Shares C₈H₈ with Styrene despite having zero double bonds (degrees of unsaturation = 5 from its polycyclic cage).'
+    },
+    {
+      id: 'spiropentane',
+      catKey: 'cycloalkane',
+      elements: ['C','C','C','C','C'],
+      bonds: [[0,1,1],[1,2,1],[2,0,1],[0,3,1],[3,4,1],[4,0,1]],
+      name: 'Spiropentane',
+      nameEn: 'Spiropentane',
+      category: 'Cycloalkane (Spiro)',
+      categoryEn: 'Cycloalkane (Spiro)',
+      state: 'Lỏng dễ bay hơi (sôi ở 39 °C)',
+      stateEn: 'Volatile colorless liquid (bp 39 °C)',
+      solubility: 'Không tan trong nước, tan tốt trong dung môi hữu cơ',
+      solubilityEn: 'Insoluble in water; soluble in organic solvents',
+      realLife: 'Hợp chất xoắn spiro nhỏ nhất trong hóa học hữu cơ với 2 vòng tam giác chụm chung đúng một nguyên tử Carbon trung tâm tạo hình nơ bướm 3D vuông góc nhau; được dùng làm mô hình nghiên cứu liên kết hóa học có sức căng vòng lớn.',
+      realLifeEn: 'The smallest spiro hydrocarbon in organic chemistry, fusing two orthogonal 3-membered rings at a single quaternary spiro carbon.',
+      reactions: [
+        'Tham gia phản ứng cộng mở vòng dễ dàng với Bromine (Br₂) và Hydro (H₂/Ni) nhờ sức căng lớn của vòng 3 cạnh.',
+        'Đồng phân hóa khi đun nóng nhẹ trên chất xúc tác thành methylene cyclobutane rồi isoprene.',
+        'Cháy hoàn toàn trong Oxygen tạo CO₂ và H₂O kèm tỏa nhiệt lượng cao.'
+      ],
+      reactionsEn: [
+        'Undergoes ring-opening addition readily with Br₂ and H₂/Ni due to intense cyclopropane ring strain.',
+        'Thermally isomerizes over catalysts into methylenecyclobutane.',
+        'Burns cleanly in excess oxygen to CO₂ and water with elevated heat of combustion.'
+      ],
+      note: 'Cùng công thức C₅H₈ với Isoprene và Cyclopentene nhưng lại hoàn toàn no (không chứa nối đôi/ba nào), vì có 2 vòng 3 cạnh.',
+      noteEn: 'Isomeric with Isoprene and Cyclopentene (C₅H₈), even though every C–C bond is a single bond across its two 3-membered rings.'
+    },
+    {
+      id: 'adamantane',
+      catKey: 'cycloalkane',
+      elements: ['C','C','C','C','C','C','C','C','C','C'],
+      bonds: [[0,4,1],[4,1,1],[0,5,1],[5,2,1],[0,6,1],[6,3,1],[1,7,1],[7,2,1],[1,8,1],[8,3,1],[2,9,1],[9,3,1]],
+      name: 'Adamantane',
+      nameEn: 'Adamantane',
+      category: 'Hydrocarbon đa vòng (Diamondoid)',
+      categoryEn: 'Polycyclic hydrocarbon (Diamondoid)',
+      state: 'Rắn (tinh thể không màu mùi long não nhẹ, nóng chảy cao ~270 °C)',
+      stateEn: 'Solid (colorless crystals, faint camphor scent, mp ~270 °C)',
+      solubility: 'Không tan trong nước, tan trong dung môi hữu cơ không phân cực',
+      solubilityEn: 'Insoluble in water; soluble in nonpolar organic solvents',
+      realLife: 'Đơn vị cấu trúc lồng 10 Carbon nhỏ nhất của mạng tinh thể kim cương tự nhiên (tên bắt nguồn từ chữ Hy Lạp "adamas" nghĩa là kim cương); khung Adamantane giúp tăng độ bền chuyển hóa cho các thuốc kháng virus và điều trị Parkinson (như Amantadine, Memantine).',
+      realLifeEn: 'Smallest 10-carbon diamond-lattice cage molecule; used as a bulky lipophilic core in antiviral and neurological drugs such as Amantadine and Memantine.',
+      reactions: [
+        'Cực kỳ bền nhiệt (nhiệt độ nóng chảy ~270 °C rất cao so với hydrocarbon 10C) do toàn bộ 4 vòng 6 cạnh đều ở cấu dạng ghế hoàn toàn không bị sức căng góc.',
+        'Thế gốc tự do với Bromine ưu tiên chọn lọc gần như hoàn toàn vào vị trí 4 đỉnh Carbon bậc ba (đỉnh cầu).',
+        'Có thể tổng hợp nhanh trong công nghiệp bằng phản ứng chuyển vị xúc tác AlCl₃ từ tetrahydrodicyclopentadiene.'
+      ],
+      reactionsEn: [
+        'Thermodynamically ultra-stable and high-melting (~270 °C) because all four fused cyclohexane rings sit in strain-free chair conformations.',
+        'Electrophilic or radical bromination attacks selectively at the four bridgehead tertiary carbons.',
+        'Synthesized classically in one step via AlCl₃-catalyzed rearrangement to this thermodynamic diamondoid sink.'
+      ],
+      note: 'Thuộc họ diamondoid với công thức C₁₀H₁₆ (cùng công thức với Limonene); cả 10 nguyên tử Carbon xếp đúng như một mảnh mạng kim cương.',
+      noteEn: 'Prototype diamondoid cage (C₁₀H₁₆); shares its formula with Limonene while locking all 10 carbons into a miniature diamond unit cell.'
     }
   ];
 
