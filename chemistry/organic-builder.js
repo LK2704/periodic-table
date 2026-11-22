@@ -1942,6 +1942,22 @@
       return out;
     }
 
+    if (occupiedAngles.length === 1 && (count === 3 || count === 2)) {
+      const occ = normalizeAngle(occupiedAngles[0]);
+      const cosA = Math.cos(occ);
+      const sinA = Math.sin(occ);
+      if (cosA > 0.25) {
+        return count === 3 ? [-Math.PI / 2, Math.PI, Math.PI / 2] : [-Math.PI / 2, Math.PI / 2];
+      }
+      if (cosA < -0.25) {
+        return count === 3 ? [-Math.PI / 2, 0, Math.PI / 2] : [-Math.PI / 2, Math.PI / 2];
+      }
+      if (count === 3) {
+        return sinA >= 0 ? [Math.PI, -Math.PI / 2, 0] : [Math.PI, Math.PI / 2, 0];
+      }
+      return [Math.PI, 0];
+    }
+
     const sorted = occupiedAngles.map(normalizeAngle).sort((a, b) => a - b);
     const gaps = [];
     for (let i = 0; i < sorted.length; i++) {
@@ -2238,7 +2254,7 @@
             const { ux, uy, dist } = safeUnitVec(pb.x - pa.x, pb.y - pa.y, cIdx * 17 + i * 5 + j);
             const elA = atomMap.get(a).element;
             const elB = atomMap.get(b).element;
-            const minChord = elA === 'H' && elB === 'H' ? 58 : elA === 'H' || elB === 'H' ? 74 : 108;
+            const minChord = elA === 'H' && elB === 'H' ? 54 : elA === 'H' || elB === 'H' ? 64 : 108;
             if (dist < minChord) {
               const push = (minChord - dist) * 0.18;
               const wA = elA === 'H' && elB !== 'H' ? 0.85 : elB === 'H' && elA !== 'H' ? 0.15 : 0.5;
@@ -2325,9 +2341,9 @@
           d.x = d.x * 0.25 + (anchor.x - pos.get(a.id).x) * 0.35;
           d.y = d.y * 0.25 + (anchor.y - pos.get(a.id).y) * 0.35;
         } else if (soft) {
-          const w = a.element === 'H' ? 0.16 : 0.32;
-          d.x = d.x * 0.6 + (soft.x - pos.get(a.id).x) * w;
-          d.y = d.y * 0.6 + (soft.y - pos.get(a.id).y) * w;
+          const w = a.element === 'H' ? 0.28 : 0.34;
+          d.x = d.x * 0.55 + (soft.x - pos.get(a.id).x) * w;
+          d.y = d.y * 0.55 + (soft.y - pos.get(a.id).y) * w;
         }
         const mag = Math.hypot(d.x, d.y);
         if (mag > stepCap) {
@@ -2985,6 +3001,12 @@
       backbone.forEach((id) => {
         const bp = positions.get(id);
         if (bp) softAnchors.set(id, { x: bp.x, y: bp.y });
+        (adj.get(id) || []).forEach((e) => {
+          if (atomMap.get(e.to)?.element === 'H' && showH && !collapsedHIds.has(e.to)) {
+            const hp = positions.get(e.to);
+            if (hp) softAnchors.set(e.to, { x: hp.x, y: hp.y });
+          }
+        });
       });
     }
 
