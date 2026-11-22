@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Periodic Table</title>
-  <link rel="stylesheet" href="style.css?v=20261122-2" />
+  <link rel="stylesheet" href="style.css?v=20261122-5" />
 </head>
 <body>
   <div class="app-shell">
@@ -992,10 +992,22 @@
                   <div class="org-search-dropdown" id="org-search-dropdown" role="listbox"></div>
                 </div>
               </div>
-              <div class="org-zoom-controls" role="group" aria-label="Thu phóng mô hình">
-                <button type="button" class="org-zoom-btn" id="org-btn-zoom-out" title="Thu nhỏ" aria-label="Thu nhỏ">−</button>
-                <button type="button" class="org-zoom-readout mono" id="org-btn-zoom-reset" title="Đặt lại thu phóng (100%)">100%</button>
-                <button type="button" class="org-zoom-btn" id="org-btn-zoom-in" title="Phóng to" aria-label="Phóng to">+</button>
+              <div class="org-stage-top-right">
+                <button
+                  type="button"
+                  class="org-autotidy-btn active"
+                  id="org-btn-autotidy"
+                  aria-pressed="true"
+                  title="Tự động sắp xếp mô hình sau 10s không thao tác"
+                >
+                  <span class="org-autotidy-dot" aria-hidden="true"></span>
+                  <span class="org-autotidy-lbl" id="org-autotidy-label" data-i18n-org="autoTidyBtn">Tự sắp xếp</span>
+                </button>
+                <div class="org-zoom-controls" role="group" aria-label="Thu phóng mô hình">
+                  <button type="button" class="org-zoom-btn" id="org-btn-zoom-out" title="Thu nhỏ" aria-label="Thu nhỏ">−</button>
+                  <button type="button" class="org-zoom-readout mono" id="org-btn-zoom-reset" title="Đặt lại thu phóng (100%)">100%</button>
+                  <button type="button" class="org-zoom-btn" id="org-btn-zoom-in" title="Phóng to" aria-label="Phóng to">+</button>
+                </div>
               </div>
               <div class="org-svg-host" id="org-svg-host" aria-live="polite"></div>
               <div class="org-stage-hint" id="org-stage-hint" data-i18n-org="stageHint">
@@ -1101,7 +1113,7 @@
           <span class="lab-tab-icon" aria-hidden="true">⚖</span>
           <span class="lab-tab-copy">
             <span class="lab-tab-title" data-i18n-vlab="tabEquilibrium">Cân bằng hóa học</span>
-            <span class="lab-tab-sub" data-i18n-vlab="tabEquilibriumSub">Nguyên lý Le Chatelier, Van ’t Hoff &amp; đồ thị C(t)</span>
+            <span class="lab-tab-sub" data-i18n-vlab="tabEquilibriumSub">Nguyên lý Le Chatelier, Van 't Hoff &amp; đồ thị C(t)</span>
           </span>
         </button>
         <button
@@ -1635,10 +1647,10 @@
   <script src="organic-data.js?v=20261122-2"></script>
   <script src="reactions-organic-data.js"></script>
   <script src="reactions.js"></script>
-  <script src="organic-builder.js?v=20261122-2"></script>
-  <script src="electrochem-lab.js"></script>
-  <script src="equilibrium-lab.js"></script>
-  <script src="titration-lab.js"></script>
+  <script src="organic-builder.js?v=20261122-7"></script>
+  <script src="electrochem-lab.js?v=20261122-4"></script>
+  <script src="equilibrium-lab.js?v=20261122-4"></script>
+  <script src="titration-lab.js?v=20261122-4"></script>
   <script src="tools.js"></script>
   <script src="element-details.js"></script>
   <script src="atom3d.js"></script>

@@ -73,6 +73,8 @@
       zoomInTitle: 'Phóng to',
       zoomOutTitle: 'Thu nhỏ',
       zoomResetTitle: 'Đặt lại thu phóng (100%)',
+      autoTidyBtn: 'Tự sắp xếp',
+      autoTidyTitle: 'Tự động sắp xếp mô hình sau 10s không thao tác',
       searchBtn: 'Tìm chất hữu cơ',
       searchPlaceholder: 'Nhập tên hoặc công thức (C6H12O6, aspirin...)',
       searchFeatured: 'Chất phổ biến gợi ý',
@@ -217,6 +219,8 @@
       zoomInTitle: 'Zoom in',
       zoomOutTitle: 'Zoom out',
       zoomResetTitle: 'Reset zoom (100%)',
+      autoTidyBtn: 'Auto-arrange',
+      autoTidyTitle: 'Auto-arrange molecule after 10s idle',
       searchBtn: 'Search compound',
       searchPlaceholder: 'Name or formula (C6H12O6, aspirin...)',
       searchFeatured: 'Popular compounds',
@@ -1942,20 +1946,18 @@
       return out;
     }
 
-    if (occupiedAngles.length === 1 && (count === 3 || count === 2)) {
+    if (occupiedAngles.length === 1 && (count === 3 || count === 2 || count === 1)) {
       const occ = normalizeAngle(occupiedAngles[0]);
-      const cosA = Math.cos(occ);
-      const sinA = Math.sin(occ);
-      if (cosA > 0.25) {
-        return count === 3 ? [-Math.PI / 2, Math.PI, Math.PI / 2] : [-Math.PI / 2, Math.PI / 2];
+      const outAng = normalizeAngle(occ + Math.PI);
+      if (count === 1) return [outAng];
+      if (count === 2) {
+        return [normalizeAngle(outAng - Math.PI / 3), normalizeAngle(outAng + Math.PI / 3)];
       }
-      if (cosA < -0.25) {
-        return count === 3 ? [-Math.PI / 2, 0, Math.PI / 2] : [-Math.PI / 2, Math.PI / 2];
-      }
-      if (count === 3) {
-        return sinA >= 0 ? [Math.PI, -Math.PI / 2, 0] : [Math.PI, Math.PI / 2, 0];
-      }
-      return [Math.PI, 0];
+      return [
+        normalizeAngle(outAng - Math.PI / 2),
+        outAng,
+        normalizeAngle(outAng + Math.PI / 2)
+      ];
     }
 
     const sorted = occupiedAngles.map(normalizeAngle).sort((a, b) => a - b);
@@ -2209,13 +2211,13 @@
               const ep = pos.get(eid);
               const L = idealBondLength(atomMap.get(cid).element, atomMap.get(eid).element);
               const sign = idx === 0 ? firstSign : -firstSign;
-              const ang = baseAng + sign * 0.62;
-              disp.get(eid).x += (cp.x + Math.cos(ang) * L - ep.x) * 0.14;
-              disp.get(eid).y += (cp.y + Math.sin(ang) * L - ep.y) * 0.14;
+              const ang = baseAng + sign * 0.76;
+              disp.get(eid).x += (cp.x + Math.cos(ang) * L - ep.x) * 0.16;
+              disp.get(eid).y += (cp.y + Math.sin(ang) * L - ep.y) * 0.16;
             });
           }
 
-          // Depth-2 exocyclic radial clearance (keeps -CH2OH / -COOH tails outside the ring)
+          // Depth-2 & Depth-3 exocyclic radial clearance (keeps -CH2OH / -COOH / -OC(=O)CH3 tails outside the ring)
           exo.forEach((e) => {
             if (atomMap.get(e.to)?.element === 'H') return;
             const ep = pos.get(e.to);
@@ -2224,9 +2226,9 @@
               if (subId === cid || ringAtomSet.has(subId) || !visibleSet.has(subId)) return;
               const sp = pos.get(subId);
               const { ux: rux, uy: ruy, dist: distC } = safeUnitVec(sp.x - cx, sp.y - cy, 3);
-              const minRingClear = R + 48;
+              const minRingClear = R + 52;
               if (distC < minRingClear) {
-                const boost = (minRingClear - distC) * 0.22;
+                const boost = (minRingClear - distC) * 0.24;
                 disp.get(subId).x += rux * boost;
                 disp.get(subId).y += ruy * boost;
               } else {
@@ -2234,16 +2236,91 @@
                 disp.get(subId).x += outUx * 0.35;
                 disp.get(subId).y += outUy * 0.35;
               }
+
+              if (atomMap.get(subId)?.element === 'H') return;
+              (adj.get(subId) || []).forEach((d3E) => {
+                const d3Id = d3E.to;
+                if (d3Id === e.to || ringAtomSet.has(d3Id) || !visibleSet.has(d3Id)) return;
+                const d3p = pos.get(d3Id);
+                const { ux: r3x, uy: r3y, dist: dist3 } = safeUnitVec(d3p.x - cx, d3p.y - cy, 7);
+                const minClear3 = R + 78;
+                if (dist3 < minClear3) {
+                  const boost3 = (minClear3 - dist3) * 0.25;
+                  disp.get(d3Id).x += r3x * boost3;
+                  disp.get(d3Id).y += r3y * boost3;
+                }
+              });
             });
           });
         });
       });
 
-      // 3. Local sibling angular repulsion (keeps -NH2, -OH, -CH3 cleanly fanned at ~120°)
+      // 3. Local sibling angular repulsion & terminal -CH3/-CH2 fan regularization
       graph.atoms.forEach((center, cIdx) => {
         const nbs = (adj.get(center.id) || []).filter((e) => visibleSet.has(e.to));
         if (nbs.length < 2) return;
         const cp = pos.get(center.id);
+
+        // Keep terminal -CH3 / -CH2 / -NH2 explicit H fans symmetrically spread & tilted toward open space
+        const heavyNbs = nbs.filter((e) => atomMap.get(e.to)?.element !== 'H');
+        const hNbs = nbs.filter((e) => atomMap.get(e.to)?.element === 'H');
+        if (heavyNbs.length === 1 && (hNbs.length === 3 || hNbs.length === 2)) {
+          const parentId = heavyNbs[0].to;
+          const pp = pos.get(parentId);
+          if (pp) {
+            const baseOut = Math.atan2(cp.y - pp.y, cp.x - pp.x);
+            let openVx = Math.cos(baseOut) * 2.4;
+            let openVy = Math.sin(baseOut) * 2.4;
+            let crowding = 0;
+            const sibSet = new Set(hNbs.map((e) => e.to));
+            sibSet.add(center.id);
+            sibSet.add(parentId);
+
+            for (let k = 0; k < visibleIds.length; k++) {
+              const oid = visibleIds[k];
+              if (sibSet.has(oid)) continue;
+              const op = pos.get(oid);
+              const dx = cp.x - op.x;
+              const dy = cp.y - op.y;
+              const d = Math.hypot(dx, dy);
+              const cutoff = atomMap.get(oid)?.element === 'H' ? 115 : 155;
+              if (d > 1 && d < cutoff) {
+                const w = (atomMap.get(oid)?.element === 'H' ? 0.75 : 1.45) * Math.pow(1 - d / cutoff, 1.5);
+                openVx += (dx / d) * w;
+                openVy += (dy / d) * w;
+                crowding += w;
+              }
+            }
+
+            let fanCenter = Math.atan2(openVy, openVx);
+            const tilt = Math.max(-0.62, Math.min(0.62, normalizeAngle(fanCenter - baseOut)));
+            fanCenter = normalizeAngle(baseOut + tilt);
+
+            const halfSpread3 = Math.max(0.96, 1.28 - Math.min(0.32, crowding * 0.14));
+            const halfSpread2 = Math.max(0.84, 1.04 - Math.min(0.2, crowding * 0.1));
+            const targetOffsets =
+              hNbs.length === 3
+                ? [-halfSpread3, 0, halfSpread3]
+                : [-halfSpread2, halfSpread2];
+
+            const sortedHs = hNbs
+              .map((e) => {
+                const hp = pos.get(e.to);
+                const rel = normalizeAngle(Math.atan2(hp.y - cp.y, hp.x - cp.x) - fanCenter);
+                return { id: e.to, pos: hp, rel };
+              })
+              .sort((a, b) => a.rel - b.rel);
+            const Lh = idealBondLength(center.element, 'H');
+            sortedHs.forEach((hItem, idx) => {
+              const idealAng = fanCenter + targetOffsets[idx];
+              const tx = cp.x + Lh * Math.cos(idealAng);
+              const ty = cp.y + Lh * Math.sin(idealAng);
+              disp.get(hItem.id).x += (tx - hItem.pos.x) * 0.2;
+              disp.get(hItem.id).y += (ty - hItem.pos.y) * 0.2;
+            });
+          }
+        }
+
         for (let i = 0; i < nbs.length; i++) {
           for (let j = i + 1; j < nbs.length; j++) {
             const a = nbs[i].to;
@@ -2254,7 +2331,7 @@
             const { ux, uy, dist } = safeUnitVec(pb.x - pa.x, pb.y - pa.y, cIdx * 17 + i * 5 + j);
             const elA = atomMap.get(a).element;
             const elB = atomMap.get(b).element;
-            const minChord = elA === 'H' && elB === 'H' ? 54 : elA === 'H' || elB === 'H' ? 64 : 108;
+            const minChord = elA === 'H' && elB === 'H' ? 56 : elA === 'H' || elB === 'H' ? 66 : 126;
             if (dist < minChord) {
               const push = (minChord - dist) * 0.18;
               const wA = elA === 'H' && elB !== 'H' ? 0.85 : elB === 'H' && elA !== 'H' ? 0.15 : 0.5;
@@ -2576,10 +2653,10 @@
         [-55, 32],
         [-55, -32],
         [46, -98],
-        [114, 48],
-        [-36, 116],
-        [36, 116],
-        [-114, 48]
+        [118, 42],
+        [-52, 114],
+        [52, 114],
+        [-118, 42]
       ];
       coords.forEach(([x, y], i) => positions.set(heavyIds[i], { x: x * s, y: y * s }));
       pinHeavy = true;
@@ -2825,9 +2902,13 @@
       let count = 0;
       while (q.length) {
         const u = q.shift();
-        count++;
+        count += 2;
         (adj.get(u) || []).forEach((e) => {
-          if (!heavySet.has(e.to) || seen.has(e.to) || positions.has(e.to)) return;
+          if (seen.has(e.to) || positions.has(e.to)) return;
+          if (!heavySet.has(e.to)) {
+            count += 0.85;
+            return;
+          }
           seen.add(e.to);
           q.push(e.to);
         });
@@ -2889,36 +2970,87 @@
               signBig = nbDelta >= 0 ? 1 : -1;
             }
             const angMap = new Map([
-              [sized[0].id, outAng + signBig * 0.56],
-              [sized[1].id, outAng - signBig * 0.56]
+              [sized[0].id, outAng + signBig * 0.76],
+              [sized[1].id, outAng - signBig * 0.76]
             ]);
             angles = children.map((ch) => angMap.get(ch));
           }
-        } else if (rc && !ringAtomSet.has(pid) && children.length === 1 && placedNeighbors.length === 1) {
-          // Depth >= 2 exocyclic substituent (e.g. OH of -CH2OH): choose 120-deg zigzag arm pointing farthest from ring center
+        } else if (!ringAtomSet.has(pid) && placedNeighbors.length === 1 && (children.length === 1 || children.length === 2)) {
+          // Depth >= 2 substituent branch (e.g. -CH2OH, -COOH, or -O-C(=O)-CH3 in Aspirin):
+          // Pick open 120° / horizontal-aligned arms that place bulkier groups (-CH3 with 3 H's) in the widest open space
           const gp = placedNeighbors[0].pos;
+          const gpId = placedNeighbors[0].id;
           const inAng = Math.atan2(pPos.y - gp.y, pPos.x - gp.x);
-          const cands = [normalizeAngle(inAng - Math.PI / 3), normalizeAngle(inAng + Math.PI / 3)];
-          const L = idealBondLength(pEl, atomMap.get(children[0]).element);
-          let bestAng = cands[0];
-          let bestScore = -Infinity;
-          cands.forEach((ang) => {
+
+          const scoreSingleArm = (childId, ang) => {
+            const cEl = atomMap.get(childId).element;
+            const L = idealBondLength(pEl, cEl);
             const tx = pPos.x + L * Math.cos(ang);
             const ty = pPos.y + L * Math.sin(ang);
-            const distFromRing = Math.hypot(tx - rc.x, ty - rc.y);
+            // Probe slightly beyond child for its attached Hydrogens (-CH3 / -OH fan space)
+            const probeX = pPos.x + (L + 46) * Math.cos(ang);
+            const probeY = pPos.y + (L + 46) * Math.sin(ang);
+            const distFromRing = rc ? Math.hypot(tx - rc.x, ty - rc.y) + Math.hypot(probeX - rc.x, probeY - rc.y) * 0.45 : 0;
             let minPeerDist = Infinity;
+            let minProbeDist = Infinity;
             positions.forEach((op, oid) => {
               if (oid === pid) return;
               const d = Math.hypot(tx - op.x, ty - op.y);
               if (d < minPeerDist) minPeerDist = d;
+              if (oid !== gpId) {
+                const dp = Math.hypot(probeX - op.x, probeY - op.y);
+                if (dp < minProbeDist) minProbeDist = dp;
+              }
             });
-            const score = distFromRing + Math.min(minPeerDist, 140) * 1.4;
-            if (score > bestScore) {
-              bestScore = score;
-              bestAng = ang;
-            }
-          });
-          angles = [bestAng];
+            const weight = getBranchSize(childId, pid);
+            const isBulkyCarbon = cEl === 'C' && weight >= 4;
+            const isHorizOrVert = Math.abs(Math.sin(ang)) < 0.08 || Math.abs(Math.cos(ang)) < 0.08;
+            const alignBonus = isBulkyCarbon && isHorizOrVert && minProbeDist > 92 ? 42 : 0;
+            return (
+              (distFromRing * 1.1 +
+                Math.min(minPeerDist, 145) * 1.45 +
+                Math.min(minProbeDist, 155) * 1.35 +
+                alignBonus) *
+              weight
+            );
+          };
+
+          if (children.length === 1) {
+            const cands = [normalizeAngle(inAng - Math.PI / 3), normalizeAngle(inAng + Math.PI / 3)];
+            let bestAng = cands[0];
+            let bestScore = -Infinity;
+            cands.forEach((ang) => {
+              const sc = scoreSingleArm(children[0], ang);
+              if (sc > bestScore) {
+                bestScore = sc;
+                bestAng = ang;
+              }
+            });
+            angles = [bestAng];
+          } else {
+            const aLeft = normalizeAngle(inAng - Math.PI / 3);
+            const aRight = normalizeAngle(inAng + Math.PI / 3);
+            const aWideLeft = normalizeAngle(inAng - Math.PI / 6);
+            const aWideRight = normalizeAngle(inAng + Math.PI / 6);
+            const candidatePairs = [
+              [aLeft, aRight],
+              [aRight, aLeft],
+              [aLeft, aWideRight],
+              [aWideRight, aLeft],
+              [aWideLeft, aRight],
+              [aRight, aWideLeft]
+            ];
+            let bestPair = candidatePairs[0];
+            let bestScore = -Infinity;
+            candidatePairs.forEach((pair) => {
+              const sc = scoreSingleArm(children[0], pair[0]) + scoreSingleArm(children[1], pair[1]);
+              if (sc > bestScore) {
+                bestScore = sc;
+                bestPair = pair;
+              }
+            });
+            angles = bestPair;
+          }
         } else if (!rc && placedNeighbors.length === 2 && (children.length === 1 || children.length === 2)) {
           // Backbone exterior vertex: point substituents outward from the apex of the zigzag V
           const v0x = placedNeighbors[0].pos.x - pPos.x;
@@ -2958,15 +3090,15 @@
       if (!positions.has(hid)) positions.set(hid, { x: idx * 60, y: 0 });
     });
 
-    // Seed explicit H atoms symmetrically outward from each heavy atom
+    // Seed explicit H atoms using global steric-potential minimization (avoids nearby branches, rings & sibling H's)
+    const hGroups = [];
     heavyIds.forEach((pid) => {
       const hAll = (adj.get(pid) || [])
         .map((e) => e.to)
-        .filter((tid) => atomMap.get(tid)?.element === 'H' && !positions.has(tid));
+        .filter((tid) => atomMap.get(tid)?.element === 'H');
       if (hAll.length === 0) return;
       const pPos = positions.get(pid);
       const pEl = atomMap.get(pid).element;
-
       const visibleHs = [];
       hAll.forEach((hid) => {
         if (!showH || collapsedHIds.has(hid)) {
@@ -2979,34 +3111,175 @@
 
       const occupied = [];
       (adj.get(pid) || []).forEach((e) => {
-        if (atomMap.get(e.to)?.element === 'H' && (!showH || collapsedHIds.has(e.to))) return;
+        if (atomMap.get(e.to)?.element === 'H') return;
         if (positions.has(e.to)) {
           const np = positions.get(e.to);
           occupied.push(Math.atan2(np.y - pPos.y, np.x - pPos.x));
         }
       });
-      const angles = pickOpenAngles(occupied, visibleHs.length);
-      visibleHs.forEach((hid, idx) => {
-        const ang = angles[idx] ?? 0;
-        const L = idealBondLength(pEl, 'H');
-        positions.set(hid, {
-          x: pPos.x + L * Math.cos(ang),
-          y: pPos.y + L * Math.sin(ang)
-        });
+
+      hGroups.push({
+        pid,
+        pPos,
+        pEl,
+        Lh: idealBondLength(pEl, 'H'),
+        visibleHs,
+        occupied
       });
     });
 
+    const evalHydrogenAngleCost = (grp, ang, ownHSet) => {
+      const qx = grp.pPos.x + grp.Lh * Math.cos(ang);
+      const qy = grp.pPos.y + grp.Lh * Math.sin(ang);
+      let cost = 0;
+
+      // 1. Repulsion from parent's heavy bonds
+      for (let i = 0; i < grp.occupied.length; i++) {
+        const dAng = Math.abs(normalizeAngle(ang - grp.occupied[i]));
+        if (dAng < 0.92) {
+          cost += 90000 + (0.92 - dAng) * 120000;
+        } else {
+          cost += 1400 / Math.pow(Math.max(0.2, dAng - 0.5), 2);
+        }
+      }
+
+      // 2. Global spatial repulsion from all other placed atoms (heavy atoms & other atoms' Hydrogens)
+      positions.forEach((op, oid) => {
+        if (oid === grp.pid || ownHSet.has(oid)) return;
+        const oEl = atomMap.get(oid)?.element;
+        if (oEl === 'H' && (!showH || collapsedHIds.has(oid))) return;
+        const d = Math.hypot(qx - op.x, qy - op.y);
+        const safeD = oEl === 'H' ? 54 : 68;
+        if (d < safeD) {
+          cost += Math.pow(safeD - d, 2) * (oEl === 'H' ? 32 : 42);
+        }
+        const weight = oEl === 'H' ? 1.5 : 2.5;
+        cost += (weight * 4800) / Math.pow(Math.max(20, d), 1.65);
+      });
+
+      // 3. Clearance from heavy-atom bond segments
+      for (let i = 0; i < heavyGraph.bonds.length; i++) {
+        const bd = heavyGraph.bonds[i];
+        if (bd.from === grp.pid || bd.to === grp.pid) continue;
+        const pa = positions.get(bd.from);
+        const pb = positions.get(bd.to);
+        if (!pa || !pb) continue;
+        const vx = pb.x - pa.x;
+        const vy = pb.y - pa.y;
+        const lenSq = vx * vx + vy * vy;
+        if (lenSq < 1) continue;
+        const t = Math.max(0, Math.min(1, ((qx - pa.x) * vx + (qy - pa.y) * vy) / lenSq));
+        const dSeg = Math.hypot(qx - (pa.x + t * vx), qy - (pa.y + t * vy));
+        if (dSeg < 38) {
+          cost += Math.pow(38 - dSeg, 2) * 38;
+        }
+      }
+
+      return cost;
+    };
+
+    // Run 2 Gauss-Seidel passes so adjacent -CH3 / -CH2 groups mutually avoid each other's Hydrogens
+    for (let pass = 0; pass < 2; pass++) {
+      hGroups.forEach((grp) => {
+        const k = grp.visibleHs.length;
+        const ownHSet = new Set(grp.visibleHs);
+        let bestAngles = null;
+
+        if (k === 1) {
+          let bestCost = Infinity;
+          let bestA = 0;
+          const baseCands = pickOpenAngles(grp.occupied, 1);
+          const steps = 72;
+          for (let s = 0; s < steps; s++) {
+            const ang = -Math.PI + (2 * Math.PI * s) / steps;
+            let c = evalHydrogenAngleCost(grp, ang, ownHSet);
+            if (baseCands.length === 1) {
+              const dev = Math.abs(normalizeAngle(ang - baseCands[0]));
+              c += dev * dev * 180;
+            }
+            if (c < bestCost) {
+              bestCost = c;
+              bestA = ang;
+            }
+          }
+          bestAngles = [bestA];
+        } else if (k === 2) {
+          let bestCost = Infinity;
+          const baseCenter =
+            grp.occupied.length === 1
+              ? normalizeAngle(grp.occupied[0] + Math.PI)
+              : grp.occupied.length === 2
+              ? normalizeAngle(
+                  Math.atan2(
+                    -(Math.sin(grp.occupied[0]) + Math.sin(grp.occupied[1])),
+                    -(Math.cos(grp.occupied[0]) + Math.cos(grp.occupied[1]))
+                  )
+                )
+              : 0;
+          const spreads = [0.84, 0.94, 1.05, 1.16];
+          for (let s = -12; s <= 12; s++) {
+            const centerAng = normalizeAngle(baseCenter + s * 0.07);
+            const devDeg = (s * 0.07 * 180) / Math.PI;
+            for (let spIdx = 0; spIdx < spreads.length; spIdx++) {
+              const delta = spreads[spIdx];
+              const a1 = normalizeAngle(centerAng - delta);
+              const a2 = normalizeAngle(centerAng + delta);
+              const spDeg = (delta * 180) / Math.PI;
+              const c =
+                evalHydrogenAngleCost(grp, a1, ownHSet) +
+                evalHydrogenAngleCost(grp, a2, ownHSet) +
+                devDeg * devDeg * 0.22 +
+                (spDeg - 56) * (spDeg - 56) * 0.25;
+              if (c < bestCost) {
+                bestCost = c;
+                bestAngles = [a1, a2];
+              }
+            }
+          }
+        } else if (k === 3) {
+          let bestCost = Infinity;
+          const outAng = grp.occupied.length >= 1 ? normalizeAngle(grp.occupied[0] + Math.PI) : 0;
+          const spreads = [0.92, 1.02, 1.14, 1.26, 1.38];
+          for (let s = -12; s <= 12; s++) {
+            const centerAng = normalizeAngle(outAng + s * 0.065);
+            const tiltDeg = (s * 0.065 * 180) / Math.PI;
+            for (let spIdx = 0; spIdx < spreads.length; spIdx++) {
+              const delta = spreads[spIdx];
+              const a1 = normalizeAngle(centerAng - delta);
+              const a2 = centerAng;
+              const a3 = normalizeAngle(centerAng + delta);
+              const spDeg = (delta * 180) / Math.PI;
+              const c =
+                evalHydrogenAngleCost(grp, a1, ownHSet) +
+                evalHydrogenAngleCost(grp, a2, ownHSet) +
+                evalHydrogenAngleCost(grp, a3, ownHSet) +
+                tiltDeg * tiltDeg * 0.24 +
+                (spDeg - 68) * (spDeg - 68) * 0.22;
+              if (c < bestCost) {
+                bestCost = c;
+                bestAngles = [a1, a2, a3];
+              }
+            }
+          }
+        } else {
+          bestAngles = pickOpenAngles(grp.occupied, k);
+        }
+
+        grp.visibleHs.forEach((hid, idx) => {
+          const ang = bestAngles[idx] ?? 0;
+          positions.set(hid, {
+            x: grp.pPos.x + grp.Lh * Math.cos(ang),
+            y: grp.pPos.y + grp.Lh * Math.sin(ang)
+          });
+        });
+      });
+    }
+
     const softAnchors = new Map();
-    if (!pinHeavy && rings.length === 0 && backbone.length >= 2) {
-      backbone.forEach((id) => {
+    if (!pinHeavy && (backbone.length >= 2 || rings.length > 0)) {
+      heavyIds.forEach((id) => {
         const bp = positions.get(id);
         if (bp) softAnchors.set(id, { x: bp.x, y: bp.y });
-        (adj.get(id) || []).forEach((e) => {
-          if (atomMap.get(e.to)?.element === 'H' && showH && !collapsedHIds.has(e.to)) {
-            const hp = positions.get(e.to);
-            if (hp) softAnchors.set(e.to, { x: hp.x, y: hp.y });
-          }
-        });
       });
     }
 
@@ -3973,6 +4246,7 @@
     toastKind: 'warn',
     toastTimer: null,
     isMutating: false,
+    autoTidyEnabled: true,
     needsAutoTidy: false,
     idleTidyTimer: null
   };
@@ -4069,7 +4343,7 @@
 
   function triggerAutoTidy() {
     state.idleTidyTimer = null;
-    if (!state.needsAutoTidy || !state.graph || state.graph.atoms.length <= 1) return;
+    if (!state.autoTidyEnabled || !state.needsAutoTidy || !state.graph || state.graph.atoms.length <= 1) return;
     if (
       state.isMutating ||
       scene.drag ||
@@ -4108,13 +4382,15 @@
 
   function resetAutoTidyTimer() {
     clearAutoTidyTimer();
-    if (!state.needsAutoTidy) return;
+    if (!state.autoTidyEnabled || !state.needsAutoTidy) return;
     state.idleTidyTimer = setTimeout(triggerAutoTidy, IDLE_TIDY_MS);
   }
 
   function markDirtyForAutoTidy() {
     state.needsAutoTidy = true;
-    resetAutoTidyTimer();
+    if (state.autoTidyEnabled) {
+      resetAutoTidyTimer();
+    }
   }
 
   function setZoom(nextZoom, instant) {
@@ -5139,6 +5415,14 @@
       dom.btnZoomOut.title = d.zoomOutTitle;
       dom.btnZoomOut.setAttribute('aria-label', d.zoomOutTitle);
     }
+    if (dom.btnAutoTidy) {
+      dom.btnAutoTidy.classList.toggle('active', state.autoTidyEnabled);
+      dom.btnAutoTidy.setAttribute('aria-pressed', state.autoTidyEnabled ? 'true' : 'false');
+      dom.btnAutoTidy.title = d.autoTidyTitle;
+    }
+    if (dom.autoTidyLabel) {
+      dom.autoTidyLabel.textContent = d.autoTidyBtn;
+    }
     if (dom.stageHint) {
       if (state.connectMode) {
         dom.stageHint.textContent = state.connectFirstId ? d.stageHintConnect2 : d.stageHintConnect1;
@@ -5453,6 +5737,9 @@
       if (scene.pan && scene.pan.pointerId === e.pointerId) {
         scene.pan = null;
         dom.svgHost.classList.remove('is-panning');
+        if (Math.abs(state.panX) > 1 || Math.abs(state.panY) > 1) {
+          markDirtyForAutoTidy();
+        }
         return;
       }
 
@@ -5655,6 +5942,8 @@
       btnZoomIn: document.getElementById('org-btn-zoom-in'),
       btnZoomOut: document.getElementById('org-btn-zoom-out'),
       btnZoomReset: document.getElementById('org-btn-zoom-reset'),
+      btnAutoTidy: document.getElementById('org-btn-autotidy'),
+      autoTidyLabel: document.getElementById('org-autotidy-label'),
       searchOverlay: document.getElementById('org-search-overlay'),
       searchTrigger: document.getElementById('org-search-trigger'),
       searchBox: document.getElementById('org-search-box'),
@@ -5742,6 +6031,21 @@
     if (dom.btnZoomIn) dom.btnZoomIn.addEventListener('click', () => setZoom(state.zoom + 0.2));
     if (dom.btnZoomOut) dom.btnZoomOut.addEventListener('click', () => setZoom(state.zoom - 0.2));
     if (dom.btnZoomReset) dom.btnZoomReset.addEventListener('click', resetView);
+    if (dom.btnAutoTidy) {
+      dom.btnAutoTidy.addEventListener('click', () => {
+        state.autoTidyEnabled = !state.autoTidyEnabled;
+        dom.btnAutoTidy.classList.toggle('active', state.autoTidyEnabled);
+        dom.btnAutoTidy.setAttribute('aria-pressed', state.autoTidyEnabled ? 'true' : 'false');
+        if (state.autoTidyEnabled) {
+          if (state.graph && state.graph.atoms.length > 1) {
+            state.needsAutoTidy = true;
+          }
+          resetAutoTidyTimer();
+        } else {
+          clearAutoTidyTimer();
+        }
+      });
+    }
 
     if (dom.searchTrigger) {
       dom.searchTrigger.addEventListener('click', () => openSearch());
@@ -5923,8 +6227,16 @@
       const onPanelActivity = () => {
         if (state.needsAutoTidy) resetAutoTidyTimer();
       };
+      const onPanelDragMove = () => {
+        if (
+          state.needsAutoTidy &&
+          (scene.drag || scene.pan || (scene.toolbarHDrag && scene.toolbarHDrag.active))
+        ) {
+          resetAutoTidyTimer();
+        }
+      };
       panel.addEventListener('pointerdown', onPanelActivity, { passive: true });
-      panel.addEventListener('pointermove', onPanelActivity, { passive: true });
+      panel.addEventListener('pointermove', onPanelDragMove, { passive: true });
       panel.addEventListener('wheel', onPanelActivity, { passive: true });
       panel.addEventListener('keydown', onPanelActivity, { passive: true });
     }

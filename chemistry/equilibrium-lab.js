@@ -9,7 +9,7 @@
       tabElectrochem: 'Pin điện & Điện phân',
       tabElectrochemSub: 'Pin Galvanic, đảo cực điện phân & Faraday',
       tabEquilibrium: 'Cân bằng hóa học',
-      tabEquilibriumSub: 'Nguyên lý Le Chatelier, Van ’t Hoff & đồ thị C(t)',
+      tabEquilibriumSub: "Nguyên lý Le Chatelier, Van 't Hoff & đồ thị C(t)",
       tabTitration: 'Chuẩn độ Acid–Base',
       tabTitrationSub: 'Burette, đường cong pH(V) & thực hành ẩn C₀',
       close: 'Đóng'
@@ -18,7 +18,7 @@
       tabElectrochem: 'Electrochemistry',
       tabElectrochemSub: 'Galvanic cells, electrolysis & Faraday’s Law',
       tabEquilibrium: 'Equilibrium',
-      tabEquilibriumSub: 'Le Chatelier’s principle, Van ’t Hoff & C(t) plot',
+      tabEquilibriumSub: "Le Chatelier's principle, Van 't Hoff & C(t) plot",
       tabTitration: 'Titration',
       tabTitrationSub: 'Burette, pH(V) curve & unknown C₀ practice',
       close: 'Close'
@@ -223,6 +223,25 @@
   const MAX_SEGMENTS = 5;
   const BASE_RATE_K = 3.6;
   const CATALYST_MULT = 2.5;
+  const SUB_DIGIT_MAP = {
+    '₀': '0',
+    '₁': '1',
+    '₂': '2',
+    '₃': '3',
+    '₄': '4',
+    '₅': '5',
+    '₆': '6',
+    '₇': '7',
+    '₈': '8',
+    '₉': '9'
+  };
+
+  function fmtChemHTML(str) {
+    return String(str)
+      .replace(/[₀₁₂₃₄₅₆₇₈₉]+/g, (m) => `<sub>${m.replace(/[₀₁₂₃₄₅₆₇₈₉]/g, (c) => SUB_DIGIT_MAP[c] || c)}</sub>`)
+      .replace(/\b([KQ])_C\b/g, '$1<sub>C</sub>')
+      .replace(/ΔrH°/g, 'Δ<sub>r</sub>H°');
+  }
 
   // 4 Standard Grade 11 (GDPT 2018) Reversible Gas-Phase Systems
   const EQUILIBRIUM_SYSTEMS = [
@@ -337,14 +356,13 @@
       exoTag: 'Tỏa nhiệt (ΔrH° < 0)',
       endoTag: 'Thu nhiệt (ΔrH° > 0)',
       ctrlTempTitle: '1. Nhiệt độ (T)',
-      ctrlVolTitle: '2. Thể tích / Áp suất (V  tỉ lệ nghịch P)',
+      ctrlVolTitle: '2. Thể tích / Áp suất (V tỉ lệ nghịch P)',
       ctrlVolHint: 'Kéo nhỏ V để tăng P • Kéo lớn V để giảm P',
       ctrlConcTitle: '3. Thêm / Rút nồng độ chất (K_C giữ nguyên)',
       addBtn: '+ Thêm',
       removeBtn: '− Rút',
       ctrlCatTitle: '4. Chất xúc tác (Catalyst)',
-      catalystOn: '⚡ Xúc tác: ĐANG BẬT',
-      catalystOff: '○ Xúc tác: TẮT',
+      catalystBtn: 'Xúc tác',
       catalystNote: 'Tăng đều tốc độ thuận & nghịch (~2.5×)',
       explainEyebrow: 'GIẢI THÍCH THEO NGUYÊN LÝ LE CHATELIER',
       concListLabel: 'Nồng độ cân bằng mới:',
@@ -377,8 +395,7 @@
       addBtn: '+ Add',
       removeBtn: '− Remove',
       ctrlCatTitle: '4. Catalyst Toggle',
-      catalystOn: '⚡ Catalyst: ON',
-      catalystOff: '○ Catalyst: OFF',
+      catalystBtn: 'Catalyst',
       catalystNote: 'Accelerates forward & reverse rates equally (~2.5×)',
       explainEyebrow: 'LE CHATELIER’S PRINCIPLE EXPLANATION',
       concListLabel: 'New Equilibrium Concentrations:',
@@ -719,7 +736,15 @@
       kind: 'catalyst',
       enabled: state.catalystOn
     };
-    render();
+
+    const catBtn = hostEl && hostEl.querySelector('#eq-cat-toggle');
+    if (catBtn) {
+      catBtn.classList.toggle('active', state.catalystOn);
+      catBtn.setAttribute('aria-pressed', state.catalystOn ? 'true' : 'false');
+      updateLiveVisuals();
+    } else {
+      render();
+    }
   }
 
   function formatSciNumber(val) {
@@ -926,9 +951,9 @@
     const isEn = state.lang === 'en';
     const segs = state.segments;
 
-    const plotL = 44;
-    const plotR = 392;
-    const plotT = 20;
+    const plotL = 54;
+    const plotR = 396;
+    const plotT = 23;
     const plotB = 198;
     const plotW = plotR - plotL;
     const plotH = plotB - plotT;
@@ -969,8 +994,8 @@
       const tag = isEn ? seg.tagEn : seg.tagVi;
       markersSVG += `
         <line x1="${xM}" y1="${plotT}" x2="${xM}" y2="${plotB}" stroke="#d4b47c" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.75" />
-        <rect x="${Number(xM) - 29}" y="4" width="58" height="14" rx="3" fill="#252017" stroke="#6b5634" stroke-width="0.9" />
-        <text x="${xM}" y="13.5" text-anchor="middle" class="eq-svg-marker-txt">${tag}</text>
+        <rect x="${Number(xM) - 29}" y="4" width="58" height="14.5" rx="3" fill="#252017" stroke="#6b5634" stroke-width="0.9" />
+        <text x="${xM}" y="13.8" text-anchor="middle" class="eq-svg-marker-txt">${tag}</text>
       `;
     }
 
@@ -1045,8 +1070,8 @@
         ${curvesSVG}
 
         <!-- Axis Labels -->
-        <text x="${(plotL + plotR) / 2}" y="220" text-anchor="middle" class="eq-svg-caption">${d.axisTimeLabel}</text>
-        <text x="${plotL + 6}" y="${plotT - 6}" text-anchor="start" class="eq-svg-axis-txt">${d.axisConcLabel}</text>
+        <text x="${(plotL + plotR) / 2}" y="222" text-anchor="middle" class="eq-svg-caption">${d.axisTimeLabel}</text>
+        <text x="13" y="${(plotT + plotB) / 2}" text-anchor="middle" transform="rotate(-90 13 ${(plotT + plotB) / 2})" class="eq-svg-caption">${d.axisConcLabel}</text>
       </svg>
     `;
   }
@@ -1143,16 +1168,16 @@
 
     const qCompareSym =
       Math.abs(state.qcInst - state.kc) / Math.max(1e-9, state.kc) < 1e-4
-        ? 'Q_C = K_C'
+        ? 'Q<sub>C</sub> = K<sub>C</sub>'
         : state.qcInst < state.kc
-        ? 'Q_C < K_C'
-        : 'Q_C > K_C';
+        ? 'Q<sub>C</sub> &lt; K<sub>C</sub>'
+        : 'Q<sub>C</sub> &gt; K<sub>C</sub>';
 
     return `
       <span class="eq-shift-badge ${shiftBadgeClass}">${shiftBadgeText}</span>
       <div class="eq-kq-row">
-        <span class="eq-kq-chip">K_C(${state.tempK}K) = <strong>${formatSciNumber(state.kc)}</strong></span>
-        <span class="eq-kq-chip">Q_C = <strong>${formatSciNumber(state.qcInst)}</strong></span>
+        <span class="eq-kq-chip">K<sub>C</sub>(${state.tempK}K) = <strong>${formatSciNumber(state.kc)}</strong></span>
+        <span class="eq-kq-chip">Q<sub>C</sub> = <strong>${formatSciNumber(state.qcInst)}</strong></span>
         <span class="eq-kq-chip is-cmp">${qCompareSym}</span>
       </div>
     `;
@@ -1165,7 +1190,7 @@
         return `
           <span class="eq-conc-pill">
             <i class="eq-sp-dot" style="background:${sp.color}"></i>
-            <span class="eq-sp-name">[${sp.label}]</span>
+            <span class="eq-sp-name">[${fmtChemHTML(sp.label)}]</span>
             <strong class="eq-sp-val">${val.toFixed(3)} M</strong>
           </span>
         `;
@@ -1215,7 +1240,7 @@
     });
 
     const explainBody = hostEl.querySelector('#eq-explain-body');
-    if (explainBody) explainBody.textContent = buildExplanationText(sys);
+    if (explainBody) explainBody.innerHTML = fmtChemHTML(buildExplanationText(sys));
   }
 
   function render() {
@@ -1226,7 +1251,7 @@
 
     const sysChipsHTML = EQUILIBRIUM_SYSTEMS.map((item) => {
       const active = item.id === sys.id ? 'active' : '';
-      return `<button type="button" class="lab-preset-chip ${active}" data-eq-sys="${item.id}">${item.chipLabel}</button>`;
+      return `<button type="button" class="lab-preset-chip ${active}" data-eq-sys="${item.id}">${fmtChemHTML(item.chipLabel)}</button>`;
     }).join('');
 
     const tempC = (state.tempK - 273.15).toFixed(0);
@@ -1238,7 +1263,7 @@
         (sp) => `
         <span class="eq-leg-item">
           <i class="eq-sp-line" style="background:${sp.color}"></i>
-          <span>[${sp.label}]</span>
+          <span>[${fmtChemHTML(sp.label)}]</span>
         </span>
       `
       )
@@ -1251,7 +1276,7 @@
           <div class="eq-sp-ctrl-row">
             <div class="eq-sp-ctrl-info">
               <i class="eq-sp-dot" style="background:${sp.color}"></i>
-              <strong>${sp.label}</strong>
+              <strong>${fmtChemHTML(sp.label)}</strong>
               <span class="eq-sp-role" data-eq-sp-role="${idx}">${roleTag} • ${state.currentC[idx].toFixed(2)}M</span>
             </div>
             <div class="eq-sp-ctrl-btns">
@@ -1274,10 +1299,10 @@
       <!-- Main Reaction Equation & K_C / Q_C Telemetry Banner -->
       <div class="eq-header-banner">
         <div class="eq-eq-block">
-          <div class="eq-eq-formula">${sys.equation}</div>
+          <div class="eq-eq-formula">${fmtChemHTML(sys.equation)}</div>
           <div class="eq-eq-sub">
-            <span class="eq-thermo-pill">${thermoBadge}</span>
-            <span class="eq-hint-pill">${isEn ? sys.visualHintEn : sys.visualHintVi}</span>
+            <span class="eq-thermo-pill">${fmtChemHTML(thermoBadge)}</span>
+            <span class="eq-hint-pill">${fmtChemHTML(isEn ? sys.visualHintEn : sys.visualHintVi)}</span>
           </div>
         </div>
         <div class="eq-metrics-right" id="eq-telemetry-host">
@@ -1334,14 +1359,15 @@
 
         <div class="eq-ctrl-card">
           <div class="echem-slider-top">
-            <span>${d.ctrlConcTitle}</span>
+            <span>${fmtChemHTML(d.ctrlConcTitle)}</span>
           </div>
           <div class="eq-sp-ctrl-list">
             ${speciesControlsHTML}
           </div>
           <div class="eq-catalyst-row">
-            <button type="button" class="eq-cat-toggle ${state.catalystOn ? 'active' : ''}" id="eq-cat-toggle">
-              ${state.catalystOn ? d.catalystOn : d.catalystOff}
+            <button type="button" class="eq-cat-toggle ${state.catalystOn ? 'active' : ''}" id="eq-cat-toggle" aria-pressed="${state.catalystOn ? 'true' : 'false'}">
+              <span class="eq-cat-dot" aria-hidden="true"></span>
+              <span class="eq-cat-lbl">${d.catalystBtn}</span>
             </button>
             <span class="eq-cat-note">${d.catalystNote}</span>
           </div>
@@ -1351,7 +1377,7 @@
       <!-- Automatic Le Chatelier Explanation Box -->
       <div class="eq-explain-card">
         <span class="echem-eyebrow is-gold">${d.explainEyebrow}</span>
-        <p class="eq-explain-body" id="eq-explain-body">${buildExplanationText(sys)}</p>
+        <p class="eq-explain-body" id="eq-explain-body">${fmtChemHTML(buildExplanationText(sys))}</p>
       </div>
     `;
   }
